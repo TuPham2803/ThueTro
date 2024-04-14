@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from ckeditor.fields import RichTextField
 
 
 # Create your models here.
@@ -22,57 +23,50 @@ class BaseModel(models.Model):
 
 
 class Accommodation(BaseModel):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accommodations_owned')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     contact_number = models.CharField(max_length=15)
-    description = models.TextField()
-
+    description = RichTextField()
+    status = models.BooleanField()
 
 
 class AccommodationImage(models.Model):
     image = models.ImageField(upload_to='homes/%Y/%m')
     caption = models.CharField(max_length=100, blank=True)
-    accommodation=models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='requests')
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
 
 
-class AccommodationRequest(BaseModel):
-    requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='requests')
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='requests')
+class Request(BaseModel):
+    requester = models.ForeignKey(User, on_delete=models.CASCADE)
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
     message = models.TextField()
     is_approved = models.BooleanField(default=False)
 
 
-
-class AccommodationComment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='comments')
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
     comment = models.TextField()
 
 
+class Follow(BaseModel):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE)
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
 
-class AccommodationFollow(BaseModel):
-    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='followers')
 
-
-class AccommodationSearchHistory(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='search_history')
+class SearchHistory(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=200)
     min_price = models.IntegerField()
     max_price = models.IntegerField()
 
 
-
 class AccommodationUsageStatistic(BaseModel):  # Là mô hình để lưu trữ thống kê sử dụng các căn nhà trọ.
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='usage_statistics')
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE, related_name='usage_statistics')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
     month = models.IntegerField()
     year = models.IntegerField()
     num_of_views = models.IntegerField()
-
-
-    def __str__(self):
-        return self.name
