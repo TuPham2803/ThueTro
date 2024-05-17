@@ -70,6 +70,11 @@ class AccommdationViewSet(viewsets.ViewSet, generics.GenericAPIView):
     serializer_class = serializers.AccommodationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_permissions(self):
+        if self.action in ['add_comment']:
+            return [permissions.IsAuthenticated(), ]
+
+        return [permissions.AllowAny(), ]
     @action(methods=['get'], url_path='comments', detail=True)
     def get_comments(self, request, pk):
         comments = self.get_object().comment_set.select_related('user').order_by("-id")
@@ -88,3 +93,4 @@ class AccommdationViewSet(viewsets.ViewSet, generics.GenericAPIView):
 class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = Comment.objects.all()
     serializer_class = serializers.CommentSerializer
+    

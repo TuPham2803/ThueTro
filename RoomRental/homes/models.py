@@ -46,10 +46,15 @@ class Request(BaseModel):
     is_approved = models.BooleanField(default=False)
 
 
-class Comment(BaseModel):
+class Interaction(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
-    comment = models.TextField()
+
+    class Meta:
+        abstract = True
+
+class Comment(Interaction):
+    comment = models.CharField(max_length=255)
 
 
 class Follow(BaseModel):
