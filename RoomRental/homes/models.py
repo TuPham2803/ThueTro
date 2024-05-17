@@ -46,7 +46,7 @@ class Request(BaseModel):
     is_approved = models.BooleanField(default=False)
 
 
-class Comment(models.Model):
+class Comment(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
     comment = models.TextField()

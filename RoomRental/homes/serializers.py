@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Accommodation, User
+from .models import Accommodation, User, Comment
 
 
 class UserSerializer(ModelSerializer):
@@ -26,3 +26,10 @@ class AccommodationSerializer(ModelSerializer):
     class Meta:
         model = Accommodation
         fields = ['owner', 'title', 'address', 'contact_number', 'description']
+
+class CommentSerializer(ModelSerializer):
+    user= UserSerializer()
+    class Meta:
+        model = Comment
+        fields = ['id', 'user', 'accommodation', 'comment', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']

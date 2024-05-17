@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import Accommodation, User
+from .models import Accommodation, User, Comment
 from . import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -69,3 +69,22 @@ class AccommdationViewSet(viewsets.ViewSet, generics.GenericAPIView):
     queryset = Accommodation.objects.filter(status=True)
     serializer_class = serializers.AccommodationSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    @action(methods=['get'], url_path='comments', detail=True)
+    def get_comments(self, request, pk):
+        comments = self.get_object().comment_set.select_related('user').order_by("-id")
+
+
+        return Response(serializers.CommentSerializer(comments, many=True).data,
+                        status=status.HTTP_200_OK)
+
+    @action(methods=['post'], url_path='comments', detail=True)
+    def add_comment(self, request, pk):
+        c = self.get_object().comment_set.create(content=request.data.get('content'),
+                                                 user=request.user)
+        return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
+
+
+class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = serializers.CommentSerializer
