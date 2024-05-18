@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import User, Accommodation, AccommodationImage, Request, Comment, Follow, SearchHistory, \
-    AccommodationUsageStatistic
+from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest
 
 
 class AccommodationImageInline(admin.TabularInline):
@@ -12,11 +11,10 @@ class AccommodationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User)
-admin.site.register(Accommodation, AccommodationAdmin)
-admin.site.register(Request)
-admin.site.register(Comment)
+admin.site.register(PostAccommodation, AccommodationAdmin)
+admin.site.register(PostRequest)
+# admin.site.register(Comment)
 admin.site.register(Follow)
-admin.site.register(SearchHistory)
-admin.site.register(AccommodationUsageStatistic)
+# admin.site.register(Like)
 
 # Register your models here.

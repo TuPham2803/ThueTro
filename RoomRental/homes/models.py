@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
 
 
-# Create your models here.
-
 class User(AbstractUser):
     USER_TYPE_CHOICES = (
         ('landlord', 'Chủ nhà trọ'),
@@ -17,56 +15,102 @@ class User(AbstractUser):
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.BooleanField()
 
     class Meta:
         abstract = True
 
 
-class Accommodation(BaseModel):
+class RoomType(models.TextChoices):
+    SHARED = 'SH', 'Shared'
+    PRIVATE = 'PR', 'Private'
+
+
+class PostAccommodation(BaseModel):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    address = models.CharField(max_length=200)
+    city = models.CharField(max_length=50)
+    district = models.CharField(max_length=50)
+    address = models.CharField(max_length=100)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    contact_number = models.CharField(max_length=15)
+    acreage = models.FloatField(null=True, blank=True)
+    price = models.FloatField(null=True, blank=True)
+    room_type = models.CharField(
+        max_length=2,
+        choices=RoomType.choices,
+        default=RoomType.SHARED,
+    )
+    max_people = models.IntegerField(default=None)
+    current_people = models.IntegerField(default=None)
+    phone_number = models.CharField(max_length=12)
     description = RichTextField()
-    status = models.BooleanField()
+    user_post = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts_accommodation')
 
 
 class AccommodationImage(models.Model):
     image = models.ImageField(upload_to='homes/%Y/%m')
     caption = models.CharField(max_length=100, blank=True)
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
+    post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE)
 
 
-class Request(BaseModel):
-    requester = models.ForeignKey(User, on_delete=models.CASCADE)
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
-    message = models.TextField()
-    is_approved = models.BooleanField(default=False)
+class PostRequest(BaseModel):
+    area = models.CharField(max_length=100, blank=True)
+    description = RichTextField()
+    user_post = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
-class Comment(models.Model):
+class Interaction(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
-    comment = models.TextField()
+
+    class Meta:
+        abstract = True
+
+
+class InteractionAccommodation(Interaction):
+    post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class InteractionRequest(Interaction):
+    post_request = models.ForeignKey(PostRequest, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class Comment(Interaction):
+    content = models.CharField(max_length=255)
+
+    class Meta:
+        abstract = True
+
+
+class CommentAccommodation(Comment, InteractionAccommodation):
+    pass
+
+
+class CommentRequest(Comment, InteractionRequest):
+    pass
 
 
 class Follow(BaseModel):
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
 
 
-class SearchHistory(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    address = models.CharField(max_length=200)
-    min_price = models.IntegerField()
-    max_price = models.IntegerField()
+class Like(Interaction):
+    class Meta:
+        abstract = True
 
 
-class AccommodationUsageStatistic(BaseModel):  # Là mô hình để lưu trữ thống kê sử dụng các căn nhà trọ.
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    accommodation = models.ForeignKey(Accommodation, on_delete=models.CASCADE)
-    month = models.IntegerField()
-    year = models.IntegerField()
-    num_of_views = models.IntegerField()
+class LikeAccommodation(Like, InteractionAccommodation):
+    class Meta:
+        unique_together = ('post_accommodation', 'user')
+
+
+class LikeRequest(Like, InteractionRequest):
+    class Meta:
+        unique_together = ('post_request', 'user')
