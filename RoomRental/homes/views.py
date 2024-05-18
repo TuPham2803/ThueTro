@@ -47,6 +47,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         u = serializers.UserSerializer(user)
         return Response(u.data, status=status.HTTP_201_CREATED)
 
+
     @action(methods=['post'], url_path='forgot', detail=False)
     def forgot_password(self, request):
         users = self.get_object().user_set.filter(active=True)
@@ -63,6 +64,21 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 
 
         # gui mail o day -> gui ma link reset lai mat khau
+
+    #lay thong tin user hien tai
+    def get_permissions(self):
+        if self.action in ['get_current_user']:
+            return [permissions.IsAuthenticated()]
+
+        return [permissions.AllowAny()]
+    @action(methods=['get', 'patch'], url_path='current-user', detail=False)
+    def get_current_user(self, request):
+        user = request.user
+        if request.method.__eq__('PATCH'):
+            for k, v in request.data.items():
+                setattr(user, k, v)
+            user.save()
+        return Response(serializers.UserSerializer(user).data)
 
 
 class AccommdationViewSet(viewsets.ViewSet, generics.GenericAPIView):
@@ -85,7 +101,7 @@ class AccommdationViewSet(viewsets.ViewSet, generics.GenericAPIView):
 
     @action(methods=['post'], url_path='comments', detail=True)
     def add_comment(self, request, pk):
-        c = self.get_object().comment_set.create(content=request.data.get('content'),
+        c = self.get_object().comment_set.create(comment=request.data.get('comment'),
                                                  user=request.user)
         return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
 
@@ -93,4 +109,4 @@ class AccommdationViewSet(viewsets.ViewSet, generics.GenericAPIView):
 class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = Comment.objects.all()
     serializer_class = serializers.CommentSerializer
-    
+
