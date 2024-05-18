@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Accommodation, User, Comment
+from . import perms
 
 
 class UserSerializer(ModelSerializer):
