@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import Accommodation, User, Comment
+from .models import PostAccommodation, User
 from . import serializers , perms
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -83,7 +83,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 
 
 class AccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
-    queryset = Accommodation.objects.filter(status=True)
+    queryset = PostAccommodation.objects.filter(status=True)
     serializer_class = serializers.AccommodationSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -108,7 +108,7 @@ class AccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
 
 # Delete comment
-class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = serializers.CommentSerializer
-    permission_classes = [perms.CommentOwner]
+# class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
+#     queryset = Comment.objects.all()
+#     serializer_class = serializers.CommentSerializer
+#     permission_classes = [perms.CommentOwner]

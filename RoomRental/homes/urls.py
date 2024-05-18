@@ -5,7 +5,7 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register('accommodations', views.AccommdationViewSet)
 router.register('user', views.UserViewSet, basename='user')
-router.register('comments', views.CommentViewSet, basename='comments')
+# router.register('comments', views.CommentViewSet, basename='comments')
 
 
 urlpatterns = [

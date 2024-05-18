@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Accommodation, User, Comment
+from .models import PostAccommodation, User
 from . import perms
 
 
@@ -25,12 +25,12 @@ class UserSerializer(ModelSerializer):
 
 class AccommodationSerializer(ModelSerializer):
     class Meta:
-        model = Accommodation
+        model = PostAccommodation
         fields = ['owner', 'title', 'address', 'contact_number', 'description']
 
-class CommentSerializer(ModelSerializer):
-    user= UserSerializer()
-    class Meta:
-        model = Comment
-        fields = ['id', 'user', 'accommodation', 'comment', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
+# class CommentSerializer(ModelSerializer):
+#     user= UserSerializer()
+#     class Meta:
+#         model = Comment
+#         fields = ['id', 'user', 'accommodation', 'comment', 'created_at', 'updated_at']
+#         read_only_fields = ['created_at', 'updated_at']
