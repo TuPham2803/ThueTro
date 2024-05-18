@@ -63,7 +63,6 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             else:
                 return Response({'result': 'Fail'}, status=status.HTTP_404_NOT_FOUND)
 
-
         # gui mail o day -> gui ma link reset lai mat khau
 
     #lay thong tin user hien tai
@@ -85,6 +84,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 class AccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     queryset = PostAccommodation.objects.filter(status=True)
     serializer_class = serializers.AccommodationSerializer
+
     permission_classes = [permissions.IsAuthenticated]
 
     def get_permissions(self):
@@ -112,3 +112,4 @@ class AccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 #     queryset = Comment.objects.all()
 #     serializer_class = serializers.CommentSerializer
 #     permission_classes = [perms.CommentOwner]
+
