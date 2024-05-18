@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
@@ -8,9 +8,14 @@ export default StyleSheet.create({
     marginTop: 50,
   },
   subject: {
+    fontSize: 15,
+    fontWeight: "",
+    color: "purple",
+  },
+  header: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "blue",
+    color: "purple",
   },
   row: {
     flexDirection: "row",
@@ -29,6 +34,28 @@ export default StyleSheet.create({
   },
   icon: {
     width: "8%",
+    height: 50,
+    alignSelf: "center",
+  },
+  wrapper: {
+    height: 200,
+  },
+  alignCenter: {
+    alignItems: "center",
+  },
+  justifyContentCenter: {
+    justifyContent: "center",
+  },
+  image: {
+    width: Dimensions.get("window").width,
+    height: 200,
+  },
+  slide: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconFeature: {
+    width: "30%",
     height: 50,
   },
 });

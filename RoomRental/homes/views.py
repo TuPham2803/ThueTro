@@ -61,7 +61,6 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             else:
                 return Response({'result': 'Fail'}, status=status.HTTP_404_NOT_FOUND)
 
-
         # gui mail o day -> gui ma link reset lai mat khau
 
 
