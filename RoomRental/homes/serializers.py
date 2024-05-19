@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import PostAccommodation, User, PostRequest, CommentAccommodation
+from .models import PostAccommodation, User, PostRequest, CommentAccommodation, Follow
 from . import perms
 
 
@@ -105,3 +105,12 @@ class LikeRequestSerializer(ModelSerializer):
     class Meta:
         model = CommentAccommodation
         fields = ['id', 'user', 'post_request', 'created_at', 'updated_at', 'status']
+
+
+class FollowSerializer(ModelSerializer):
+    owner = UserSerializer()
+    follower = UserSerializer()
+
+    class Meta:
+        model = Follow
+        fields = ['id', 'owner', 'follower', 'created_at', 'updated_at', 'status']

@@ -212,6 +212,16 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             user.save()
         return Response(serializers.UserSerializer(user).data)
 
+    @action(methods=['GET', 'POST'], detail=True, url_path='follows')
+    def follows(self, request, pk=None):
+        if request.method == 'GET':
+            follows = self.get_object().followers.select_related('follower').all()
+            return Response(serializers.FollowSerializer(follows, many=True).data,
+                            status=status.HTTP_200_OK)
+        elif request.method == 'POST':
+            c = self.get_object().followers.create(follower=request.user)
+            return Response(serializers.FollowSerializer(c).data, status=status.HTTP_201_CREATED)
+
 # class PostAccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 #     queryset = PostAccommodation.objects.filter(status=True)
 #     serializer_class = serializers.AccommodationSerializer
