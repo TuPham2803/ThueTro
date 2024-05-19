@@ -50,5 +50,5 @@ urlpatterns = [
                        namespace='oauth2_provider')),
 ]
 
-CLIENT_ID='kq4J9oG1z8FKbtpwbWvfFW9QXTbjxi51I4rIFs4Z'
-CLIENT_SECRET='fGTm8HNDehEURE0KdVs0NNkkrFPMpBaiZuVMoCVYRVLv5uiOoyAzO2WrrcJjhVaZPdi2tO6P7VWf8ziZQt4FTZNvzX23OlTTgif9giFOwRhL7DMXvoAObsYBWJ4rRvKm'
+CLIENT_ID='QlNeaDyBBIFMN7dbLopqw23QXbkjGjwYluj6sEiM'
+CLIENT_SECRET='8DyNaOoZT0Qmt3x67nVuWdJH06bkL1MgIs4xMMlnJMfqrxGABukUqqgz3ZTIa3ZLO9C8oOCBsUtf7mGj6BTsGmx9UdP8QYropEpUnqNWBcRONiy7jh3oXwVYQgNqGaIa'
