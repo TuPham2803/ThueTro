@@ -11,13 +11,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = PostAccommodation.objects.all()
     serializer_class = serializers.PostAccommodationSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = PostRequest.objects.all()
     serializer_class = serializers.PostRequestSerializer
-    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user_post=self.request.user)
