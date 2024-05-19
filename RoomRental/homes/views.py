@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status, generics
+from rest_framework import viewsets, permissions, status, generics, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -8,8 +8,8 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
-    queryset = PostAccommodation.objects.all()
+class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+    queryset = PostAccommodation.objects.filter(status=True)
     serializer_class = serializers.PostAccommodationSerializer
 
     def get_permissions(self):
@@ -39,9 +39,54 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             status_code = status.HTTP_200_OK
         return Response(serializers.LikeAccommodationSerializer(l).data, status=status_code)
 
+    def get_queryset(self):
+        queryset = self.queryset
 
-class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
-    queryset = PostRequest.objects.all()
+        if self.action.__eq__('list'):
+            district = self.request.query_params.get('district')
+            if district:
+                queryset = queryset.filter(district__icontains=district)
+
+            city = self.request.query_params.get('city')
+            if city:
+                queryset = queryset.filter(city__icontains=city)
+
+            max_people = self.request.query_params.get('max_people')
+            if max_people:
+                queryset = queryset.filter(max_people__gte=max_people)
+
+            current_people = self.request.query_params.get('current_people')
+            if current_people:
+                queryset = queryset.filter(current_people__lte=current_people)
+
+            min_price = self.request.query_params.get('min_price')
+            if min_price:
+                queryset = queryset.filter(price__gte=min_price)
+
+            max_price = self.request.query_params.get('max_price')
+            if max_price:
+                queryset = queryset.filter(price__lte=max_price)
+
+        return queryset
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.serializer_class(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.status = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+    queryset = PostRequest.objects.filter(status=True)
     serializer_class = serializers.PostRequestSerializer
 
     # def perform_create(self, serializer):
@@ -73,6 +118,27 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             status_code = status.HTTP_200_OK
         return Response(serializers.LikeRequestSerializer(l).data, status=status_code)
 
+
+    def perform_update(self, serializer):
+        serializer.save(user_post=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.serializer_class(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.status = False
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_create(self, serializer):
+        serializer.save(user_post=self.request.user)
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = User.objects.filter(is_active=True)
