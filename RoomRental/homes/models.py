@@ -15,7 +15,7 @@ class User(AbstractUser):
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.BooleanField()
+    status = models.BooleanField(default=True, editable=False)
 
     class Meta:
         abstract = True
