@@ -12,13 +12,67 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = PostAccommodation.objects.all()
     serializer_class = serializers.PostAccommodationSerializer
 
+    def get_permissions(self):
+        if self.action == 'comments' and self.request.POST:
+            return [permissions.IsAuthenticated()]
+        if self.action in ['like']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    @action(methods=['GET', 'POST'], detail=True, url_path='comments')
+    def comments(self, request, pk=None):
+        if request.method == 'GET':
+            comments = self.get_object().commentaccommodation_set.select_related('user').all()
+            return Response(serializers.CommentAccommodationSerializer(comments, many=True).data,
+                            status=status.HTTP_200_OK)
+        elif request.method == 'POST':
+            c = self.get_object().commentaccommodation_set.create(content=request.data.get('content'),
+                                                                  user=request.user)
+            return Response(serializers.CommentAccommodationSerializer(c).data, status=status.HTTP_201_CREATED)
+
+    @action(methods=['POST'], detail=True, url_path='like')
+    def like(self, request, pk=None):
+        l, created = self.get_object().likeaccommodation_set.get_or_create(user=request.user)
+        if created:
+            status_code = status.HTTP_201_CREATED
+        else:
+            status_code = status.HTTP_200_OK
+        return Response(serializers.LikeAccommodationSerializer(l).data, status=status_code)
+
 
 class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = PostRequest.objects.all()
     serializer_class = serializers.PostRequestSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(user_post=self.request.user)
+    # def perform_create(self, serializer):
+    #     serializer.save(user_post=self.request.user)
+    def get_permissions(self):
+        if self.action == 'comments' and self.request.POST:
+            return [permissions.IsAuthenticated()]
+        if self.action in ['like']:
+            return [permissions.IsAuthenticated()]
+        return [permissions.AllowAny()]
+
+    @action(methods=['GET', 'POST'], detail=True, url_path='comments')
+    def comments(self, request, pk=None):
+        if request.method == 'GET':
+            comments = self.get_object().commentrequest_set.select_related('user').all()
+            return Response(serializers.CommentRequestSerializer(comments, many=True).data,
+                            status=status.HTTP_200_OK)
+        elif request.method == 'POST':
+            c = self.get_object().commentrequest_set.create(content=request.data.get('content'),
+                                                            user=request.user)
+            return Response(serializers.CommentRequestSerializer(c).data, status=status.HTTP_201_CREATED)
+
+    @action(methods=['POST'], detail=True, url_path='like')
+    def like(self, request, pk=None):
+        l, created = self.get_object().likerequest_set.get_or_create(user=request.user)
+        if created:
+            status_code = status.HTTP_201_CREATED
+        else:
+            status_code = status.HTTP_200_OK
+        return Response(serializers.LikeRequestSerializer(l).data, status=status_code)
+
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = User.objects.filter(is_active=True)
@@ -91,31 +145,11 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 setattr(user, k, v)
             user.save()
         return Response(serializers.UserSerializer(user).data)
-#
-#
-# class AccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+
+# class PostAccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 #     queryset = PostAccommodation.objects.filter(status=True)
 #     serializer_class = serializers.AccommodationSerializer
-#
-#     permission_classes = [permissions.IsAuthenticated]
-#
-#     def get_permissions(self):
-#         if self.action in ['add_comment']:
-#             return [permissions.IsAuthenticated(), ]
-#
-#         return [permissions.AllowAny(), ]
-#
-#     @action(methods=['get'], url_path='comments', detail=True)
-#     def get_comments(self, request, pk):
-#         comments = self.get_object().comment_set.select_related('user')
-#         return Response(serializers.CommentSerializer(comments, many=True).data,
-#                         status=status.HTTP_200_OK)
-#
-#     @action(methods=['post'], url_path='comments', detail=True)
-#     def add_comment(self, request, pk):
-#         c = self.get_object().comment_set.create(comment=request.data.get('comment'),
-#                                                  user=request.user)
-#         return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
+
 
 # Delete comment
 # class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):

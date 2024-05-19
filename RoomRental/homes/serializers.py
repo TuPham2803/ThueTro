@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import PostAccommodation, User, PostRequest
+from .models import PostAccommodation, User, PostRequest, CommentAccommodation
 from . import perms
 
 
@@ -70,9 +70,38 @@ class AccommodationSerializer(ModelSerializer):
         model = PostAccommodation
         fields = ['owner', 'title', 'address', 'contact_number', 'description']
 
-# class CommentSerializer(ModelSerializer):
-#     user= UserSerializer()
-#     class Meta:
-#         model = Comment
-#         fields = ['id', 'user', 'accommodation', 'comment', 'created_at', 'updated_at']
-#         read_only_fields = ['created_at', 'updated_at']
+
+class CommentAccommodationSerializer(ModelSerializer):
+    user = UserSerializer()
+    post_accommodation = PostAccommodationSerializer()
+
+    class Meta:
+        model = CommentAccommodation
+        fields = ['id', 'user', 'post_accommodation', 'content', 'created_at', 'updated_at', 'status']
+
+
+class CommentRequestSerializer(ModelSerializer):
+    user = UserSerializer()
+    post_request = PostRequestSerializer()
+
+    class Meta:
+        model = CommentAccommodation
+        fields = ['id', 'user', 'post_request', 'content', 'created_at', 'updated_at', 'status']
+
+
+class LikeAccommodationSerializer(ModelSerializer):
+    user = UserSerializer()
+    post_accommodation = PostAccommodationSerializer()
+
+    class Meta:
+        model = CommentAccommodation
+        fields = ['id', 'user', 'post_accommodation', 'created_at', 'updated_at', 'status']
+
+
+class LikeRequestSerializer(ModelSerializer):
+    user = UserSerializer()
+    post_request = PostRequestSerializer()
+
+    class Meta:
+        model = CommentAccommodation
+        fields = ['id', 'user', 'post_request', 'created_at', 'updated_at', 'status']
