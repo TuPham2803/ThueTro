@@ -9,6 +9,7 @@ class User(AbstractUser):
         ('tenant', 'Người thuê trọ'),
         ('admin', 'Quản trị viên'),
     )
+    email = models.EmailField(null=False)
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
 
 
