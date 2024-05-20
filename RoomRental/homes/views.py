@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status, generics, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import PostAccommodation, User, PostRequest, CommentAccommodation, CommentRequest
+from .models import PostAccommodation, User, PostRequest, CommentAccommodation, CommentRequest ,LikeAccommodation, LikeRequest
 from . import serializers, perms
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -32,14 +32,26 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
                                                                   user=request.user)
             return Response(serializers.CommentAccommodationSerializer(c).data, status=status.HTTP_201_CREATED)
 
-    @action(methods=['POST'], detail=True, url_path='like')
-    def like(self, request, pk=None):
-        l, created = self.get_object().likeaccommodation_set.get_or_create(user=request.user)
-        if created:
-            status_code = status.HTTP_201_CREATED
-        else:
-            status_code = status.HTTP_200_OK
-        return Response(serializers.LikeAccommodationSerializer(l).data, status=status_code)
+    # @action(methods=['POST'], detail=True, url_path='like')
+    # def like(self, request, pk=None):
+    #     l, created = self.get_object().likeaccommodation_set.get_or_create(user=request.user)
+    #     if created:
+    #         status_code = status.HTTP_201_CREATED
+    #     else:
+    #         status_code = status.HTTP_200_OK
+    #     return Response(serializers.LikeAccommodationSerializer(l).data, status=status_code)
+
+    @action(methods=['post'], url_path='like', detail=True)
+    def like(self, request, pk):
+        li, created = LikeAccommodation.objects.get_or_create(post_accommodation=self.get_object(),
+                                                 user=request.user)
+
+        if not created:
+            li.status = not li.status
+            li.save()
+
+        return Response(serializers.PostAccommodationSerializer(self.get_object()).data,
+                        status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
         queryset = self.queryset
@@ -122,14 +134,6 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
                                                             user=request.user)
             return Response(serializers.CommentRequestSerializer(c).data, status=status.HTTP_201_CREATED)
 
-    @action(methods=['POST'], detail=True, url_path='like')
-    def like(self, request, pk=None):
-        l, created = self.get_object().likerequest_set.get_or_create(user=request.user)
-        if created:
-            status_code = status.HTTP_201_CREATED
-        else:
-            status_code = status.HTTP_200_OK
-        return Response(serializers.LikeRequestSerializer(l).data, status=status_code)
 
     def perform_update(self, serializer):
         serializer.save(user_post=self.request.user)
@@ -151,6 +155,18 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
 
     def perform_create(self, serializer):
         serializer.save(user_post=self.request.user)
+
+    @action(methods=['post'], url_path='like', detail=True)
+    def like(self, request, pk):
+        li, created = LikeRequest.objects.get_or_create(post_request=self.get_object(),
+                                                              user=request.user)
+
+        if not created:
+            li.status = not li.status
+            li.save()
+
+        return Response(serializers.PostRequestSerializer(self.get_object()).data,
+                        status=status.HTTP_201_CREATED)
 
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
@@ -239,4 +255,10 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 class CommentAccommodationViewSet(viewsets.ViewSet, generics.RetrieveUpdateDestroyAPIView):
     queryset = CommentAccommodation.objects.all()
     serializer_class = serializers.CommentAccommodationSerializer
+    permission_classes = [perms.CommentOwner]
+
+
+class CommentRequestViewSet(viewsets.ViewSet, generics.RetrieveUpdateDestroyAPIView):
+    queryset = CommentRequest.objects.all()
+    serializer_class = serializers.CommentRequestSerializer
     permission_classes = [perms.CommentOwner]
