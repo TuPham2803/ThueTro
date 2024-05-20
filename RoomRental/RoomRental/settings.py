@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'drf_yasg',
     'oauth2_provider',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 REST_FRAMEWORK = {
@@ -83,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'homedb',
         'USER': 'root',
-        'PASSWORD': 'Admin@123',
+        'PASSWORD': 'admin@123',
         'HOST': ''  # mặc định localhost
     }
 }
@@ -106,6 +108,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+import cloudinary
+
+cloudinary.config(
+    cloud_name="dbyeacxv4",
+    api_key="691338469635563",
+    api_secret="dHHQ-iAJHwlZQXHmqe0eTU1p8NE"
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
+from cloudinary.models import CloudinaryField
 
 
 class User(AbstractUser):
@@ -13,10 +14,15 @@ class User(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
 
 
+class UserAvatarImage(models.Model):
+    image = CloudinaryField(null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.BooleanField(default=True, editable=False)
+    status = models.IntegerField(default=-1, editable=False)
 
     class Meta:
         abstract = True
@@ -50,9 +56,10 @@ class PostAccommodation(BaseModel):
 
 
 class AccommodationImage(models.Model):
-    image = models.ImageField(upload_to='homes/%Y/%m')
+    # image = models.ImageField(upload_to='homes/%Y/%m')
+    image = CloudinaryField(null=True)
     caption = models.CharField(max_length=100, blank=True)
-    post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE)
+    post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE, related_name='images')
 
 
 class PostRequest(BaseModel):

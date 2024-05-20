@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
-    queryset = PostAccommodation.objects.filter(status=True)
+    queryset = PostAccommodation.objects.filter(status=1)
     serializer_class = serializers.PostAccommodationSerializer
 
     def get_permissions(self):
@@ -17,6 +17,8 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
             return [permissions.IsAuthenticated()]
         if self.action in ['like']:
             return [permissions.IsAuthenticated()]
+        if self.request.method == 'GET':
+            return [permissions.AllowAny()]
         return [permissions.AllowAny()]
 
     @action(methods=['GET', 'POST'], detail=True, url_path='comments')
@@ -67,7 +69,18 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
             if max_price:
                 queryset = queryset.filter(price__lte=max_price)
 
+            status = self.request.query_params.get('status')
+            if status:
+                queryset = queryset.filter(status=status)
+
         return queryset
+
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
