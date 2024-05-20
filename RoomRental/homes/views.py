@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status, generics, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import PostAccommodation, User, PostRequest
+from .models import PostAccommodation, User, PostRequest, CommentAccommodation, CommentRequest
 from . import serializers, perms
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -118,7 +118,6 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
             status_code = status.HTTP_200_OK
         return Response(serializers.LikeRequestSerializer(l).data, status=status_code)
 
-
     def perform_update(self, serializer):
         serializer.save(user_post=self.request.user)
 
@@ -139,6 +138,7 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
 
     def perform_create(self, serializer):
         serializer.save(user_post=self.request.user)
+
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = User.objects.filter(is_active=True)
@@ -222,13 +222,8 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             c = self.get_object().followers.create(follower=request.user)
             return Response(serializers.FollowSerializer(c).data, status=status.HTTP_201_CREATED)
 
-# class PostAccommdationViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
-#     queryset = PostAccommodation.objects.filter(status=True)
-#     serializer_class = serializers.AccommodationSerializer
 
-
-# Delete comment
-# class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
-#     queryset = Comment.objects.all()
-#     serializer_class = serializers.CommentSerializer
-#     permission_classes = [perms.CommentOwner]
+class CommentAccommodationViewSet(viewsets.ViewSet, generics.RetrieveUpdateDestroyAPIView):
+    queryset = CommentAccommodation.objects.all()
+    serializer_class = serializers.CommentAccommodationSerializer
+    permission_classes = [perms.CommentOwner]
