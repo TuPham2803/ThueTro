@@ -22,7 +22,7 @@ class UserAvatarImage(models.Model):
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.BooleanField(default=True, editable=False)
+    status = models.IntegerField(default=-1, editable=False)
 
     class Meta:
         abstract = True
@@ -59,7 +59,7 @@ class AccommodationImage(models.Model):
     # image = models.ImageField(upload_to='homes/%Y/%m')
     image = CloudinaryField(null=True)
     caption = models.CharField(max_length=100, blank=True)
-    post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE)
+    post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE, related_name='images')
 
 
 class PostRequest(BaseModel):

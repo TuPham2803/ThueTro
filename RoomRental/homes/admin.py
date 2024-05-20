@@ -19,13 +19,14 @@ class MyUserAdmin(admin.ModelAdmin):
     def my_image(self, instance):
         if instance:
             if instance.image is cloudinary.CloudinaryResource:
-                return mark_safe(f"<img width='120' src='{instance.image.url}' />")
+                return mark_safe(f"<img src='{instance.image.url}' />")
 
             return mark_safe(f"<img width='120' src='/static/{instance.image.name}' />")
 
 
-class AccommodationAdmin(admin.ModelAdmin):
+class MyAccommodationAdmin(admin.ModelAdmin):
     inlines = [AccommodationImageInline]
+    list_filter = ['id', 'status']
 
     def my_image(self, instance):
         if instance:
@@ -36,7 +37,7 @@ class AccommodationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, MyUserAdmin)
-admin.site.register(PostAccommodation, AccommodationAdmin)
+admin.site.register(PostAccommodation, MyAccommodationAdmin)
 admin.site.register(PostRequest)
 # admin.site.register(Comment)
 admin.site.register(Follow)

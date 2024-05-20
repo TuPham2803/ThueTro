@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import PostAccommodation, User, PostRequest, CommentAccommodation, Follow
+from .models import PostAccommodation, User, PostRequest, CommentAccommodation, Follow, AccommodationImage
 from . import perms
+import cloudinary
 
 
 class UserSerializer(ModelSerializer):
@@ -57,12 +58,28 @@ class PostAccommodationSerializer(ModelSerializer):
             'current_people',
             'phone_number',
             'description',
+            'images',
             'user_post',
             'created_at',
             'updated_at',
             'status'
         ]
         read_only_fields = ['created_at', 'updated_at']
+
+        def create(self, validated_data):
+            images_data = self.context['request'].FILES.getlist('images')
+            post_accommodation = PostAccommodation.objects.create(**validated_data)
+
+            for image_data in images_data:
+                # Kiểm tra xem hình ảnh đã tồn tại trong cơ sở dữ liệu hay không
+                existing_image = AccommodationImage.objects.filter(image=image_data.name).exists()
+
+                if not existing_image:
+                    # Nếu hình ảnh không tồn tại, tạo mới và lưu vào Cloudinary
+                    image = cloudinary.uploader.upload(image_data)
+                    AccommodationImage.objects.create(post_accommodation=post_accommodation, image=image['url'])
+
+            return post_accommodation
 
 
 class AccommodationSerializer(ModelSerializer):
