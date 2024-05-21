@@ -26,7 +26,7 @@ class MyUserAdmin(admin.ModelAdmin):
 
 class MyAccommodationAdmin(admin.ModelAdmin):
     inlines = [AccommodationImageInline]
-    list_filter = ['id', 'status']
+    list_filter = ['pending_status', 'active']
 
     def my_image(self, instance):
         if instance:

@@ -22,7 +22,7 @@ class UserAvatarImage(models.Model):
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.IntegerField(default=-1, editable=False)
+    active = models.BooleanField(default=True, editable=False)
 
     class Meta:
         abstract = True
@@ -31,6 +31,12 @@ class BaseModel(models.Model):
 class RoomType(models.TextChoices):
     SHARED = 'SH', 'Shared'
     PRIVATE = 'PR', 'Private'
+
+
+class PendingStatus(models.TextChoices):
+    PENDING = "PD", "Pending"
+    APPROVED = "APR", "Approved"
+    FAILED = "FL", "Failed"
 
 
 class PostAccommodation(BaseModel):
@@ -53,6 +59,11 @@ class PostAccommodation(BaseModel):
     phone_number = models.CharField(max_length=12)
     description = RichTextField()
     user_post = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts_accommodation')
+    pending_status = models.CharField(
+        max_length=3,
+        choices=PendingStatus.choices,
+        default=PendingStatus.PENDING,
+    )
 
 
 class AccommodationImage(models.Model):
@@ -60,6 +71,9 @@ class AccommodationImage(models.Model):
     image = CloudinaryField(null=True)
     caption = models.CharField(max_length=100, blank=True)
     post_accommodation = models.ForeignKey(PostAccommodation, on_delete=models.CASCADE, related_name='images')
+
+    def __str__(self):
+        return self.image.url
 
 
 class PostRequest(BaseModel):

@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
-    queryset = PostAccommodation.objects.filter(status=1)
+    queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
 
     def get_permissions(self):
@@ -81,9 +81,9 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
             if max_price:
                 queryset = queryset.filter(price__lte=max_price)
 
-            status = self.request.query_params.get('status')
-            if status:
-                queryset = queryset.filter(status=status)
+            pending_status = self.request.query_params.get('pending_status')
+            if pending_status:
+                queryset = queryset.filter(pending_status=pending_status)
 
         return queryset
 
@@ -105,13 +105,13 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.status = False
+        instance.active = False
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
-    queryset = PostRequest.objects.filter(status=True)
+    queryset = PostRequest.objects.filter(active=True)
     serializer_class = serializers.PostRequestSerializer
 
     # def perform_create(self, serializer):

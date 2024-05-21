@@ -34,7 +34,7 @@ class PostRequestSerializer(ModelSerializer):
             'user_post',
             'created_at',
             'updated_at',
-            'status',
+            'active',
         ]
         read_only_fields = ['created_at', 'updated_at']
 
@@ -62,7 +62,8 @@ class PostAccommodationSerializer(ModelSerializer):
             'user_post',
             'created_at',
             'updated_at',
-            'status'
+            'active',
+            'pending_status'
         ]
         read_only_fields = ['created_at', 'updated_at']
 
@@ -94,7 +95,7 @@ class CommentAccommodationSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_accommodation', 'content', 'created_at', 'updated_at', 'status']
+        fields = ['id', 'user', 'post_accommodation', 'content', 'created_at', 'updated_at', 'active']
 
 
 class CommentRequestSerializer(ModelSerializer):
@@ -103,7 +104,7 @@ class CommentRequestSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_request', 'content', 'created_at', 'updated_at', 'status']
+        fields = ['id', 'user', 'post_request', 'content', 'created_at', 'updated_at', 'active']
 
 
 class LikeAccommodationSerializer(ModelSerializer):
@@ -112,7 +113,7 @@ class LikeAccommodationSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_accommodation', 'created_at', 'updated_at', 'status']
+        fields = ['id', 'user', 'post_accommodation', 'created_at', 'updated_at', 'active']
 
 
 class LikeRequestSerializer(ModelSerializer):
@@ -121,7 +122,7 @@ class LikeRequestSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_request', 'created_at', 'updated_at', 'status']
+        fields = ['id', 'user', 'post_request', 'created_at', 'updated_at', 'active']
 
 
 class FollowSerializer(ModelSerializer):
@@ -130,4 +131,4 @@ class FollowSerializer(ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ['id', 'owner', 'follower', 'created_at', 'updated_at', 'status']
+        fields = ['id', 'owner', 'follower', 'created_at', 'updated_at', 'active']
