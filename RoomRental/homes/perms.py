@@ -7,14 +7,8 @@ class CommentOwner(permissions.IsAuthenticated):
 
 
 from rest_framework import permissions
-from rest_framework.exceptions import PermissionDenied
-
 
 class RestrictTo(permissions.BasePermission):
-    """
-    Quyền tùy chỉnh chỉ cho phép người dùng thuộc một số loại role nhất định truy cập view.
-    """
-
     def __init__(self, allowed_roles):
         self.allowed_roles = allowed_roles
 
@@ -28,7 +22,13 @@ class RestrictTo(permissions.BasePermission):
             return True
 
         # Nếu role không nằm trong danh sách được phép, trả về lỗi 403
-        raise PermissionDenied(detail="You don’t have permission to access", code=403)
+        raise permissions.PermissionDenied(detail="You don’t have permission to access", code=403)
+
+
+
+
+
+
 
 
 

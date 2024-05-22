@@ -12,9 +12,10 @@ import cloudinary
 
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [RestrictTo(['landlord'])]
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
-    permission_classes = [RestrictTo(['landlord'])]
+
 
     def get_permissions(self):
         if self.action == 'comments' and self.request.POST:
