@@ -2,11 +2,14 @@ from rest_framework import viewsets, permissions, status, generics, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import PostAccommodation, User, PostRequest, CommentAccommodation, CommentRequest ,LikeAccommodation, LikeRequest
+from .models import PostAccommodation, User, PostRequest, CommentAccommodation, CommentRequest, LikeAccommodation, \
+    LikeRequest, AccommodationImage
 from . import serializers, perms
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .perms import RestrictTo
+import cloudinary
+
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
@@ -45,7 +48,7 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
     @action(methods=['post'], url_path='like', detail=True)
     def like(self, request, pk):
         li, created = LikeAccommodation.objects.get_or_create(post_accommodation=self.get_object(),
-                                                 user=request.user)
+                                                              user=request.user)
 
         if not created:
             li.status = not li.status
@@ -88,12 +91,28 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
 
         return queryset
 
-    # def create(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     self.perform_create(serializer)
-    #     headers = self.get_success_headers(serializer.data)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def create(self, request, *args, **kwargs):
+        # Tạo bài đăng mới
+        post_serializer = self.get_serializer(data=request.data)
+        post_serializer.is_valid(raise_exception=True)
+        post = post_serializer.save()
+
+        # Tải các hình ảnh lên CDN và tạo dữ liệu trong cơ sở dữ liệu cho chúng
+        images = request.FILES.getlist('images')
+
+        if len(images) < 3:
+            return Response({'error': 'At least three images are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        uploaded_image_urls = []
+        for image_file in images:
+            upload_result = cloudinary.uploader.upload(image_file)
+            uploaded_image_urls.append(upload_result['secure_url'])
+            AccommodationImage.objects.create(image=upload_result['secure_url'], post_accommodation=post)
+
+        response_data = {
+            'post': post_serializer.data
+        }
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -135,7 +154,6 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
                                                             user=request.user)
             return Response(serializers.CommentRequestSerializer(c).data, status=status.HTTP_201_CREATED)
 
-
     def perform_update(self, serializer):
         serializer.save(user_post=self.request.user)
 
@@ -160,7 +178,7 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
     @action(methods=['post'], url_path='like', detail=True)
     def like(self, request, pk):
         li, created = LikeRequest.objects.get_or_create(post_request=self.get_object(),
-                                                              user=request.user)
+                                                        user=request.user)
 
         if not created:
             li.status = not li.status

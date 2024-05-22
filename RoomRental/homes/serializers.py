@@ -1,7 +1,8 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 from .models import PostAccommodation, User, PostRequest, CommentAccommodation, Follow, AccommodationImage
 from . import perms
 import cloudinary
+from cloudinary.models import CloudinaryField
 
 
 class UserSerializer(ModelSerializer):
@@ -13,6 +14,12 @@ class UserSerializer(ModelSerializer):
         user.save()
 
         return user
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['image'] = instance.image.url
+
+        return rep
 
     class Meta:
         model = User
@@ -39,7 +46,15 @@ class PostRequestSerializer(ModelSerializer):
         read_only_fields = ['created_at', 'updated_at']
 
 
+class AccomodationImageSerializer(ModelSerializer):
+    class Meta:
+        model = AccommodationImage
+        fields = ['image']
+
+
 class PostAccommodationSerializer(ModelSerializer):
+    images = AccomodationImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = PostAccommodation
         fields = [
@@ -65,22 +80,17 @@ class PostAccommodationSerializer(ModelSerializer):
             'active',
             'pending_status'
         ]
-        read_only_fields = ['created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at', 'active', 'pending_status']
 
-        def create(self, validated_data):
-            images_data = self.context['request'].FILES.getlist('images')
-            post_accommodation = PostAccommodation.objects.create(**validated_data)
-
-            for image_data in images_data:
-                # Kiểm tra xem hình ảnh đã tồn tại trong cơ sở dữ liệu hay không
-                existing_image = AccommodationImage.objects.filter(image=image_data.name).exists()
-
-                if not existing_image:
-                    # Nếu hình ảnh không tồn tại, tạo mới và lưu vào Cloudinary
-                    image = cloudinary.uploader.upload(image_data)
-                    AccommodationImage.objects.create(post_accommodation=post_accommodation, image=image['url'])
-
-            return post_accommodation
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        images_data = []
+        images_queryset = instance.images.all() if hasattr(instance, 'images') and instance.images else None
+        if images_queryset:
+            for image in images_queryset:
+                images_data.append(image.image.url)
+        rep['images'] = images_data
+        return rep
 
 
 class AccommodationSerializer(ModelSerializer):

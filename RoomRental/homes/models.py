@@ -12,11 +12,7 @@ class User(AbstractUser):
     )
     email = models.EmailField(null=False)
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
-
-
-class UserAvatarImage(models.Model):
     image = CloudinaryField(null=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class BaseModel(models.Model):
