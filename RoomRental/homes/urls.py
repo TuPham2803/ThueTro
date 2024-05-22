@@ -2,6 +2,7 @@ from django.urls import path, include
 from . import views
 from rest_framework import routers
 
+
 router = routers.DefaultRouter()
 router.register(r'post_accommodations', views.PostAccommodationViewSet, basename='post_accommodation')
 router.register(r'post_requests', views.PostRequestViewSet, basename='post_request')
