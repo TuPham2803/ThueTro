@@ -10,6 +10,7 @@ from django.urls import path
 class MyAdminSite(admin.AdminSite):
     site_header = 'Admin_Room'
 
+
     def get_urls(self):
         return [path('cate-stats/', self.stats_view)] + super().get_urls()
 

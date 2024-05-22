@@ -6,11 +6,12 @@ from .models import PostAccommodation, User, PostRequest, CommentAccommodation, 
 from . import serializers, perms
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from .perms import RestrictTo
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
+    permission_classes = [RestrictTo(['landlord'])]
 
     def get_permissions(self):
         if self.action == 'comments' and self.request.POST:
@@ -252,13 +253,13 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             return Response(serializers.FollowSerializer(c).data, status=status.HTTP_201_CREATED)
 
 
-class CommentAccommodationViewSet(viewsets.ViewSet, generics.RetrieveUpdateDestroyAPIView):
+class CommentAccommodationViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = CommentAccommodation.objects.all()
     serializer_class = serializers.CommentAccommodationSerializer
     permission_classes = [perms.CommentOwner]
 
 
-class CommentRequestViewSet(viewsets.ViewSet, generics.RetrieveUpdateDestroyAPIView):
+class CommentRequestViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = CommentRequest.objects.all()
     serializer_class = serializers.CommentRequestSerializer
     permission_classes = [perms.CommentOwner]
