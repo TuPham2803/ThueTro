@@ -208,25 +208,16 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             # Xác thực không thành công
             return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    @action(methods=['post'], url_path='create', detail=False)
+    @action(methods=['post'], detail=False, url_path='create')
     def create_user(self, request):
-        data = request.data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
         # Tạo user mới
-        user = User.objects.create_user(
-            first_name=data.get('first_name'),
-            last_name=data.get('last_name'),
-            username=data.get('username'),
-            email=data.get('email'),
-            password=data.get('password')
-        )
-
-        user.set_password(data.get('password'))
-        user.save()
+        user = serializer.save()
 
         # Trả về thông tin user đã tạo
-        u = serializers.UserSerializer(user)
-        return Response(u.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], url_path='forgot', detail=False)
     def forgot_password(self, request):
