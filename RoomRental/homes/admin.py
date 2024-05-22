@@ -43,8 +43,6 @@ class MyAccommodationAdmin(admin.ModelAdmin):
 admin_site.register(User)
 admin_site.register(PostAccommodation, MyAccommodationAdmin)
 admin_site.register(PostRequest)
-# admin.site.register(Comment)
 admin_site.register(Follow)
-# admin.site.register(Like)
 
-# Register your models here.
+ # Register your models here.

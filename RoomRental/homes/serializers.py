@@ -6,13 +6,19 @@ from cloudinary.models import CloudinaryField
 
 
 class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'email', 'user_type', 'image', 'first_name', 'last_name']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'email': {'required': True},
+        }
+
     def create(self, validated_data):
-        data = validated_data.copy()
-
-        user = User(**data)
-        user.set_password(data["password"])
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
         user.save()
-
         return user
 
     def to_representation(self, instance):
@@ -20,15 +26,6 @@ class UserSerializer(ModelSerializer):
         rep['image'] = instance.image.url
 
         return rep
-
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password']
-        extra_kwargs = {
-            'password': {
-                'write_only': True
-            }
-        }
 
 
 class PostRequestSerializer(ModelSerializer):
