@@ -1,7 +1,25 @@
+from django.contrib import admin
+from django.template.response import TemplateResponse
 from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest
 import cloudinary
 from django.contrib import admin
 from django.utils.html import mark_safe
+from django.urls import path
+
+
+class MyAdminSite(admin.AdminSite):
+    site_header = 'Admin_Room'
+
+    def get_urls(self):
+        return [path('cate-stats/', self.stats_view)] + super().get_urls()
+
+    def stats_view(self, request):
+        return TemplateResponse(request, 'admin/stats.html', {
+
+        })
+
+
+admin_site = MyAdminSite(name='Admin_Room')
 
 
 class AccommodationImageInline(admin.TabularInline):
@@ -25,7 +43,7 @@ admin.site.register(User)
 admin.site.register(PostAccommodation, MyAccommodationAdmin)
 admin.site.register(PostRequest)
 # admin.site.register(Comment)
-admin.site.register(Follow)
+admin_site.register(Follow)
 # admin.site.register(Like)
 
 # Register your models here.
