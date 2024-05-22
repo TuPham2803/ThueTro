@@ -1,42 +1,27 @@
-from django.contrib import admin
-from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest, \
-    UserAvatarImage
+from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest
 import cloudinary
+from django.contrib import admin
 from django.utils.html import mark_safe
 
 
 class AccommodationImageInline(admin.TabularInline):
     model = AccommodationImage
-
-
-class UserAvatarImageInline(admin.TabularInline):
-    model = UserAvatarImage
-
-
-class MyUserAdmin(admin.ModelAdmin):
-    inlines = [UserAvatarImageInline]
-
-    def my_image(self, instance):
-        if instance:
-            if instance.image is cloudinary.CloudinaryResource:
-                return mark_safe(f"<img src='{instance.image.url}' />")
-
-            return mark_safe(f"<img width='120' src='/static/{instance.image.name}' />")
-
-
-class MyAccommodationAdmin(admin.ModelAdmin):
-    inlines = [AccommodationImageInline]
-    list_filter = ['pending_status', 'active']
+    readonly_fields = ['my_image']
 
     def my_image(self, instance):
         if instance:
             if instance.image is cloudinary.CloudinaryResource:
                 return mark_safe(f"<img width='120' src='{instance.image.url}' />")
 
-            return mark_safe(f"<img width='120' src='/static/{instance.image.name}' />")
+            return mark_safe(f"<img width='120' src='{instance.image.url}' />")
 
 
-admin.site.register(User, MyUserAdmin)
+class MyAccommodationAdmin(admin.ModelAdmin):
+    inlines = [AccommodationImageInline]
+    list_filter = ['pending_status', 'active']
+
+
+admin.site.register(User)
 admin.site.register(PostAccommodation, MyAccommodationAdmin)
 admin.site.register(PostRequest)
 # admin.site.register(Comment)
