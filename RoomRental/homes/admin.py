@@ -39,11 +39,11 @@ class MyAccommodationAdmin(admin.ModelAdmin):
     list_filter = ['pending_status', 'active']
 
 
-admin.site.register(User)
-admin.site.register(PostAccommodation, MyAccommodationAdmin)
-admin.site.register(PostRequest)
+admin_site.register(User)
+admin_site.register(PostAccommodation, MyAccommodationAdmin)
+admin_site.register(PostRequest)
 # admin.site.register(Comment)
 admin_site.register(Follow)
 # admin.site.register(Like)
 
-# Register your models here.
+ # Register your models here.
