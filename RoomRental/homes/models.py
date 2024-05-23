@@ -118,6 +118,9 @@ class Follow(BaseModel):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
 
+    class Meta:
+        unique_together = ('follower', 'owner')
+
 
 class Like(Interaction):
     class Meta:
