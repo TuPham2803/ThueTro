@@ -17,13 +17,21 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
     serializer_class = serializers.PostAccommodationSerializer
 
     def get_permissions(self):
+        # Nếu hành động là 'comments' và phương thức yêu cầu là POST
         if self.action == 'comments' and self.request.POST:
+            # Trả về danh sách quyền yêu cầu người dùng phải đăng nhập
             return [permissions.IsAuthenticated()]
+        # Nếu hành động là 'like'
         if self.action in ['like']:
             return [permissions.IsAuthenticated()]
         if self.request.method == 'GET':
+            # Trả về danh sách quyền cho phép mọi người truy cập
             return [permissions.AllowAny()]
-        return [permissions.AllowAny()]
+        if self.action == 'create' and self.request.method == 'POST':
+            # Trả về danh sách quyền yêu cầu người dùng phải đăng nhập và có quyền hạn là 'landlord'
+            return [permissions.IsAuthenticated(), RestrictTo(['landlord'])]
+        return super().get_permissions()
+
 
     @action(methods=['GET', 'POST'], detail=True, url_path='comments')
     def comments(self, request, pk=None):
