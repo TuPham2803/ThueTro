@@ -9,30 +9,21 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .perms import RestrictTo
 import cloudinary
+from .perms import IsTenantAndFollowLandlord
 
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [RestrictTo(['landlord'])]
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
 
-
     def get_permissions(self):
-        # Nếu hành động là 'comments' và phương thức yêu cầu là POST
         if self.action == 'comments' and self.request.POST:
-            # Trả về danh sách quyền yêu cầu người dùng phải đăng nhập
             return [permissions.IsAuthenticated()]
-        # Nếu hành động là 'like'
         if self.action in ['like']:
             return [permissions.IsAuthenticated()]
-        if self.request.method == 'GET':
-            # Trả về danh sách quyền cho phép mọi người truy cập
-            return [permissions.AllowAny()]
         if self.action == 'create' and self.request.method == 'POST':
-            # Trả về danh sách quyền yêu cầu người dùng phải đăng nhập và có quyền hạn là 'landlord'
             return [permissions.IsAuthenticated(), RestrictTo(['landlord'])]
-        return super().get_permissions()
-
+        return [permissions.AllowAny()]
 
     @action(methods=['GET', 'POST'], detail=True, url_path='comments')
     def comments(self, request, pk=None):
@@ -45,25 +36,16 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
                                                                   user=request.user)
             return Response(serializers.CommentAccommodationSerializer(c).data, status=status.HTTP_201_CREATED)
 
-    # @action(methods=['POST'], detail=True, url_path='like')
-    # def like(self, request, pk=None):
-    #     l, created = self.get_object().likeaccommodation_set.get_or_create(user=request.user)
-    #     if created:
-    #         status_code = status.HTTP_201_CREATED
-    #     else:
-    #         status_code = status.HTTP_200_OK
-    #     return Response(serializers.LikeAccommodationSerializer(l).data, status=status_code)
-
     @action(methods=['post'], url_path='like', detail=True)
     def like(self, request, pk):
         li, created = LikeAccommodation.objects.get_or_create(post_accommodation=self.get_object(),
                                                               user=request.user)
 
         if not created:
-            li.status = not li.status
+            li.active = not li.active
             li.save()
 
-        return Response(serializers.PostAccommodationSerializer(self.get_object()).data,
+        return Response(serializers.LikeAccommodationSerializer(li).data,
                         status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
@@ -150,6 +132,7 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
             return [permissions.IsAuthenticated()]
         if self.action in ['like']:
             return [permissions.IsAuthenticated()]
+
         return [permissions.AllowAny()]
 
     @action(methods=['GET', 'POST'], detail=True, url_path='comments')
@@ -190,16 +173,25 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
                                                         user=request.user)
 
         if not created:
-            li.status = not li.status
+            li.active = not li.active
             li.save()
 
-        return Response(serializers.PostRequestSerializer(self.get_object()).data,
+        return Response(serializers.LikeRequestSerializer(li).data,
                         status=status.HTTP_201_CREATED)
 
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
+
+    # permission_classes = [permissions.IsAuthenticated, IsTenantAndFollowLandlord]
+
+    def get_permissions(self):
+        if self.action == 'get_current_user':
+            return [permissions.IsAuthenticated()]
+        if self.action == 'follows' and self.request.method == 'POST':
+            return [IsTenantAndFollowLandlord()]
+        return [permissions.AllowAny()]
 
     @action(methods=['post'], detail=False)
     def login(self, request):
@@ -245,11 +237,6 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         # gui mail o day -> gui ma link reset lai mat khau
 
     # lay thong tin user hien tai
-    def get_permissions(self):
-        if self.action in ['get_current_user']:
-            return [permissions.IsAuthenticated()]
-
-        return [permissions.AllowAny()]
 
     @action(methods=['get', 'patch'], url_path='current-user', detail=False)
     def get_current_user(self, request):
@@ -267,8 +254,11 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             return Response(serializers.FollowSerializer(follows, many=True).data,
                             status=status.HTTP_200_OK)
         elif request.method == 'POST':
-            c = self.get_object().followers.create(follower=request.user)
-            return Response(serializers.FollowSerializer(c).data, status=status.HTTP_201_CREATED)
+            fo, created = self.get_object().followers.get_or_create(follower=request.user)
+            if not created:
+                fo.active = not fo.active
+                fo.save()
+            return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
 
 
 class CommentAccommodationViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
