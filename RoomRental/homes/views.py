@@ -146,6 +146,9 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
                                                             user=request.user)
             return Response(serializers.CommentRequestSerializer(c).data, status=status.HTTP_201_CREATED)
 
+    def perform_create(self, serializer):
+        serializer.save(user_post=self.request.user)
+
     def perform_update(self, serializer):
         serializer.save(user_post=self.request.user)
 
