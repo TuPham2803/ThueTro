@@ -85,7 +85,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'homedb',
         'USER': 'root',
-        'PASSWORD': 'Admin@123',
+        'PASSWORD': 'admin@123',
         'HOST': ''  # mặc định localhost
     }
 }
@@ -100,6 +100,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 10,
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',

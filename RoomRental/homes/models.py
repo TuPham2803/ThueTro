@@ -50,8 +50,8 @@ class PostAccommodation(BaseModel):
         choices=RoomType.choices,
         default=RoomType.SHARED,
     )
-    max_people = models.IntegerField(default=None)
-    current_people = models.IntegerField(default=None)
+    max_people = models.IntegerField(default=1)
+    current_people = models.IntegerField(default=1)
     phone_number = models.CharField(max_length=12)
     description = RichTextField()
     user_post = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts_accommodation')

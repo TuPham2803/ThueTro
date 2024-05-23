@@ -16,7 +16,6 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
 
-
     def get_permissions(self):
         if self.action == 'comments' and self.request.POST:
             return [permissions.IsAuthenticated()]
@@ -154,6 +153,9 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
             c = self.get_object().commentrequest_set.create(content=request.data.get('content'),
                                                             user=request.user)
             return Response(serializers.CommentRequestSerializer(c).data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save(user_post=self.request.user)
 
     def perform_update(self, serializer):
         serializer.save(user_post=self.request.user)
