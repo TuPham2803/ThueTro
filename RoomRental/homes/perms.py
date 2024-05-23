@@ -1,29 +1,22 @@
 from rest_framework import permissions
-
-
+from django.core.exceptions import PermissionDenied
+from rest_framework.permissions import BasePermission
 class CommentOwner(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, comment):
         return super().has_permission(request, view) and request.user == comment.user
 
 
-from rest_framework import permissions
 
-class RestrictTo(permissions.BasePermission):
-    def __init__(self, allowed_roles):
-        self.allowed_roles = allowed_roles
+class RestrictTo(BasePermission):
+    def __init__(self, allowed_user_types):
+        self.allowed_user_types = allowed_user_types
 
     def has_permission(self, request, view):
-        # Kiểm tra xem người dùng có xác thực không
         if not request.user.is_authenticated:
             return False
-
-        # Kiểm tra xem role của người dùng có nằm trong danh sách được phép không
-        if request.user.user_type in self.allowed_roles:
-            return True
-
-        # Nếu role không nằm trong danh sách được phép, trả về lỗi 403
-        raise permissions.PermissionDenied(detail="You don’t have permission to access", code=403)
-
+        if request.user.user_type not in self.allowed_user_types:
+            raise PermissionDenied("You do not have permission to perform this action.")
+        return True
 
 
 
