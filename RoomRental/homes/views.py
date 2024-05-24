@@ -1,3 +1,7 @@
+from datetime import datetime
+
+from django.db.models import Count
+from django.db.models.functions import ExtractMonth, ExtractYear, ExtractQuarter
 from rest_framework import viewsets, permissions, status, generics, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -263,6 +267,64 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 fo.save()
             return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
 
+        # API mới để đếm số lượng người dùng theo loại và thời gian
+
+    @action(methods=['post'], detail=False, url_path='user-statistics')
+    def user_statistics(self, request):
+        user_type = request.data.get('user_type')
+        period = request.data.get('period')  # month, year, quarter
+        period_value = request.data.get('period_value')  # e.g. '2023', '2023-05', 'Q1-2023'
+
+        if not user_type or not period or not period_value:
+            return Response({'error': 'user_type, period, and period_value fields are required.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        users = User.objects.filter(user_type=user_type)
+
+        if period == 'month':
+            try:
+                date = datetime.strptime(period_value, '%Y-%m')
+                users = users.filter(date_joined__year=date.year, date_joined__month=date.month)
+            except ValueError:
+                return Response({'error': 'Invalid period_value for month. Use YYYY-MM format.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        elif period == 'year':
+            try:
+                year = int(period_value)
+                users = users.filter(date_joined__year=year)
+            except ValueError:
+                return Response({'error': 'Invalid period_value for year. Use YYYY format.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        elif period == 'quarter':
+            try:
+                quarter, year = period_value.split('-')
+                year = int(year)
+                quarter_months = {
+                    'Q1': (1, 3),
+                    'Q2': (4, 6),
+                    'Q3': (7, 9),
+                    'Q4': (10, 12)
+                }
+                if quarter in quarter_months:
+                    start_month, end_month = quarter_months[quarter]
+                    users = users.filter(date_joined__year=year,
+                                         date_joined__month__gte=start_month,
+                                         date_joined__month__lte=end_month)
+                else:
+                    return Response({'error': 'Invalid quarter. Use Q1, Q2, Q3, or Q4.'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+            except ValueError:
+                return Response({'error': 'Invalid period_value for quarter. Use QX-YYYY format.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Invalid period. Use month, year, or quarter.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user_count = users.count()
+
+        return Response(
+            {'user_type': user_type, 'period': period, 'period_value': period_value, 'count': user_count},
+            status=status.HTTP_200_OK)
 
 class CommentAccommodationViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = CommentAccommodation.objects.all()
