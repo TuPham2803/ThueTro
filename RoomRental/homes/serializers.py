@@ -27,7 +27,7 @@ class UserSerializer(ModelSerializer):
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
         required_fields = ['username', 'password', 'email', 'user_type', 'first_name', 'last_name',
-                           'confirmed_password']
+                           'confirmed_password', 'image']
         for field in required_fields:
             if data.get(field) in [None, '']:
                 raise ValidationError({field: 'This field is required and cannot be null or empty.'})
@@ -61,6 +61,7 @@ class PostRequestSerializer(ModelSerializer):
     class Meta:
         model = PostRequest
         fields = [
+            'id',
             'area',
             'description',
             'user_post',
@@ -104,6 +105,7 @@ class PostAccommodationSerializer(ModelSerializer):
     class Meta:
         model = PostAccommodation
         fields = [
+            'id',
             'owner',
             'title',
             'city',

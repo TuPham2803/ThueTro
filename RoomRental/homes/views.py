@@ -167,9 +167,6 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def perform_create(self, serializer):
-        serializer.save(user_post=self.request.user)
-
     @action(methods=['post'], url_path='like', detail=True)
     def like(self, request, pk):
         li, created = LikeRequest.objects.get_or_create(post_request=self.get_object(),
@@ -195,22 +192,6 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         if self.action == 'follows' and self.request.method == 'POST':
             return [IsTenantAndFollowLandlord()]
         return [permissions.AllowAny()]
-
-    @action(methods=['post'], detail=False)
-    def login(self, request):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            # Đăng nhập thành công, tạo token
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            }, status=status.HTTP_200_OK)
-        else:
-            # Xác thực không thành công
-            return Response({'error': 'Invalid username or password'}, status=status.HTTP_401_UNAUTHORIZED)
 
     @action(methods=['post'], detail=False, url_path='create')
     def create_user(self, request):
@@ -248,6 +229,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             for k, v in request.data.items():
                 setattr(user, k, v)
             user.save()
+
         return Response(serializers.UserSerializer(user).data)
 
     @action(methods=['GET', 'POST'], detail=True, url_path='follows')
