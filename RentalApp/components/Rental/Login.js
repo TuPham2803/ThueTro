@@ -3,7 +3,7 @@ import MyStyle from "../../styles/MyStyle";
 import { Button, TextInput } from "react-native-paper";
 import React from "react";
 
-const Login = () => {
+const Login = ({navigation}) => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -29,7 +29,7 @@ const Login = () => {
           <Button
             icon="account-lock-open"
             mode="contained"
-            onPress={() => console.log("Pressed")}
+            onPress={() => navigation.navigate("Home")}
             style={MyStyle.margin}
           >
             Sign in

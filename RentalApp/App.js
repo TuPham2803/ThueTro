@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./components/Rental/Home";
 import Login from "./components/Rental/Login";
+import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,12 @@ const MyStack = () => {
         component={Login}
         options={{ title: "Login" }}
       />
+      <Stack.Screen
+        name="CreatePostAccommodation"
+        component={CreatePostAccommodation}
+        options={{ title: "CreatePostAccommodation" }}
+      />
+
     </Stack.Navigator>
   );
 };

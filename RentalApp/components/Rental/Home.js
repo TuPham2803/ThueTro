@@ -96,7 +96,7 @@ const Home = ({ navigation }) => {
             >
               <View style={[MyStyle.alignCenter]}>
                 <IconButton icon="account-group" color="purple" size={20} />
-                <Text>Bạn ở chung</Text>
+                <Text>Bạn ở chungggg</Text>
               </View>
             </TouchableRipple>
             <TouchableRipple
@@ -152,12 +152,12 @@ const Home = ({ navigation }) => {
           {
             image: "https://via.placeholder.com/100.png?text=Feature+1",
             caption: "Feature 1",
-            screen: "Feature1Screen",
+            screen: "Login",
           },
           {
             image: "https://via.placeholder.com/100.png?text=Feature+2",
             caption: "Feature 2",
-            screen: "Feature2Screen",
+            screen: "CreatePostAccommodation",
           },
           {
             image: "https://via.placeholder.com/100.png?text=Feature+3",
@@ -192,28 +192,7 @@ const Home = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      {/* View containing 5 buttons with images and captions */}
-      {/* <ScrollView horizontal={true} style={MyStyle.horizontalScroll}>
-        {[
-          { image: "https://via.placeholder.com/100.png?text=Feature+1", caption: "Feature 1", screen: "Feature1Screen" },
-          { image: "https://via.placeholder.com/100.png?text=Feature+2", caption: "Feature 2", screen: "Feature2Screen" },
-          { image: "https://via.placeholder.com/100.png?text=Feature+3", caption: "Feature 3", screen: "Feature3Screen" },
-          { image: "https://via.placeholder.com/100.png?text=Feature+4", caption: "Feature 4", screen: "Feature4Screen" },
-          { image: "https://via.placeholder.com/100.png?text=Feature+5", caption: "Feature 5", screen: "Feature5Screen" },
-        ].map((item, index) => (
-          <Card key={index} style={MyStyle.card}>
-            <TouchableOpacity
-              style={MyStyle.button}
-              onPress={() => navigation.navigate(item.screen)}
-            >
-              <Card.Cover source={{ uri: item.image }} style={MyStyle.cardImage} />
-              <Card.Content>
-                <Text style={MyStyle.buttonCaption}>{item.caption}</Text>
-              </Card.Content>
-            </TouchableOpacity>
-          </Card>
-        ))}
-      </ScrollView> */}
+      
     </ScrollView>
   );
 };
