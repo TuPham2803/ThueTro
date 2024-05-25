@@ -1,11 +1,8 @@
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MyStyle from "../../styles/MyStyle";
 import {
-  Button,
   Card,
-  Icon,
   IconButton,
-  MD3Colors,
   Searchbar,
   TouchableRipple,
 } from "react-native-paper";
@@ -93,7 +90,7 @@ const Home = ({ navigation }) => {
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
-                <Icon source="account" color="purple" size={20} />
+                <IconButton icon="map-marker" color="purple" size={20} />
                 <Text>Tìm kiếm theo vị trí</Text>
               </View>
             </TouchableRipple>
@@ -103,7 +100,7 @@ const Home = ({ navigation }) => {
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
-                <Icon source="account" color="purple" size={20} />
+                <IconButton icon="cash" color="purple" size={20} />
                 <Text>Tìm kiếm theo giá</Text>
               </View>
             </TouchableRipple>
@@ -113,7 +110,7 @@ const Home = ({ navigation }) => {
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
-                <Icon source="account" color="purple" size={20} />
+                <IconButton icon="account-group" color="purple" size={20} />
                 <Text>Bạn ở chung</Text>
               </View>
             </TouchableRipple>
@@ -123,7 +120,7 @@ const Home = ({ navigation }) => {
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
-                <Icon source="account" color="purple" size={20} />
+                <IconButton icon="bed" color="purple" size={20} />
                 <Text>Phòng riêng</Text>
               </View>
             </TouchableRipple>
@@ -133,7 +130,7 @@ const Home = ({ navigation }) => {
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
-                <Icon source="account" color="purple" size={20} />
+                <IconButton icon="home" color="purple" size={20} />
                 <Text>Nhà nhanh</Text>
               </View>
             </TouchableRipple>
@@ -143,17 +140,18 @@ const Home = ({ navigation }) => {
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
-                <Icon source="account" color="purple" size={20} />
+                <IconButton icon="plus" color="purple" size={20} />
                 <Text>Đăng phòng trọ</Text>
               </View>
             </TouchableRipple>
           </View>
         </View>
 
-        <View style={[MyStyle.container, MyStyle.margin]}>
+        <View style={[MyStyle.container, MyStyle.margin, MyStyle.top]}>
           <Text style={MyStyle.header}>Search trending and quality</Text>
         </View>
       </ScrollView>
+
       <View style={MyStyle.container}>
         <ScrollView>
           {accommdation.map((a) => (
@@ -163,6 +161,74 @@ const Home = ({ navigation }) => {
           ))}
         </ScrollView>
       </View>
+      {/* Thêm 5 buttons có chưa hình ảnh và caption, có thể trượt ngang, ấn vào chuyển sang trang tìm kiếm */}
+      <ScrollView horizontal={true} style={MyStyle.horizontalScroll}>
+        {[
+          {
+            image: "https://via.placeholder.com/100.png?text=Feature+1",
+            caption: "Feature 1",
+            screen: "Feature1Screen",
+          },
+          {
+            image: "https://via.placeholder.com/100.png?text=Feature+2",
+            caption: "Feature 2",
+            screen: "Feature2Screen",
+          },
+          {
+            image: "https://via.placeholder.com/100.png?text=Feature+3",
+            caption: "Feature 3",
+            screen: "Feature3Screen",
+          },
+          {
+            image: "https://via.placeholder.com/100.png?text=Feature+4",
+            caption: "Feature 4",
+            screen: "Feature4Screen",
+          },
+          {
+            image: "https://via.placeholder.com/100.png?text=Feature+5",
+            caption: "Feature 5",
+            screen: "Feature5Screen",
+          },
+        ].map((item, index) => (
+          <Card key={index} style={MyStyle.card}>
+            <TouchableOpacity
+              style={MyStyle.button}
+              onPress={() => navigation.navigate(item.screen)}
+            >
+              <Card.Cover
+                source={{ uri: item.image }}
+                style={MyStyle.cardImage}
+              />
+              <Card.Content>
+                <Text style={MyStyle.buttonCaption}>{item.caption}</Text>
+              </Card.Content>
+            </TouchableOpacity>
+          </Card>
+        ))}
+      </ScrollView>
+
+      {/* View containing 5 buttons with images and captions */}
+      {/* <ScrollView horizontal={true} style={MyStyle.horizontalScroll}>
+        {[
+          { image: "https://via.placeholder.com/100.png?text=Feature+1", caption: "Feature 1", screen: "Feature1Screen" },
+          { image: "https://via.placeholder.com/100.png?text=Feature+2", caption: "Feature 2", screen: "Feature2Screen" },
+          { image: "https://via.placeholder.com/100.png?text=Feature+3", caption: "Feature 3", screen: "Feature3Screen" },
+          { image: "https://via.placeholder.com/100.png?text=Feature+4", caption: "Feature 4", screen: "Feature4Screen" },
+          { image: "https://via.placeholder.com/100.png?text=Feature+5", caption: "Feature 5", screen: "Feature5Screen" },
+        ].map((item, index) => (
+          <Card key={index} style={MyStyle.card}>
+            <TouchableOpacity
+              style={MyStyle.button}
+              onPress={() => navigation.navigate(item.screen)}
+            >
+              <Card.Cover source={{ uri: item.image }} style={MyStyle.cardImage} />
+              <Card.Content>
+                <Text style={MyStyle.buttonCaption}>{item.caption}</Text>
+              </Card.Content>
+            </TouchableOpacity>
+          </Card>
+        ))}
+      </ScrollView> */}
     </ScrollView>
   );
 };
