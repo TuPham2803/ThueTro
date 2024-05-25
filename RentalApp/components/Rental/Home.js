@@ -8,6 +8,8 @@ import {
 } from "react-native-paper";
 import React from "react";
 import Swiper from "react-native-swiper";
+import APIs, { endpoints } from "../../configs/APIs";
+import Item from "../../Utils/Item";
 
 const Home = ({ navigation }) => {
   const [search, setSearch] = React.useState("");
@@ -18,6 +20,19 @@ const Home = ({ navigation }) => {
     "https://via.placeholder.com/800x200.png?text=Image+3",
   ];
   const [accommdation, setAccomodation] = React.useState([]);
+
+  const loadPostAccomodations = async () => {
+    try {
+      let res = await APIs.get(endpoints["post_accomodations"]);
+      setAccomodation(res.data);
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
+
+  React.useEffect(() => {
+    loadPostAccomodations();
+  }, []);
 
   return (
     <ScrollView style={[MyStyle.container, MyStyle.top]}>

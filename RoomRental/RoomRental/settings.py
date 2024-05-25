@@ -20,7 +20,7 @@ import pymysql
 
 pymysql.install_as_MySQLdb()
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['26.14.198.86', '192.168.40.1', 'localhost', '127.0.0.1', '*']
 
 # Application definition
 
