@@ -2,10 +2,19 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./components/Rental/Home";
 import Login from "./components/User/Login";
+import { useContext, useReducer } from "react";
+import { MyUserReducer } from "./configs/Reducer";
+import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
+import Profile from "./components/User/Profile";
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Icon } from "react-native-paper";
 
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
+  const user = useContext(MyUserContext);
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
@@ -14,14 +23,25 @@ const MyStack = () => {
         component={Login}
         options={{ title: "Login" }}
       />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ title: "Profile" }}
+      />
     </Stack.Navigator>
   );
 };
 
 export default function App() {
+  const [user, dispatch] = useReducer(MyUserReducer, null);
+
   return (
     <NavigationContainer>
-      <MyStack />
+      <MyUserContext.Provider value={user}>
+        <MyDispatchContext.Provider value={dispatch}>
+          <MyStack />
+        </MyDispatchContext.Provider>
+      </MyUserContext.Provider>
     </NavigationContainer>
   );
 }

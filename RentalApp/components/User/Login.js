@@ -2,9 +2,10 @@ import { Text, View } from "react-native";
 import MyStyle from "../../styles/MyStyle";
 import { Button, TextInput } from "react-native-paper";
 import React, { useContext } from "react";
-import { MyDispatchContext } from "../../configs/Contexts";
+import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import { useNavigation } from "@react-navigation/native";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
   const [user, setUser] = React.useState({});
@@ -32,14 +33,21 @@ const Login = () => {
   const login = async () => {
     setLoading(true);
     try {
-      let res = await APIs.post(endpoints["login"], {
-        ...user,
-        client_id: "oYGHb8Bt1odfEu8Wz2o8UHyLo52sI4rzCsB0xESW",
-        client_secret:
-          "5Ztf235KBvE5ycS00gNcJxLMoicbDuslEvenhSufkeUA4mbySMK1lFD9TWljaE3322g2gK9LIIjRQChdk7tbxGCBvV9CNLcpcccSGhqBRXRW1OjOYKd20vTMoKgVxFYl",
-        grant_type: "password",
+      let formData = new FormData();
+      formData.append("username", user.username);
+      formData.append("password", user.password);
+      formData.append("client_id", "oYGHb8Bt1odfEu8Wz2o8UHyLo52sI4rzCsB0xESW");
+      formData.append(
+        "client_secret",
+        "5Ztf235KBvE5ycS00gNcJxLMoicbDuslEvenhSufkeUA4mbySMK1lFD9TWljaE3322g2gK9LIIjRQChdk7tbxGCBvV9CNLcpcccSGhqBRXRW1OjOYKd20vTMoKgVxFYl"
+      );
+      formData.append("grant_type", "password");
+
+      let res = await APIs.post(endpoints["login"], formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      console.info(res.data);
 
       await AsyncStorage.setItem("token", res.data.access_token);
 
@@ -49,10 +57,12 @@ const Login = () => {
         );
         console.info(user.data);
 
-        dispatch({
+        const loginUser = (userData) => ({
           type: "login",
-          payload: user.data,
+          payload: userData,
         });
+
+        dispatch(loginUser(user.data));
 
         nav.navigate("Home");
       }, 100);
