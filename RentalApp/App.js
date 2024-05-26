@@ -7,9 +7,6 @@ import { MyUserReducer } from "./configs/Reducer";
 import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
 import Profile from "./components/User/Profile";
 import React from "react";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "react-native-paper";
-import Login from "./components/Rental/Login";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
 
 const Stack = createNativeStackNavigator();
@@ -35,7 +32,6 @@ const MyStack = () => {
         component={CreatePostAccommodation}
         options={{ title: "CreatePostAccommodation" }}
       />
-
     </Stack.Navigator>
   );
 };
