@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./components/Rental/Home";
 import Login from "./components/Rental/Login";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
+import CreatePostRequest from "./components/Rental/CreatePostRequest";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,11 @@ const MyStack = () => {
         name="CreatePostAccommodation"
         component={CreatePostAccommodation}
         options={{ title: "CreatePostAccommodation" }}
+      />
+      <Stack.Screen
+        name="CreatePostRequest"
+        component={CreatePostRequest}
+        options={{ title: "CreatePostRequest" }}
       />
 
     </Stack.Navigator>

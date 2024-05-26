@@ -20,6 +20,7 @@ const Home = ({ navigation }) => {
     "https://via.placeholder.com/800x200.png?text=Image+3",
   ];
   const [accommdation, setAccomodation] = React.useState([]);
+  
 
   const loadPostAccomodations = async () => {
     try {
@@ -29,6 +30,7 @@ const Home = ({ navigation }) => {
       console.error(ex);
     }
   };
+
 
   React.useEffect(() => {
     loadPostAccomodations();
@@ -177,7 +179,7 @@ const Home = ({ navigation }) => {
           {
             image: "https://via.placeholder.com/100.png?text=Feature+3",
             caption: "Feature 3",
-            screen: "Feature3Screen",
+            screen: "CreatePostRequest",
           },
           {
             image: "https://via.placeholder.com/100.png?text=Feature+4",
