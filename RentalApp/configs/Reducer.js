@@ -4,6 +4,7 @@ export const MyUserReducer = (current, action) => {
       return action.payload;
     case "logout":
       return null;
+    default:
+      return current;
   }
-  return current;
 };

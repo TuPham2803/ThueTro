@@ -6,10 +6,11 @@ import {
   Searchbar,
   TouchableRipple,
 } from "react-native-paper";
-import React from "react";
+import React, { useContext } from "react";
 import Swiper from "react-native-swiper";
 import APIs, { endpoints } from "../../configs/APIs";
 import Item from "../../Utils/Item";
+import { MyUserContext } from "../../configs/Contexts";
 
 const Home = ({ navigation }) => {
   const [search, setSearch] = React.useState("");
@@ -20,7 +21,7 @@ const Home = ({ navigation }) => {
     "https://via.placeholder.com/800x200.png?text=Image+3",
   ];
   const [accommdation, setAccomodation] = React.useState([]);
-  
+  const user = useContext(MyUserContext);
 
   const loadPostAccomodations = async () => {
     try {
@@ -61,11 +62,14 @@ const Home = ({ navigation }) => {
             onPress={() => console.log("Pressed")}
             style={MyStyle.icon}
           />
+
           <IconButton
             icon="account"
             iconColor="purple"
             size={20}
-            onPress={() => navigation.navigate("Login")}
+            onPress={() => {
+              navigation.navigate(user ? "Profile" : "Login");
+            }}
             style={MyStyle.icon}
           />
         </View>
