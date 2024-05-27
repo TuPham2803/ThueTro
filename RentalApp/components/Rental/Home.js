@@ -32,6 +32,7 @@ const Home = ({ navigation }) => {
     }
   };
 
+
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
@@ -182,7 +183,7 @@ const Home = ({ navigation }) => {
           {
             image: "https://via.placeholder.com/100.png?text=Feature+3",
             caption: "Feature 3",
-            screen: "Feature3Screen",
+            screen: "CreatePostRequest",
           },
           {
             image: "https://via.placeholder.com/100.png?text=Feature+4",
