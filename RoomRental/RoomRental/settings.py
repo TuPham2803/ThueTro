@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,12 +26,6 @@ ALLOWED_HOSTS = ['26.14.198.86', '192.168.40.1', 'localhost', '127.0.0.1', '*']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
     'homes',
     'rest_framework',
     'ckeditor',
@@ -39,6 +34,12 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'cloudinary',
     'cloudinary_storage',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
 ]
 
 REST_FRAMEWORK = {
@@ -62,7 +63,7 @@ ROOT_URLCONF = 'RoomRental.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

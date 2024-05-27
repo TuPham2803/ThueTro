@@ -12,13 +12,16 @@ class MyAdminSite(admin.AdminSite):
 
 
     def get_urls(self):
-        return [path('cate-stats/', self.stats_view)] + super().get_urls()
+        return [path('user-stats/', self.stats_view)]+ [path('reviewing-posts/', self.reviewing_posts)] + super().get_urls()
 
     def stats_view(self, request):
-        return TemplateResponse(request, 'admin/stats.html', {
+        return TemplateResponse(request, 'admin/user_stats.html', {
 
         })
+    def reviewing_posts(self, request):
+        return TemplateResponse(request, 'admin/reviewing_posts.html', {
 
+        })
 
 admin_site = MyAdminSite(name='Admin_Room')
 
