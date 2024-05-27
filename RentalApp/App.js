@@ -8,6 +8,7 @@ import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
 import Profile from "./components/User/Profile";
 import React from "react";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
+import Register from "./components/User/Register";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,11 @@ const MyStack = () => {
         name="Profile"
         component={Profile}
         options={{ title: "Profile" }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{ title: "Register" }}
       />
       <Stack.Screen
         name="CreatePostAccommodation"

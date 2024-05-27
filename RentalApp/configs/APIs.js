@@ -8,6 +8,7 @@ export const endpoints = {
   user: "/user/",
   "current-user": "/user/current-user/",
   login: "/o/token/",
+  register: "/user/",
 };
 
 export const authApi = (token) => {

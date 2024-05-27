@@ -197,17 +197,6 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             return [IsTenantAndFollowLandlord()]
         return [permissions.AllowAny()]
 
-    @action(methods=['post'], detail=False, url_path='create')
-    def create_user(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        # Tạo user mới
-        user = serializer.save()
-
-        # Trả về thông tin user đã tạo
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
     @action(methods=['post'], url_path='forgot', detail=False)
     def forgot_password(self, request):
         users = self.get_object().user_set.filter(active=True)

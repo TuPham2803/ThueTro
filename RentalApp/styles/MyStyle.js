@@ -39,6 +39,10 @@ export default StyleSheet.create({
     height: 50,
     alignSelf: "center",
   },
+  marginDistantSide: {
+    marginLeft: 10,
+    marginRight: 10,
+  },
   wrapper: {
     height: 200,
   },
@@ -69,7 +73,7 @@ export default StyleSheet.create({
     marginHorizontal: 5,
   },
   cardImage: {
-    width: '100%',
+    width: "100%",
     height: 80,
   },
   button: {
@@ -78,5 +82,11 @@ export default StyleSheet.create({
   buttonCaption: {
     marginTop: 5,
     textAlign: "center",
+  },
+  border: {
+    borderColor: "purple",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
   },
 });
