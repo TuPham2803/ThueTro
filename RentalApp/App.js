@@ -9,39 +9,45 @@ import Profile from "./components/User/Profile";
 import React from "react";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
 import CreatePostRequest from "./components/Rental/CreatePostRequest";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Icon } from 'react-native-paper';
+
 
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
   const user = useContext(MyUserContext);
 
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{ title: "Login" }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={{ title: "Profile" }}
-      />
-      <Stack.Screen
-        name="CreatePostAccommodation"
-        component={CreatePostAccommodation}
-        options={{ title: "CreatePostAccommodation" }}
-      />
-      <Stack.Screen
-        name="CreatePostRequest"
-        component={CreatePostRequest}
-        options={{ title: "CreatePostRequest" }}
-      />
 
+  return (
+    <Stack.Navigator >
+      <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
+      <Stack.Screen name="Profile" component={Profile}/>
+      <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation}
+        options={{ title: "Tạo tin cho thuê" }}/>
+      <Stack.Screen name="CreatePostRequest" component={CreatePostRequest}
+        options={{ title: "Tạo tin tìm phòng" }}/>
     </Stack.Navigator>
   );
 };
+
+const Tab = createBottomTabNavigator();
+const MyTab = () => {
+  const user = useContext(MyUserContext);
+
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Index" component={MyStack} options={{ tabBarIcon: () => <Icon size={30} color="blue" source="home" /> }} />
+      {user === null ? <>
+        {/* <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="blue" source="account" />}} /> */}
+        <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="blue" source="login" /> }} />
+      </> : <>
+        <Tab.Screen name="Profile" component={Profile} options={{ title: user.username, tabBarIcon: () => <Icon size={30} color="blue" source="account" /> }} />
+      </>}
+
+    </Tab.Navigator>
+  );
+}
 
 export default function App() {
   const [user, dispatch] = useReducer(MyUserReducer, null);
@@ -50,7 +56,7 @@ export default function App() {
     <NavigationContainer>
       <MyUserContext.Provider value={user}>
         <MyDispatchContext.Provider value={dispatch}>
-          <MyStack />
+          <MyTab />
         </MyDispatchContext.Provider>
       </MyUserContext.Provider>
     </NavigationContainer>

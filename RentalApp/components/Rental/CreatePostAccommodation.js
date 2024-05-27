@@ -36,12 +36,12 @@ const CreatePostAccommodation = ({ navigation }) => {
       <View style={[MyStyle.container, MyStyle.top]}>
 
 
-        <Appbar.Header style={{ backgroundColor: "purple" }}>
+        {/* <Appbar.Header style={{ backgroundColor: "purple" }}>
           <Appbar.BackAction onPress={() => console.log("Go back")} />
           <Appbar.Content
             title={<Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>Bài Đăng Phòng</Text>}
           />
-        </Appbar.Header>
+        </Appbar.Header> */}
 
         <ScrollView style={[MyStyle.top, MyStyle.wrapper, { paddingHorizontal: 20 }]}>
 
