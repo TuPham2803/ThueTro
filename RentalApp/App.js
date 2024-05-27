@@ -15,33 +15,54 @@ import { Icon } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
-const MyStack = () => {
+const HomeStack = () => {
   const user = useContext(MyUserContext);
-
-
   return (
     <Stack.Navigator >
       <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
-      <Stack.Screen name="Profile" component={Profile}/>
-      <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation}
-        options={{ title: "Tạo tin cho thuê" }}/>
-      <Stack.Screen name="CreatePostRequest" component={CreatePostRequest}
-        options={{ title: "Tạo tin tìm phòng" }}/>
     </Stack.Navigator>
   );
 };
 
+const PostManagerStack = () => {
+  // const user = useContext(MyUserContext);
+  // const user = { username: "admin", user_type: "landlord" };
+  const user = { username: "admin", user_type: "tenant" };
+
+  return (
+    <Stack.Navigator >
+      {user.user_type == "landlord" ? <>
+        <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation}
+          options={{ title: "Tạo tin cho thuê" }} />
+      </> : <>
+        <Stack.Screen name="CreatePostRequest" component={CreatePostRequest}
+          options={{ title: "Tạo tin tìm phòng" }} />
+      </>}
+    </Stack.Navigator>
+  );
+};
+const MessageStack = () => {
+  const user = useContext(MyUserContext);
+  return (
+    <Stack.Navigator >
+
+    </Stack.Navigator>
+  );
+};
 const Tab = createBottomTabNavigator();
 const MyTab = () => {
-  const user = useContext(MyUserContext);
+  // const user = useContext(MyUserContext);
+  const user = { username: "tu", user_type: "landlord" };
 
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Index" component={MyStack} options={{ tabBarIcon: () => <Icon size={30} color="blue" source="home" /> }} />
+      <Tab.Screen name="Home" component={HomeStack} options={{ tabBarIcon: () => <Icon size={30} color="blue" source="home" /> }} />
       {user === null ? <>
         {/* <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="blue" source="account" />}} /> */}
         <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="blue" source="login" /> }} />
       </> : <>
+        <Tab.Screen name="PostManager" component={PostManagerStack} options={{ title: "Bài đăng", tabBarIcon: () => <Icon size={30} color="blue" source="post" /> }} />
+        <Tab.Screen name="Message" component={MessageStack} options={{ title: "Tin nhắn", tabBarIcon: () => <Icon size={30} color="blue" source="message" /> }} />
         <Tab.Screen name="Profile" component={Profile} options={{ title: user.username, tabBarIcon: () => <Icon size={30} color="blue" source="account" /> }} />
       </>}
 
