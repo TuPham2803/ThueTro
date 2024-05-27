@@ -14,6 +14,12 @@ const Profile = ({ navigation }) => {
       <Text style={[MyStyle.text]}>
         {user ? user.username : "You are not logged in"}
       </Text>
+      {/* if not current user profile then show a follow button */}
+      {user && user.username !== "current-user" && (
+        <Button mode="contained" style={[MyStyle.button, MyStyle.margin]}>
+          Follow
+        </Button>
+      )}
       <Button
         mode="contained"
         onPress={() => {

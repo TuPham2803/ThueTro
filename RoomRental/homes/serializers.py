@@ -8,26 +8,21 @@ from cloudinary.models import CloudinaryField
 
 
 class UserSerializer(ModelSerializer):
-    confirmed_password = CharField(write_only=True)
-
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'user_type', 'image', 'first_name', 'last_name',
-                  'confirmed_password']
+        fields = ['id', 'username', 'password', 'email', 'user_type', 'image', 'first_name', 'last_name']
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True},
             'image': {'required': True},
             'user_type': {'required': True},
             'first_name': {'required': True},
-            'last_name': {'required': True},
-            'confirmed_password': {'required': True}
+            'last_name': {'required': True}
         }
 
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
-        required_fields = ['username', 'password', 'email', 'user_type', 'first_name', 'last_name',
-                           'confirmed_password', 'image']
+        required_fields = ['username', 'password', 'email', 'user_type', 'first_name', 'last_name', 'image']
         for field in required_fields:
             if data.get(field) in [None, '']:
                 raise ValidationError({field: 'This field is required and cannot be null or empty.'})
@@ -37,13 +32,9 @@ class UserSerializer(ModelSerializer):
         except DjangoValidationError as e:
             raise ValidationError({'password': list(e.messages)})
 
-        if data.get('password') != data.get('confirmed_password'):
-            raise ValidationError({'confirmed_password': 'Password fields didn’t match.'})
-
         return data
 
     def create(self, validated_data):
-        validated_data.pop('confirmed_password')
         user = User(**validated_data)
         user.set_password(validated_data['password'])
         user.save()

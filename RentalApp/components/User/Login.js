@@ -49,6 +49,8 @@ const Login = () => {
         },
       });
 
+      console.info(res.data);
+
       await AsyncStorage.setItem("token", res.data.access_token);
 
       setTimeout(async () => {
@@ -105,7 +107,7 @@ const Login = () => {
           <Button
             icon="account-lock-open"
             mode="contained"
-            onPress={() => console.log("Pressed")}
+            onPress={() => nav.navigate("Register")}
             style={MyStyle.margin}
             loading={loading}
           >
