@@ -11,7 +11,7 @@
   {% comment %} end import lib {% endcomment %}
 
   <h2>User Stats</h2>
-  <div class="container mt-5">
+  <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-2">
         <form id="myForm" class="col g-3">
@@ -22,6 +22,13 @@
               <option value="month">By Month</option>
               <option value="quarter">By Quarter</option>
               <option value="year">By Year</option>
+            </select>
+          </div>
+          <div class="col-auto mt-3">
+            <label for="ChartOption" class="form-label">chart type</label>
+            <select style="height:auto" class="form-select" id="ChartOption">
+              <option value="bar">Bar</option>
+              <option value="pie">Pie</option>
             </select>
           </div>
           <div id="timePeriodGroup" class="form-group col-md-auto mt-3">
@@ -69,15 +76,13 @@
       labels: [
         'Red',
         'Blue',
-        'Yellow'
       ],
       datasets: [{
         label: 'My First Dataset',
-        data: [300, 50, 100],
+        data: [300, 50],
         backgroundColor: [
           'rgb(255, 99, 132)',
           'rgb(54, 162, 235)',
-          'rgb(255, 205, 86)'
         ],
         hoverOffset: 4
       }]
