@@ -13,8 +13,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .perms import RestrictTo
 import cloudinary
-from .perms import IsTenantAndFollowLandlord
-
+from .sendmail import send_mail
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
@@ -194,7 +193,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         if self.action == 'get_current_user':
             return [permissions.IsAuthenticated()]
         if self.action == 'follows' and self.request.method == 'POST':
-            return [IsTenantAndFollowLandlord()]
+            return [perms.IsTenantAndFollowLandlord()]
         return [permissions.AllowAny()]
 
     @action(methods=['post'], url_path='forgot', detail=False)
@@ -239,7 +238,12 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
 
         # API mới để đếm số lượng người dùng theo loại và thời gian
-
+    @action (methods=['get'], detail=False, url_path='test_sendmail')
+    def test(self, request):
+        post_accommodation = PostAccommodation.objects.get(id=1)
+        send_mail(post_accommodation)
+        return Response({}, status=status.HTTP_200_OK)
+    
     @action(methods=['get'], detail=False, url_path='statistics')
     def user_statistics(self, request):
         serializer = serializers.UserStatisticSerializer(data=request.query_params)
