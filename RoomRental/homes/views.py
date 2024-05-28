@@ -240,34 +240,25 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 
         # API mới để đếm số lượng người dùng theo loại và thời gian
 
-    @action(methods=['post'], detail=False, url_path='user-statistics')
+    @action(methods=['get'], detail=False, url_path='statistics')
     def user_statistics(self, request):
-        user_type = request.data.get('user_type')
-        period = request.data.get('period')  # month, year, quarter
-        period_value = request.data.get('period_value')  # e.g. '2023', '2023-05', 'Q1-2023'
+        serializer = serializers.UserStatisticSerializer(data=request.query_params)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if not user_type or not period or not period_value:
-            return Response({'error': 'user_type, period, and period_value fields are required.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        period = serializer.validated_data['period']
+        period_value = serializer.validated_data['period_value']
 
-        users = User.objects.filter(user_type=user_type)
-
-        if period == 'month':
-            try:
+        filters = {}
+        try:
+            if period == 'month':
                 date = datetime.strptime(period_value, '%Y-%m')
-                users = users.filter(date_joined__year=date.year, date_joined__month=date.month)
-            except ValueError:
-                return Response({'error': 'Invalid period_value for month. Use YYYY-MM format.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        elif period == 'year':
-            try:
+                filters['date_joined__year'] = date.year
+                filters['date_joined__month'] = date.month
+            elif period == 'year':
                 year = int(period_value)
-                users = users.filter(date_joined__year=year)
-            except ValueError:
-                return Response({'error': 'Invalid period_value for year. Use YYYY format.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        elif period == 'quarter':
-            try:
+                filters['date_joined__year'] = year
+            elif period == 'quarter':
                 quarter, year = period_value.split('-')
                 year = int(year)
                 quarter_months = {
@@ -278,24 +269,29 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 }
                 if quarter in quarter_months:
                     start_month, end_month = quarter_months[quarter]
-                    users = users.filter(date_joined__year=year,
-                                         date_joined__month__gte=start_month,
-                                         date_joined__month__lte=end_month)
+                    filters['date_joined__year'] = year
+                    filters['date_joined__month__gte'] = start_month
+                    filters['date_joined__month__lte'] = end_month
                 else:
                     return Response({'error': 'Invalid quarter. Use Q1, Q2, Q3, or Q4.'},
                                     status=status.HTTP_400_BAD_REQUEST)
-            except ValueError:
-                return Response({'error': 'Invalid period_value for quarter. Use QX-YYYY format.'},
-                                status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'error': 'Invalid period. Use month, year, or quarter.'},
+            elif period == 'time_period':
+                start_date, end_date = period_value.split('_to_')
+                filters['date_joined__date__gte'] = start_date
+                filters['date_joined__date__lte'] = end_date
+        except ValueError:
+            return Response({'error': f'Invalid period_value for {period}. Use the correct format.'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        user_count = users.count()
+        user_counts = {}
+        for user_type in ['landlord', 'tenant']:
+            user_counts[user_type] = User.objects.filter(user_type=user_type, **filters).count()
 
-        return Response(
-            {'user_type': user_type, 'period': period, 'period_value': period_value, 'count': user_count},
-            status=status.HTTP_200_OK)
+        return Response({
+            'user_type_counts': user_counts,
+            'period': period,
+            'period_value': period_value
+        }, status=status.HTTP_200_OK)
 
 class CommentAccommodationViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = CommentAccommodation.objects.all()
