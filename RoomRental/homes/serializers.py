@@ -1,16 +1,17 @@
-from rest_framework.serializers import ModelSerializer, ValidationError, CharField
+from rest_framework.serializers import ModelSerializer, ValidationError, CharField, ChoiceField, Serializer
 from .models import PostAccommodation, User, PostRequest, CommentAccommodation, Follow, AccommodationImage
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from . import perms
 import cloudinary
 from cloudinary.models import CloudinaryField
-
+from datetime import datetime
 
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'user_type', 'image', 'first_name', 'last_name']
+        fields = ['id', 'username', 'password', 'email',
+                  'user_type', 'image', 'first_name', 'last_name']
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'required': True},
@@ -22,10 +23,12 @@ class UserSerializer(ModelSerializer):
 
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
-        required_fields = ['username', 'password', 'email', 'user_type', 'first_name', 'last_name', 'image']
+        required_fields = ['username', 'password', 'email',
+                           'user_type', 'first_name', 'last_name', 'image']
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise ValidationError({field: 'This field is required and cannot be null or empty.'})
+                raise ValidationError(
+                    {field: 'This field is required and cannot be null or empty.'})
 
         try:
             validate_password(data.get('password'))
@@ -79,7 +82,8 @@ class PostRequestSerializer(ModelSerializer):
         ]
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise ValidationError({field: 'This field is required and cannot be null or empty.'})
+                raise ValidationError(
+                    {field: 'This field is required and cannot be null or empty.'})
 
         return data
 
@@ -140,7 +144,8 @@ class PostAccommodationSerializer(ModelSerializer):
             'active': {'required': True, 'read_only': True},
             'pending_status': {'required': True, 'read_only': True},
         }
-        read_only_fields = ['created_at', 'updated_at', 'active', 'pending_status']
+        read_only_fields = ['created_at',
+                            'updated_at', 'active', 'pending_status']
 
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
@@ -154,14 +159,16 @@ class PostAccommodationSerializer(ModelSerializer):
             required_fields.remove('max_people')
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise ValidationError({field: 'This field is required and cannot be null or empty.'})
+                raise ValidationError(
+                    {field: 'This field is required and cannot be null or empty.'})
 
         return data
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         images_data = []
-        images_queryset = instance.images.all() if hasattr(instance, 'images') and instance.images else None
+        images_queryset = instance.images.all() if hasattr(
+            instance, 'images') and instance.images else None
         if images_queryset:
             for image in images_queryset:
                 images_data.append(image.image.url)
@@ -181,7 +188,8 @@ class CommentAccommodationSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_accommodation', 'content', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'user', 'post_accommodation',
+                  'content', 'created_at', 'updated_at', 'active']
 
 
 class CommentRequestSerializer(ModelSerializer):
@@ -190,7 +198,8 @@ class CommentRequestSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_request', 'content', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'user', 'post_request', 'content',
+                  'created_at', 'updated_at', 'active']
 
 
 class LikeAccommodationSerializer(ModelSerializer):
@@ -199,7 +208,8 @@ class LikeAccommodationSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_accommodation', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'user', 'post_accommodation',
+                  'created_at', 'updated_at', 'active']
 
 
 class LikeRequestSerializer(ModelSerializer):
@@ -208,7 +218,8 @@ class LikeRequestSerializer(ModelSerializer):
 
     class Meta:
         model = CommentAccommodation
-        fields = ['id', 'user', 'post_request', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'user', 'post_request',
+                  'created_at', 'updated_at', 'active']
 
 
 class FollowSerializer(ModelSerializer):
@@ -217,4 +228,46 @@ class FollowSerializer(ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ['id', 'owner', 'follower', 'created_at', 'updated_at', 'active']
+        fields = ['id', 'owner', 'follower',
+                  'created_at', 'updated_at', 'active']
+
+
+class UserStatisticSerializer(Serializer):
+    PERIOD_CHOICES = [
+        ('month', 'Month'),
+        ('year', 'Year'),
+        ('quarter', 'Quarter'),
+        ('time_period', 'Time Period')
+    ]
+
+    period = ChoiceField(choices=PERIOD_CHOICES)
+    period_value =CharField()
+
+    def validate_period_value(self, value):
+        period = self.initial_data.get('period')
+        if period == 'month':
+            try:
+                datetime.strptime(value, '%Y-%m')
+            except ValueError:
+                raise ValidationError('Invalid period_value for month. Use YYYY-MM format.')
+        elif period == 'year':
+            if not value.isdigit() or len(value) != 4:
+                raise ValidationError('Invalid period_value for year. Use YYYY format.')
+        elif period == 'quarter':
+            try:
+                quarter, year = value.split('-')
+                year = int(year)
+                if quarter not in ['Q1', 'Q2', 'Q3', 'Q4']:
+                    raise ValidationError('Invalid quarter. Use Q1, Q2, Q3, or Q4.')
+            except ValueError:
+                raise ValidationError('Invalid period_value for quarter. Use QX-YYYY format.')
+        elif period == 'time_period':
+            try:
+                start_date, end_date = value.split('_to_')
+                start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+                end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+                if start_date_obj > end_date_obj:
+                    raise ValidationError('start_date must be before or equal end_date.')
+            except ValueError:
+                raise ValidationError('Invalid period_value for time_period. Use YYYY-MM-DD_to_YYYY-MM-DD format.')
+        return value
