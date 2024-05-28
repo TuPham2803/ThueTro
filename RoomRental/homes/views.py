@@ -239,7 +239,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 
         # API mới để đếm số lượng người dùng theo loại và thời gian
     @action (methods=['get'], detail=False, url_path='test_sendmail')
-    def test(self, request):
+    def test_sendmail(self, request):
         post_accommodation = PostAccommodation.objects.get(id=1)
         send_mail(post_accommodation)
         return Response({}, status=status.HTTP_200_OK)
