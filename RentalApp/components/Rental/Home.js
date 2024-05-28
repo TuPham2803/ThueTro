@@ -42,7 +42,7 @@ const Home = ({ navigation }) => {
 
   return (
   
-    <ScrollView style={[MyStyle.container, MyStyle.top]}>
+    <ScrollView style={[MyStyle.container]}>
       <ScrollView>
         <View style={[MyStyle.row]}>
           <Searchbar
@@ -145,7 +145,7 @@ const Home = ({ navigation }) => {
               </View>
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={() => navigation.navigate("CreatePostAccommodation")}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >

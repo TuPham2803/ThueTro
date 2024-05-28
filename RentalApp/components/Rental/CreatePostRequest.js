@@ -46,7 +46,7 @@ const CreatePostRequest = ({ navigation }) => {
 
     return (
         <Provider>
-            <View style={[MyStyle.container, MyStyle.top]}>
+            <View style={[MyStyle.container,{marginTop:20, marginBottom:30}]}>
                 {/* <Appbar.Header style={{ backgroundColor: "purple" }}>
                     <Appbar.BackAction onPress={() => console.log("Go back")} />
                     <Appbar.Content
@@ -57,7 +57,7 @@ const CreatePostRequest = ({ navigation }) => {
 
 
 
-                <ScrollView style={[MyStyle.top, MyStyle.wrapper, { paddingHorizontal: 20 }]}>
+                <ScrollView style={[ MyStyle.wrapper, { paddingHorizontal: 20 }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="map-marker" size={30} color="purple" />
                         <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Địa chỉ mong muốn: </Text>
@@ -81,7 +81,7 @@ const CreatePostRequest = ({ navigation }) => {
                         style={[MyStyle.input, MyStyle.margin]}
                     />
 
-<View>
+                    <View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                             <Icon name="currency-usd" size={30} color="purple" />
                             <Text style={styles.label}>Khoảng Giá</Text>
@@ -93,7 +93,7 @@ const CreatePostRequest = ({ navigation }) => {
                         </View>
 
                         <View style={styles.sliderContainer}>
-                            
+
                             <MultiSlider
                                 values={priceRange}
                                 onValuesChange={(values) => setPriceRange(values)}
@@ -107,7 +107,7 @@ const CreatePostRequest = ({ navigation }) => {
                                 trackStyle={{ height: 10 }}
                                 markerStyle={styles.thumbStyle}
                             />
-                            
+
                         </View>
                         <Text style={styles.currentValue}>
                             Giá mong muốn: {priceRange[0]} - {priceRange[1]}

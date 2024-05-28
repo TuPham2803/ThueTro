@@ -9,17 +9,13 @@ const Profile = ({ navigation }) => {
   const dispatch = useContext(MyDispatchContext);
 
   return (
-    <View style={[MyStyle.container, MyStyle.center]}>
-      <Text style={[MyStyle.title]}>Profile</Text>
-
-      <Text style={[MyStyle.text]}>
-        {user ? user.username : "You are not logged in"}
-      </Text>
+    <View style={[MyStyle.container, MyStyle.center, MyStyle.marginDistantSide]}>
+     
 
       <List.Section>
         <List.Item
           title="Username"
-          description={user ? user.username : "You are not logged in"}
+          description={user ? user.username : "KhaTu"}
           titleStyle={{ color: "purple" }}
           descriptionStyle={{ color: "purple" }}
           left={(props) => <List.Icon {...props} icon="account" />}
@@ -72,12 +68,12 @@ const Profile = ({ navigation }) => {
       )}
 
       {/* Thêm nút "Quản lý bài đăng" */}
-      <View style={[MyStyle.row_button, MyStyle.margin]}>
+      <View style={[MyStyle.row_button, MyStyle.margin, MyStyle.marginDistantSide]}>
         <Button
           icon="account-cog"
           mode="contained"
           onPress={() => console.log("Manage Posts Pressed")}
-          style={[MyStyle.button, MyStyle.margin]}
+          // style={[MyStyle.button, MyStyle.margin]}
         >
           Quản lý bài đăng
         </Button>
@@ -86,20 +82,20 @@ const Profile = ({ navigation }) => {
           icon="heart"
           mode="contained"
           onPress={() => console.log("Favorite Posts Pressed")}
-          style={[MyStyle.button, MyStyle.margin]}
+          // style={[MyStyle.button, MyStyle.margin]}
         >
           Bài đăng yêu thích
         </Button>
       </View>
 
-      {/* Thêm nút "Bài đăng yêu thích" */}
+      {/* Thêm nút "Logout" */}
       <Button
         mode="contained"
         onPress={() => {
           dispatch({ type: "logout" });
           navigation.navigate("Home");
         }}
-        style={[MyStyle.button, MyStyle.margin]}
+        // style={[MyStyle.button, MyStyle.margin]}
       >
         Logout
       </Button>
