@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .perms import RestrictTo
 import cloudinary
 from .sendmail import send_mail
-
+from threading import Thread
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
@@ -237,11 +237,12 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 fo.save()
             return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
 
-        # API mới để đếm số lượng người dùng theo loại và thời gian
+    
+    
     @action (methods=['get'], detail=False, url_path='test_sendmail')
     def test_sendmail(self, request):
         post_accommodation = PostAccommodation.objects.get(id=1)
-        send_mail(post_accommodation)
+        Thread(target=send_mail, args=(post_accommodation, )).start()
         return Response({}, status=status.HTTP_200_OK)
     
     @action(methods=['get'], detail=False, url_path='statistics')
