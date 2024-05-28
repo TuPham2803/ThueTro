@@ -1,7 +1,8 @@
-<!-- templates/admin/stats.html -->
 {% extends 'admin/base_site.html' %}
 
-
+{% block branding %}
+<h1 id="site-name">User Statistic</h1>
+{% endblock %}
 
 {% block content %}
   {% comment %} import lib {% endcomment %}
@@ -9,8 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   {% comment %} end import lib {% endcomment %}
-
-  <h2>User Stats</h2>
+  <div id="alert-placeholder"></div> <!-- Alert placeholder -->
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-2">
@@ -18,14 +18,14 @@
           <div class="col-auto mt-3">
             <label for="selectOption" class="form-label">Select Option</label>
             <select style="height:auto" class="form-select" id="selectOption">
-              <option value="timePeriod">By Time Period</option>
+              <option value="time_period">By Time Period</option>
               <option value="month">By Month</option>
               <option value="quarter">By Quarter</option>
               <option value="year">By Year</option>
             </select>
           </div>
           <div class="col-auto mt-3">
-            <label for="ChartOption" class="form-label">chart type</label>
+            <label for="ChartOption" class="form-label">Chart Type</label>
             <select style="height:auto" class="form-select" id="ChartOption">
               <option value="bar">Bar</option>
               <option value="pie">Pie</option>
@@ -49,8 +49,8 @@
               <option value="3">Q3</option>
               <option value="4">Q4</option>
             </select>
-            <label for="year" class="form-label">Enter Year</label>
-            <input type="number" class="form-control" id="year" minlength="4" maxlength="4">
+            <label for="yearQuarter" class="form-label">Enter Year</label>
+            <input type="number" class="form-control" id="yearQuarter" minlength="4" maxlength="4">
           </div>
           <div id="yearGroup" class="form-group col-md-auto mt-3">
             <label for="year" class="form-label">Enter Year</label>
@@ -61,56 +61,36 @@
           </div>
         </form>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 border border-dark">
         <div>
           <canvas id="myChart"></canvas>
         </div>
       </div>
     </div>
   </div>
-  
 
   <script>
     const ctx = document.getElementById('myChart');
-    const data = {
-      labels: [
-        'Red',
-        'Blue',
-      ],
-      datasets: [{
-        label: 'My First Dataset',
-        data: [300, 50],
-        backgroundColor: [
-          'rgb(255, 99, 132)',
-          'rgb(54, 162, 235)',
-        ],
-        hoverOffset: 4
-      }]
-    };
-    const config = {
-      type: 'pie',
-      data: data,
-    };
-    new Chart(ctx, config)
+    let myChart;
 
     const selectOption = document.getElementById('selectOption');
     const timePeriodGroup = document.getElementById('timePeriodGroup');
     const monthGroup = document.getElementById('monthGroup');
     const quarterGroup = document.getElementById('quarterGroup');
     const yearGroup = document.getElementById('yearGroup');
-  
+
     // Function to toggle visibility of form groups based on selected option
     function toggleFormGroups() {
       const selectedOption = selectOption.value;
-  
+
       // Hide all form groups
       timePeriodGroup.style.display = 'none';
       monthGroup.style.display = 'none';
       quarterGroup.style.display = 'none';
       yearGroup.style.display = 'none';
-  
+
       // Show the selected form group
-      if (selectedOption === 'timePeriod') {
+      if (selectedOption === 'time_period') {
         timePeriodGroup.style.display = 'block';
       } else if (selectedOption === 'month') {
         monthGroup.style.display = 'block';
@@ -120,12 +100,90 @@
         yearGroup.style.display = 'block';
       }
     }
-  
+
     // Add event listener to select element
     selectOption.addEventListener('change', toggleFormGroups);
-  
+
     // Call the function initially to set the initial visibility
     toggleFormGroups();
+
+    // Function to display alert
+    function showAlert(message, type) {
+      const alertPlaceholder = document.getElementById('alert-placeholder');
+      const alertHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      `;
+      alertPlaceholder.innerHTML = alertHTML;
+    }
+    
+    // Add event listener to form submission
+    document.getElementById('myForm').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const period = selectOption.value;
+      let periodValue;
+
+      if (period === 'time_period') {
+        const startDate = document.getElementById('startDate').value ;
+        const endDate = document.getElementById('endDate').value ;
+        periodValue = `${startDate}_to_${endDate}`;
+      } else if (period === 'month') {
+        periodValue = document.getElementById('month').value;
+      } else if (period === 'quarter') {
+        const quarter = document.getElementById('quarter').value;
+        const year = document.getElementById('yearQuarter').value;
+        periodValue = `Q${quarter}-${year}`;
+      } else if (period === 'year') {
+        periodValue = document.getElementById('year').value;
+      }
+
+      const chartType = document.getElementById('ChartOption').value;
+      const endpoint = "http://127.0.0.1:8000";
+
+      try {
+        const response = await fetch(`${endpoint}/user/statistics?period=${period}&period_value=${periodValue}`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          let errorMessage = 'Bad request';
+          if (errorData.period_value) {
+            errorMessage = errorData.period_value.join(', ');
+          }
+          throw new Error(errorMessage);
+        }
+        const data = await response.json();
+
+        const labels = Object.keys(data.user_type_counts);
+        const values = Object.values(data.user_type_counts);
+
+        const chartData = {
+          labels: labels,
+          datasets: [{
+            label: 'User Counts',
+            data: values,
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(54, 162, 235)'
+            ],
+            hoverOffset: 4
+          }]
+        };
+
+        if (myChart) {
+          myChart.destroy(); // Destroy the old chart before creating a new one
+        }
+
+        myChart = new Chart(ctx, {
+          type: chartType,
+          data: chartData,
+        });
+      } catch (error) {
+        console.error('Error fetching user statistics:', error);
+        showAlert(`${error.message}`, 'danger');
+      }
+    });
   </script>
 
 {% endblock %}

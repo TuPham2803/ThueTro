@@ -256,7 +256,7 @@ class UserStatisticSerializer(Serializer):
         elif period == 'quarter':
             try:
                 quarter, year = value.split('-')
-                year = int(year)
+                year = int(year) 
                 if quarter not in ['Q1', 'Q2', 'Q3', 'Q4']:
                     raise ValidationError('Invalid quarter. Use Q1, Q2, Q3, or Q4.')
             except ValueError:
