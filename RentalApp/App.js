@@ -9,6 +9,8 @@ import Profile from "./components/User/Profile";
 import React from "react";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
 import CreatePostRequest from "./components/Rental/CreatePostRequest";
+import PostAccommodations from "./components/Rental/PostAccomodations";
+import PostAccommodationDetails from "./components/Rental/PostAccommodationDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +39,16 @@ const MyStack = () => {
         name="CreatePostRequest"
         component={CreatePostRequest}
         options={{ title: "CreatePostRequest" }}
+      />
+      <Stack.Screen
+        name="PostAccommodations"
+        component={PostAccommodations}
+        options={{ title: "PostAccomodations" }}
+      />
+      <Stack.Screen
+        name="PostAccommodationDetails"
+        component={PostAccommodationDetails}
+        options={{ title: "PostAccommodationDetails" }}
       />
     </Stack.Navigator>
   );

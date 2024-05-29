@@ -32,7 +32,6 @@ const Home = ({ navigation }) => {
     }
   };
 
-
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
@@ -101,7 +100,7 @@ const Home = ({ navigation }) => {
               </View>
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={() => navigation.navigate("PostAccommodations")}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
@@ -212,8 +211,6 @@ const Home = ({ navigation }) => {
           </Card>
         ))}
       </ScrollView>
-
-      
     </ScrollView>
   );
 };
