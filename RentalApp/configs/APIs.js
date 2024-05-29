@@ -7,7 +7,9 @@ export const endpoints = {
   post_accomodation_details: (postAccomodationId) =>
     `/post_accommodations/${postAccomodationId}/`,
   post_requests: "/post_requests/",
+  post_request_details: (postRequestId) => `/post_requests/${postRequestId}/`,
   user: "/user/",
+  "user-details": (userId) => `/user/?id=${userId}`,
   "current-user": "/user/current-user/",
   login: "/o/token/",
   register: "/user/",

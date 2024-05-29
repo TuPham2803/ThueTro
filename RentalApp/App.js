@@ -15,6 +15,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-paper";
 import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
 import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
+import PostRequests from "./components/Rental/PostRequests";
+import PostRequestDetails from "./components/Rental/PostRequestDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -41,12 +43,22 @@ const HomeStack = () => {
       <Stack.Screen
         name="PostAccommodations"
         component={PostAccommodations}
-        options={{ title: "PostAccomodations" }}
+        options={{ title: "Bài đăng cho thuê nhà" }}
       />
       <Stack.Screen
         name="PostAccommodationDetails"
         component={PostAccommodationDetails}
-        options={{ title: "PostAccommodationDetails" }}
+        options={{ title: "Chi tiết bài đăng" }}
+      />
+      <Stack.Screen
+        name="PostRequests"
+        component={PostRequests}
+        options={{ title: "Bài đăng tìm kiếm nhà" }}
+      />
+      <Stack.Screen
+        name="PostRequestDetails"
+        component={PostRequestDetails}
+        options={{ title: "Chi tiết bài đăng" }}
       />
       <Stack.Screen
         name="CreatePostAccommodation"

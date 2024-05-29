@@ -56,7 +56,6 @@ const PostAccommodationDetails = ({ route }) => {
     }
   };
 
-  // make a comment function that when ever this current user make a comment, it will be displayed on the screen immediately without refreshing the page also send to server to save the comment
   const comment = async () => {
     try {
       let res = await APIs.post(endpoints["comments"](postId), {

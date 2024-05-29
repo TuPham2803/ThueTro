@@ -1,18 +1,49 @@
-import { List, Text } from "react-native-paper";
+import { ActivityIndicator, List, Text } from "react-native-paper";
 import moment from "moment";
 import { Image, View, useWindowDimensions } from "react-native";
 import MyStyle from "../styles/MyStyle";
 import { RenderHTML } from "react-native-render-html";
+import { useEffect, useState } from "react";
+import APIs, { endpoints } from "../configs/APIs";
+import { htmlToText } from "html-to-text";
 
-const Item = ({ instance }) => {
+const ItemPostRequest = ({ instance }) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const loadUser = async () => {
+    setLoading(true);
+    try {
+      let res = await APIs.get(endpoints["user-details"](instance.user_post));
+      setUser(res.data);
+    } catch (ex) {
+      console.error(ex);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
   return (
     <List.Item
       style={MyStyle.margin}
-      title={instance.title}
       titleStyle={MyStyle.header}
+      title={
+        instance.description ? (
+          <Text style={MyStyle.header}>{htmlToText(instance.description)}</Text>
+        ) : (
+          "No description available"
+        )
+      }
       description={
         <View style={{ flexDirection: "column" }}>
-          {instance.price ? <Text>{instance.price} đ/Tháng</Text> : null}
           {instance.district && instance.city ? (
             <Text>
               {instance.district}, {instance.city}
@@ -24,8 +55,8 @@ const Item = ({ instance }) => {
         </View>
       }
       left={() =>
-        instance.images && instance.images.length > 0 ? (
-          <Image style={MyStyle.avatar} source={{ uri: instance.images[0] }} />
+        user ? (
+          <Image style={MyStyle.avatar} source={{ uri: user.image }} />
         ) : null
       }
       right={() => (
@@ -46,4 +77,4 @@ const Item = ({ instance }) => {
   );
 };
 
-export default Item;
+export default ItemPostRequest;
