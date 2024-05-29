@@ -11,6 +11,9 @@ import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation
 import CreatePostRequest from "./components/Rental/CreatePostRequest";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-paper';
+import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
+import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
+
 
 
 const Stack = createNativeStackNavigator();
@@ -69,6 +72,15 @@ const ProfileStack = () => {
   );
 };
 
+const ListPostAccommodationStack = () => {
+  const user = useContext(MyUserContext);
+  return (
+    <Stack.Navigator >
+      <Stack.Screen name="Danh sách Bài Đăng" component={ListPostAccommodation}/>
+      <Stack.Screen name = "UpdatePostAccommodation" component = {UpdatePostAccommodation}/>
+    </Stack.Navigator>
+  );
+}
 
 
 
@@ -88,7 +100,7 @@ const MyTab = () => {
         {/* <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" />}} /> */}
         <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="purple" source="login" /> }} />
       </> : <>
-        <Tab.Screen name="PostManager" component={PostManagerStack} options={{ title: "Bài đăng", tabBarIcon: () => <Icon size={30} color="purple" source="post" /> }} />
+        <Tab.Screen name="ListPostAccommodationStack" component={ListPostAccommodationStack} options={{ title: "Danh sách Bài đăng", tabBarIcon: () => <Icon size={30} color="purple" source="post" /> }} />
         <Tab.Screen name="Message" component={MessageStack} options={{ title: "Tin nhắn", tabBarIcon: () => <Icon size={30} color="purple" source="message" /> }} />
         <Tab.Screen name="Profile" component={ProfileStack} options={{ title: user.username, tabBarIcon: () => <Icon size={30} color="purple" source="account" /> }} />
       </>}
