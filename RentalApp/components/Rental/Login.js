@@ -26,6 +26,9 @@ const Login = ({navigation}) => {
           style={[MyStyle.searchBar, MyStyle.margin]}
         />
         <View style={[MyStyle.row, MyStyle.margin]}>
+          
+
+
           <Button
             icon="account-lock-open"
             mode="contained"
@@ -42,6 +45,8 @@ const Login = ({navigation}) => {
           >
             Sign up
           </Button>
+
+
         </View>
         <Text>Forgot password?</Text>
       </View>

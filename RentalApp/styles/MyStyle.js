@@ -89,4 +89,10 @@ export default StyleSheet.create({
     borderRadius: 5,
     padding: 10,
   },
+  row_button: {
+    flexDirection: "row", // Đảm bảo các phần tử trong hàng nằm ngang
+    justifyContent: "center", // Căn giữa các phần tử trong hàng
+    alignItems: "center", // Căn giữa theo trục dọc
+  },
+  
 });

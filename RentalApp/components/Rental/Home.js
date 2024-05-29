@@ -1,10 +1,18 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  SafeAreaView,
+} from "react-native";
 import MyStyle from "../../styles/MyStyle";
 import {
   Card,
   IconButton,
   Searchbar,
   TouchableRipple,
+  BottomNavigation,
 } from "react-native-paper";
 import React, { useContext } from "react";
 import Swiper from "react-native-swiper";
@@ -31,13 +39,12 @@ const Home = ({ navigation }) => {
       console.error(ex);
     }
   };
-
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
 
   return (
-    <ScrollView style={[MyStyle.container, MyStyle.top]}>
+    <ScrollView style={[MyStyle.container]}>
       <ScrollView>
         <View style={[MyStyle.row]}>
           <Searchbar
@@ -140,7 +147,7 @@ const Home = ({ navigation }) => {
               </View>
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={() => navigation.navigate("CreatePostAccommodation")}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
