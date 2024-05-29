@@ -24,9 +24,8 @@ const HomeStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
-      <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation} options={{ title: "Tạo bài đăng" }} />
-      <Stack.Screen name="CreatePostRequest" component={CreatePostRequest} options={{ title: "Tạo bài đăng" }} />
-
+      <Stack.Screen name="PostAccommodations" component={PostAccommodations} options={{ title: "Danh sách bài đăng" }}></Stack.Screen>
+      <Stack.Screen name="PostAccommodationDetails" component={PostAccommodationDetails} options={{ title: "Bài đăng" }}></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -95,15 +94,15 @@ const MyTab = () => {
 
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}
-    tabBarOptions={{ activeTintColor: 'purple' }} >
-      <Tab.Screen name="Home" component={HomeStack} options={{ tabBarIcon: () => <Icon size={30} color="purple" source="home" /> }} />
+      tabBarOptions={{ activeTintColor: 'purple' }} >
+      <Tab.Screen name="HomeStack" component={HomeStack} options={{ tabBarIcon: () => <Icon size={30} color="purple" source="home" /> }} />
       {user === null ? <>
-        <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" />}} />
+        <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" /> }} />
         <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="purple" source="login" /> }} />
       </> : <>
         <Tab.Screen name="ListPostAccommodationStack" component={ListPostAccommodationStack} options={{ title: "Danh sách Bài đăng", tabBarIcon: () => <Icon size={30} color="purple" source="post" /> }} />
         <Tab.Screen name="Message" component={MessageStack} options={{ title: "Tin nhắn", tabBarIcon: () => <Icon size={30} color="purple" source="message" /> }} />
-        <Tab.Screen name="Profile" component={ProfileStack} options={{ title: user.username, tabBarIcon: () => <Icon size={30} color="purple" source="account" /> }} />
+        <Tab.Screen name="ProfileStack" component={ProfileStack} options={{ title: user.username, tabBarIcon: () => <Icon size={30} color="purple" source="account" /> }} />
       </>}
 
     </Tab.Navigator>
@@ -111,9 +110,9 @@ const MyTab = () => {
 };
 
 export default function App() {
-  const userData = {username: "chutro", user_type: "landlord"}
-  // const userData = {username: "thuetro", user_type: "tenant"}r
-  // const userData = null
+  // const userData = { username: "chutro", user_type: "landlord" }
+  // const userData = {username: "thuetro", user_type: "tenant"}
+  const userData = null
   const [user, dispatch] = useReducer(MyUserReducer, userData);
   return (
     <NavigationContainer>
