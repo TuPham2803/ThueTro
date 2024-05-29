@@ -86,23 +86,33 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         return queryset
 
     def create(self, request, *args, **kwargs):
-        # Tạo bài đăng mới
+        # Tạo bài đăng mới từ dữ liệu yêu cầu
         post_serializer = self.get_serializer(data=request.data)
-        post_serializer.is_valid(raise_exception=True)
-        post = post_serializer.save()
+        if not post_serializer.is_valid():
+            return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Tải các hình ảnh lên CDN và tạo dữ liệu trong cơ sở dữ liệu cho chúng
+        # Kiểm tra số lượng hình ảnh tải lên
         images = request.FILES.getlist('images')
-
         if len(images) < 3:
             return Response({'error': 'At least three images are required'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Lưu tạm bài đăng nhưng chưa commit vào cơ sở dữ liệu
+        post = post_serializer.save(commit=False)
+
         uploaded_image_urls = []
         for image_file in images:
-            upload_result = cloudinary.uploader.upload(image_file)
-            uploaded_image_urls.append(upload_result['secure_url'])
-            AccommodationImage.objects.create(image=upload_result['secure_url'], post_accommodation=post)
+            try:
+                upload_result = cloudinary.uploader.upload(image_file)
+                uploaded_image_urls.append(upload_result['secure_url'])
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+        # Chỉ khi tất cả hình ảnh được tải lên thành công, lưu bài đăng và ảnh vào cơ sở dữ liệu
+        post.save()
+        for url in uploaded_image_urls:
+            AccommodationImage.objects.create(image=url, post_accommodation=post)
+
+        # Chuẩn bị dữ liệu phản hồi
         response_data = {
             'post': post_serializer.data
         }

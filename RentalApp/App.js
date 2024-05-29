@@ -10,19 +10,19 @@ import Profile from "./components/User/Profile";
 import React from "react";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
 import CreatePostRequest from "./components/Rental/CreatePostRequest";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from 'react-native-paper';
+import PostAccommodations from "./components/Rental/PostAccomodations";
+import PostAccommodationDetails from "./components/Rental/PostAccommodationDetails";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Icon } from "react-native-paper";
 import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
 import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
-
-
 
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   const user = useContext(MyUserContext);
   return (
-    <Stack.Navigator >
+    <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
       <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation} options={{ title: "Tạo bài đăng" }} />
       <Stack.Screen name="CreatePostRequest" component={CreatePostRequest} options={{ title: "Tạo bài đăng" }} />
@@ -35,56 +35,59 @@ const PostManagerStack = () => {
   const user = useContext(MyUserContext);
 
   return (
-    <Stack.Navigator >
-      {user.user_type == "landlord" ? <>
-        <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation}
-          options={{ title: "Tạo tin cho thuê" }} />
-      </> : <>
-        <Stack.Screen name="CreatePostRequest" component={CreatePostRequest}
-          options={{ title: "Tạo tin tìm phòng" }} />
-      </>}
+    <Stack.Navigator>
+      {user.user_type == "landlord" ? (
+        <>
+          <Stack.Screen
+            name="CreatePostAccommodation"
+            component={CreatePostAccommodation}
+            options={{ title: "Tạo tin cho thuê" }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name="CreatePostRequest"
+            component={CreatePostRequest}
+            options={{ title: "Tạo tin tìm phòng" }}
+          />
+        </>
+      )}
     </Stack.Navigator>
-
-
   );
 };
 const MessageStack = () => {
   const user = useContext(MyUserContext);
-  return (
-    <Stack.Navigator >
-
-    </Stack.Navigator>
-  );
+  return <Stack.Navigator></Stack.Navigator>;
 };
 
 const ProfileStack = () => {
   const user = useContext(MyUserContext);
 
   return (
-    <Stack.Navigator >
-     
-        <Stack.Screen name="Profile" component={Profile}/>
-
+    <Stack.Navigator>
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
-
-    
   );
 };
 
 const ListPostAccommodationStack = () => {
   const user = useContext(MyUserContext);
   return (
-    <Stack.Navigator >
-      <Stack.Screen name="ListPostAccommodation" component={ListPostAccommodation} options={{ title: "Danh sách bài đăng" }} />
-      <Stack.Screen name = "UpdatePostAccommodation" component = {UpdatePostAccommodation} options={{ title: "Chỉnh sửa bài đăng" }}/>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ListPostAccommodation"
+        component={ListPostAccommodation}
+        options={{ title: "Danh sách bài đăng" }}
+      />
+      <Stack.Screen
+        name="UpdatePostAccommodation"
+        component={UpdatePostAccommodation}
+        options={{ title: "Chỉnh sửa bài đăng" }}
+      />
     </Stack.Navigator>
   );
-}
-
-
-
-
-
+};
 
 const Tab = createBottomTabNavigator();
 const MyTab = () => {
@@ -105,7 +108,7 @@ const MyTab = () => {
 
     </Tab.Navigator>
   );
-}
+};
 
 export default function App() {
   const userData = {username: "chutro", user_type: "landlord"}
