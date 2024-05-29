@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Home from "./components/Rental/Home";
 import Login from "./components/User/Login";
+import Register from "./components/User/Register";
 import { useContext, useReducer } from "react";
 import { MyUserReducer } from "./configs/Reducer";
 import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
@@ -24,14 +25,14 @@ const HomeStack = () => {
     <Stack.Navigator >
       <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
       <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation} options={{ title: "Tạo bài đăng" }} />
+      <Stack.Screen name="CreatePostRequest" component={CreatePostRequest} options={{ title: "Tạo bài đăng" }} />
+
     </Stack.Navigator>
   );
 };
 
 const PostManagerStack = () => {
-  // const user = useContext(MyUserContext);
-  // const user = { username: "admin", user_type: "landlord" };
-  const user = { username: "admin", user_type: "tenant" };
+  const user = useContext(MyUserContext);
 
   return (
     <Stack.Navigator >
@@ -57,9 +58,7 @@ const MessageStack = () => {
 };
 
 const ProfileStack = () => {
-  // const user = useContext(MyUserContext);
-  // const user = { username: "admin", user_type: "landlord" };
-  const user = { username: "admin", user_type: "tenant" };
+  const user = useContext(MyUserContext);
 
   return (
     <Stack.Navigator >
@@ -89,15 +88,14 @@ const ListPostAccommodationStack = () => {
 
 const Tab = createBottomTabNavigator();
 const MyTab = () => {
-  // const user = useContext(MyUserContext);
-  const user = { username: "tu", user_type: "landlord" };
+  const user = useContext(MyUserContext);
 
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}
     tabBarOptions={{ activeTintColor: 'purple' }} >
       <Tab.Screen name="Home" component={HomeStack} options={{ tabBarIcon: () => <Icon size={30} color="purple" source="home" /> }} />
       {user === null ? <>
-        {/* <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" />}} /> */}
+        <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" />}} />
         <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="purple" source="login" /> }} />
       </> : <>
         <Tab.Screen name="ListPostAccommodationStack" component={ListPostAccommodationStack} options={{ title: "Danh sách Bài đăng", tabBarIcon: () => <Icon size={30} color="purple" source="post" /> }} />
@@ -110,8 +108,10 @@ const MyTab = () => {
 }
 
 export default function App() {
-  const [user, dispatch] = useReducer(MyUserReducer, null);
-
+  const userData = {username: "chutro", user_type: "landlord"}
+  // const userData = {username: "thuetro", user_type: "tenant"}r
+  // const userData = null
+  const [user, dispatch] = useReducer(MyUserReducer, userData);
   return (
     <NavigationContainer>
       <MyUserContext.Provider value={user}>
