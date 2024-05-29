@@ -28,6 +28,10 @@ export default StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
+  col:{
+    flexDirection: "column",
+    flexWrap: "wrap",
+  },
   margin: {
     margin: 5,
   },

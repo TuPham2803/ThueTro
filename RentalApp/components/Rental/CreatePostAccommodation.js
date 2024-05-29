@@ -245,13 +245,6 @@ const CreatePostAccommodation = ({ navigation }) => {
           >
             Đăng bài
           </Button>
-          <Button 
-            mode="contained"
-            onPress={() => console.log("Pressed")}
-            style={[MyStyle.button, { backgroundColor: "purple" }, {marginTop:10}]}
-          >
-            Sửa bài đăng
-          </Button>
         </ScrollView>
       </View>
     </Provider>

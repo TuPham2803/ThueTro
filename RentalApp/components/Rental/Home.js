@@ -31,6 +31,14 @@ const Home = ({ navigation }) => {
   const [accommdation, setAccomodation] = React.useState([]);
   const user = useContext(MyUserContext);
 
+  const handlePress = () => {
+    if (user.user_type === 'landlord') {
+      navigation.navigate('CreatePostAccommodation');
+    } else {
+      navigation.navigate('CreatePostRequest');
+    }
+  }
+
   const loadPostAccomodations = async () => {
     try {
       let res = await APIs.get(
@@ -149,13 +157,13 @@ const Home = ({ navigation }) => {
               </View>
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => navigation.navigate("CreatePostAccommodation")}
+              onPress={handlePress}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
                 <IconButton icon="plus" color="purple" size={20} />
-                <Text>Đăng phòng trọ</Text>
+                <Text>Đăng tin</Text>
               </View>
             </TouchableRipple>
           </View>
