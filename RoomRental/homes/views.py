@@ -15,6 +15,8 @@ from .perms import RestrictTo
 import cloudinary
 from .sendmail import send_mail
 from threading import Thread
+
+
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
@@ -96,9 +98,6 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         if len(images) < 3:
             return Response({'error': 'At least three images are required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Lưu tạm bài đăng nhưng chưa commit vào cơ sở dữ liệu
-        post = post_serializer.save(commit=False)
-
         uploaded_image_urls = []
         for image_file in images:
             try:
@@ -108,7 +107,7 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Chỉ khi tất cả hình ảnh được tải lên thành công, lưu bài đăng và ảnh vào cơ sở dữ liệu
-        post.save()
+        post = post_serializer.save(owner=request.user, user_post=request.user)
         for url in uploaded_image_urls:
             AccommodationImage.objects.create(image=url, post_accommodation=post)
 
@@ -199,6 +198,16 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 
     # permission_classes = [permissions.IsAuthenticated, IsTenantAndFollowLandlord]
 
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action.__eq__('list'):
+            user_id = self.request.query_params.get('id')
+            if user_id:
+                queryset = queryset.filter(id__icontains=user_id)
+
+            return queryset
+
     def get_permissions(self):
         if self.action == 'get_current_user':
             return [permissions.IsAuthenticated()]
@@ -247,14 +256,12 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 fo.save()
             return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
 
-    
-    
-    @action (methods=['get'], detail=False, url_path='test_sendmail')
+    @action(methods=['get'], detail=False, url_path='test_sendmail')
     def test_sendmail(self, request):
         post_accommodation = PostAccommodation.objects.get(id=1)
-        Thread(target=send_mail, args=(post_accommodation, )).start()
+        Thread(target=send_mail, args=(post_accommodation,)).start()
         return Response({}, status=status.HTTP_200_OK)
-    
+
     @action(methods=['get'], detail=False, url_path='statistics')
     def user_statistics(self, request):
         serializer = serializers.UserStatisticSerializer(data=request.query_params)
@@ -307,6 +314,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
             'period': period,
             'period_value': period_value
         }, status=status.HTTP_200_OK)
+
 
 class CommentAccommodationViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = CommentAccommodation.objects.all()
