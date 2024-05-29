@@ -12,10 +12,11 @@ const ListPostAccommodation = ({ navigation }) => {
             style={[MyStyle.Button, { backgroundColor: "purple"}]}
             onPress={() => navigation.navigate("UpdatePostAccommodation")}
         >
-            Sửa bài đăng
+            Sưa3 bài đăng
         </Button>
     );
 };
 export default ListPostAccommodation;
 
+   
 

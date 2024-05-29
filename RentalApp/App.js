@@ -76,8 +76,8 @@ const ListPostAccommodationStack = () => {
   const user = useContext(MyUserContext);
   return (
     <Stack.Navigator >
-      <Stack.Screen name="Danh sách Bài Đăng" component={ListPostAccommodation}/>
-      <Stack.Screen name = "UpdatePostAccommodation" component = {UpdatePostAccommodation}/>
+      <Stack.Screen name="ListPostAccommodation" component={ListPostAccommodation} options={{ title: "Danh sách bài đăng" }} />
+      <Stack.Screen name = "UpdatePostAccommodation" component = {UpdatePostAccommodation} options={{ title: "Chỉnh sửa bài đăng" }}/>
     </Stack.Navigator>
   );
 }

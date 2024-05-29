@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import * as ImagePicker from 'react-native-image-picker';
 import ListPostAccommodation from "./ListPostAccommodation";
 
-const CreatePostAccommodation = ({ navigation }) => {
+const UpdatePostAccommodation = ({ navigation }) => {
     const [title, setTitle] = React.useState("");
     const [address, setAddress] = React.useState("");
     const [price, setPrice] = React.useState("");
@@ -275,4 +275,4 @@ const CreatePostAccommodation = ({ navigation }) => {
     );
 };
 
-export default CreatePostAccommodation;
+export default UpdatePostAccommodation;
