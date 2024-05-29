@@ -11,19 +11,17 @@ import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation
 import CreatePostRequest from "./components/Rental/CreatePostRequest";
 import PostAccommodations from "./components/Rental/PostAccomodations";
 import PostAccommodationDetails from "./components/Rental/PostAccommodationDetails";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from 'react-native-paper';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Icon } from "react-native-paper";
 import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
 import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
-
-
 
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   const user = useContext(MyUserContext);
   return (
-    <Stack.Navigator >
+    <Stack.Navigator>
       <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
       <Stack.Screen
         name="Login"
@@ -34,11 +32,6 @@ const HomeStack = () => {
         name="Profile"
         component={Profile}
         options={{ title: "Profile" }}
-      />
-      <Stack.Screen
-        name="CreatePostAccommodation"
-        component={CreatePostAccommodation}
-        options={{ title: "CreatePostAccommodation" }}
       />
       <Stack.Screen
         name="CreatePostRequest"
@@ -55,7 +48,11 @@ const HomeStack = () => {
         component={PostAccommodationDetails}
         options={{ title: "PostAccommodationDetails" }}
       />
-      <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation} options={{ title: "Tạo bài đăng" }} />
+      <Stack.Screen
+        name="CreatePostAccommodation"
+        component={CreatePostAccommodation}
+        options={{ title: "Tạo bài đăng" }}
+      />
     </Stack.Navigator>
   );
 };
@@ -66,26 +63,30 @@ const PostManagerStack = () => {
   const user = { username: "admin", user_type: "tenant" };
 
   return (
-    <Stack.Navigator >
-      {user.user_type == "landlord" ? <>
-        <Stack.Screen name="CreatePostAccommodation" component={CreatePostAccommodation}
-          options={{ title: "Tạo tin cho thuê" }} />
-      </> : <>
-        <Stack.Screen name="CreatePostRequest" component={CreatePostRequest}
-          options={{ title: "Tạo tin tìm phòng" }} />
-      </>}
+    <Stack.Navigator>
+      {user.user_type == "landlord" ? (
+        <>
+          <Stack.Screen
+            name="CreatePostAccommodation"
+            component={CreatePostAccommodation}
+            options={{ title: "Tạo tin cho thuê" }}
+          />
+        </>
+      ) : (
+        <>
+          <Stack.Screen
+            name="CreatePostRequest"
+            component={CreatePostRequest}
+            options={{ title: "Tạo tin tìm phòng" }}
+          />
+        </>
+      )}
     </Stack.Navigator>
-
-
   );
 };
 const MessageStack = () => {
   const user = useContext(MyUserContext);
-  return (
-    <Stack.Navigator >
-
-    </Stack.Navigator>
-  );
+  return <Stack.Navigator></Stack.Navigator>;
 };
 
 const ProfileStack = () => {
@@ -94,30 +95,29 @@ const ProfileStack = () => {
   const user = { username: "admin", user_type: "tenant" };
 
   return (
-    <Stack.Navigator >
-     
-        <Stack.Screen name="Profile" component={Profile}/>
-
+    <Stack.Navigator>
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
-
-    
   );
 };
 
 const ListPostAccommodationStack = () => {
   const user = useContext(MyUserContext);
   return (
-    <Stack.Navigator >
-      <Stack.Screen name="ListPostAccommodation" component={ListPostAccommodation} options={{ title: "Danh sách bài đăng" }} />
-      <Stack.Screen name = "UpdatePostAccommodation" component = {UpdatePostAccommodation} options={{ title: "Chỉnh sửa bài đăng" }}/>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ListPostAccommodation"
+        component={ListPostAccommodation}
+        options={{ title: "Danh sách bài đăng" }}
+      />
+      <Stack.Screen
+        name="UpdatePostAccommodation"
+        component={UpdatePostAccommodation}
+        options={{ title: "Chỉnh sửa bài đăng" }}
+      />
     </Stack.Navigator>
   );
-}
-
-
-
-
-
+};
 
 const Tab = createBottomTabNavigator();
 const MyTab = () => {
@@ -125,21 +125,66 @@ const MyTab = () => {
   const user = { username: "tu", user_type: "landlord" };
 
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}
-    tabBarOptions={{ activeTintColor: 'purple' }} >
-      <Tab.Screen name="Home" component={HomeStack} options={{ tabBarIcon: () => <Icon size={30} color="purple" source="home" /> }} />
-      {user === null ? <>
-        {/* <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" />}} /> */}
-        <Tab.Screen name="Login" component={Login} options={{ title: "Đăng nhập", tabBarIcon: () => <Icon size={30} color="purple" source="login" /> }} />
-      </> : <>
-        <Tab.Screen name="ListPostAccommodationStack" component={ListPostAccommodationStack} options={{ title: "Danh sách Bài đăng", tabBarIcon: () => <Icon size={30} color="purple" source="post" /> }} />
-        <Tab.Screen name="Message" component={MessageStack} options={{ title: "Tin nhắn", tabBarIcon: () => <Icon size={30} color="purple" source="message" /> }} />
-        <Tab.Screen name="Profile" component={ProfileStack} options={{ title: user.username, tabBarIcon: () => <Icon size={30} color="purple" source="account" /> }} />
-      </>}
-
+    <Tab.Navigator
+      screenOptions={{ headerShown: false }}
+      tabBarOptions={{ activeTintColor: "purple" }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeStack}
+        options={{
+          tabBarIcon: () => <Icon size={30} color="purple" source="home" />,
+        }}
+      />
+      {user === null ? (
+        <>
+          {/* <Tab.Screen name="Register" component={Register} options={{ title: "Đăng ký", tabBarIcon: () => <Icon size={30} color="purple" source="account" />}} /> */}
+          <Tab.Screen
+            name="Login"
+            component={Login}
+            options={{
+              title: "Đăng nhập",
+              tabBarIcon: () => (
+                <Icon size={30} color="purple" source="login" />
+              ),
+            }}
+          />
+        </>
+      ) : (
+        <>
+          <Tab.Screen
+            name="ListPostAccommodationStack"
+            component={ListPostAccommodationStack}
+            options={{
+              title: "Danh sách Bài đăng",
+              tabBarIcon: () => <Icon size={30} color="purple" source="post" />,
+            }}
+          />
+          <Tab.Screen
+            name="Message"
+            component={MessageStack}
+            options={{
+              title: "Tin nhắn",
+              tabBarIcon: () => (
+                <Icon size={30} color="purple" source="message" />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileStack}
+            options={{
+              title: user.username,
+              tabBarIcon: () => (
+                <Icon size={30} color="purple" source="account" />
+              ),
+            }}
+          />
+        </>
+      )}
     </Tab.Navigator>
   );
-}
+};
 
 export default function App() {
   const [user, dispatch] = useReducer(MyUserReducer, null);

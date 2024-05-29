@@ -14,6 +14,7 @@ const Item = ({ instance }) => {
     <List.Item
       style={MyStyle.margin}
       title={instance.title}
+      titleStyle={MyStyle.header}
       description={
         <View style={{ flexDirection: "column" }}>
           {instance.description ? (
@@ -33,7 +34,20 @@ const Item = ({ instance }) => {
           <Image style={MyStyle.avatar} source={{ uri: instance.images[0] }} />
         ) : null
       }
-      right={() => <List.Icon icon="arrow-right" />}
+      right={() => (
+        <View style={[{ justifyContent: "flex-end", alignItems: "flex-end" }]}>
+          <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
+            <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
+              <List.Icon icon="heart-outline" />
+              <Text>12</Text>
+            </View>
+            <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
+              <List.Icon icon="comment-outline" />
+              <Text>12</Text>
+            </View>
+          </View>
+        </View>
+      )}
     />
   );
 };

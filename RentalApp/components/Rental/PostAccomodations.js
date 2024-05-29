@@ -28,7 +28,9 @@ const PostAccommodations = ({ navigation }) => {
 
   const loadPostAccomodations = async () => {
     try {
-      let res = await APIs.get(endpoints["post_accomodations"]);
+      let res = await APIs.get(
+        `${endpoints["post_accomodations"]}?pending_status=APR`
+      );
       setPosts(res.data);
     } catch (ex) {
       console.error(ex);
@@ -40,7 +42,7 @@ const PostAccommodations = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={[MyStyle.container, MyStyle.margin, MyStyle.top]}>
+    <View style={[MyStyle.container, MyStyle.margin]}>
       <Searchbar placeholder="Search" onChangeText={setQ} value={q} />
       <ScrollView>
         <View style={[MyStyle.container, MyStyle.margin]}>
