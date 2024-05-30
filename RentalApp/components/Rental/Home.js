@@ -41,7 +41,9 @@ const Home = ({ navigation }) => {
 
   const loadPostAccomodations = async () => {
     try {
-      let res = await APIs.get(endpoints["post_accomodations"]);
+      let res = await APIs.get(
+        `${endpoints["post_accomodations"]}?pending_status=APR`
+      );
       setAccomodation(res.data);
     } catch (ex) {
       console.error(ex);
@@ -105,7 +107,7 @@ const Home = ({ navigation }) => {
         <View style={[MyStyle.container, MyStyle.top]}>
           <View style={[MyStyle.row]}>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={() => navigation.navigate("PostRequests")}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >

@@ -15,14 +15,10 @@ class MyAdminSite(admin.AdminSite):
             path('reviewing-posts/', self.reviewing_posts)] + super().get_urls()
 
     def stats_view(self, request):
-        return TemplateResponse(request, 'admin/user_stats.html', {
-
-        })
+        return TemplateResponse(request, 'admin/user_stats.html', {})
 
     def reviewing_posts(self, request):
-        return TemplateResponse(request, 'admin/reviewing_posts.html', {
-
-        })
+        return TemplateResponse(request, 'admin/reviewing_posts.html', {})
 
     def get_app_list(self, request):
         app_list = super().get_app_list(request)
