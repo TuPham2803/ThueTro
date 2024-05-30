@@ -9,7 +9,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 // hay tao cho toi trang giao dien tao bai dang thue nha voi cac truong nhu dia chi, tieu de, gia tien, ghi chu, email, so luong nguoi o, sdt, button dang bai, button quay ve trang chu
 
-const CreatePostRequest = ({ navigation }) => {
+const UpdatePostRequest = ({ navigation }) => {
     const [address, setAddress] = React.useState("");
     const [title, setTitle] = React.useState("");
     const [price, setPrice] = useState(0);
@@ -46,18 +46,8 @@ const CreatePostRequest = ({ navigation }) => {
 
     return (
         <Provider>
-            <View style={[MyStyle.container,{marginTop:20, marginBottom:30}]}>
-                {/* <Appbar.Header style={{ backgroundColor: "purple" }}>
-                    <Appbar.BackAction onPress={() => console.log("Go back")} />
-                    <Appbar.Content
-                        title={<Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>Bài Đăng Tìm Phòng</Text>}
-                    />
-                </Appbar.Header> */}
-
-
-
-
-                <ScrollView style={[ MyStyle.wrapper, { paddingHorizontal: 20 }]}>
+            <View style={[MyStyle.container, { marginTop: 20, marginBottom: 30 }]}>
+                <ScrollView style={[MyStyle.wrapper, { paddingHorizontal: 20 }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="map-marker" size={30} color="purple" />
                         <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Địa chỉ mong muốn: </Text>
@@ -213,7 +203,7 @@ const CreatePostRequest = ({ navigation }) => {
                         onPress={() => console.log("Pressed")}
                         style={[MyStyle.button, MyStyle.margin]}
                     >
-                        Post
+                        Sửa bài dđaăng
                     </Button>
 
                 </ScrollView>
@@ -273,4 +263,4 @@ const styles = StyleSheet.create({
 
 
 
-export default CreatePostRequest;
+export default UpdatePostRequest;

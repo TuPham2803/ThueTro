@@ -33,17 +33,9 @@ const CreatePostAccommodation = ({ navigation }) => {
 
   return (
     <Provider>
-      <View style={[MyStyle.container, MyStyle.top]}>
+      <View style={[MyStyle.container, {marginTop:20,marginBottom:30}]}>
 
-
-        {/* <Appbar.Header style={{ backgroundColor: "purple" }}>
-          <Appbar.BackAction onPress={() => console.log("Go back")} />
-          <Appbar.Content
-            title={<Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>Bài Đăng Phòng</Text>}
-          />
-        </Appbar.Header> */}
-
-        <ScrollView style={[MyStyle.top, MyStyle.wrapper, { paddingHorizontal: 20 }]}>
+        <ScrollView style={[ MyStyle.wrapper, { paddingHorizontal: 20 }]}>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
             <Icon source="home-account" size={30} color="purple" />
@@ -251,7 +243,7 @@ const CreatePostAccommodation = ({ navigation }) => {
             onPress={() => console.log("Pressed")}
             style={[MyStyle.button, { backgroundColor: "purple" }]}
           >
-            Create Post
+            Đăng bài
           </Button>
         </ScrollView>
       </View>

@@ -1,4 +1,11 @@
-import { Image, ScrollView, Text, TouchableOpacity, View, SafeAreaView } from "react-native";
+import {
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  SafeAreaView,
+} from "react-native";
 import MyStyle from "../../styles/MyStyle";
 import {
   Card,
@@ -6,7 +13,6 @@ import {
   Searchbar,
   TouchableRipple,
   BottomNavigation,
-
 } from "react-native-paper";
 import React, { useContext } from "react";
 import Swiper from "react-native-swiper";
@@ -25,9 +31,19 @@ const Home = ({ navigation }) => {
   const [accommdation, setAccomodation] = React.useState([]);
   const user = useContext(MyUserContext);
 
+  const handlePress = () => {
+    if (user.user_type === 'landlord') {
+      navigation.navigate('CreatePostAccommodation');
+    } else {
+      navigation.navigate('CreatePostRequest');
+    }
+  }
+
   const loadPostAccomodations = async () => {
     try {
-      let res = await APIs.get(endpoints["post_accomodations"]);
+      let res = await APIs.get(
+        `${endpoints["post_accomodations"]}?pending_status=APR`
+      );
       setAccomodation(res.data);
     } catch (ex) {
       console.error(ex);
@@ -36,8 +52,9 @@ const Home = ({ navigation }) => {
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
+
   return (
-    <ScrollView style={[MyStyle.container, MyStyle.top]}>
+    <ScrollView style={[MyStyle.container]}>
       <ScrollView>
         <View style={[MyStyle.row]}>
           <Searchbar
@@ -90,7 +107,7 @@ const Home = ({ navigation }) => {
         <View style={[MyStyle.container, MyStyle.top]}>
           <View style={[MyStyle.row]}>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={() => navigation.navigate("PostRequests")}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
@@ -100,7 +117,7 @@ const Home = ({ navigation }) => {
               </View>
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={() => navigation.navigate("PostAccommodations")}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
@@ -140,13 +157,13 @@ const Home = ({ navigation }) => {
               </View>
             </TouchableRipple>
             <TouchableRipple
-              onPress={() => console.log("Pressed")}
+              onPress={handlePress}
               rippleColor="rgba(0, 0, 0, .32)"
               style={[MyStyle.iconFeature, MyStyle.margin]}
             >
               <View style={[MyStyle.alignCenter]}>
                 <IconButton icon="plus" color="purple" size={20} />
-                <Text>Đăng phòng trọ</Text>
+                <Text>Đăng tin</Text>
               </View>
             </TouchableRipple>
           </View>
@@ -212,7 +229,7 @@ const Home = ({ navigation }) => {
         ))}
       </ScrollView>
     </ScrollView>
-  );  
+  );
 };
 
 export default Home;

@@ -4,11 +4,16 @@ const BASE_URL = "http://26.14.198.86:8000/";
 
 export const endpoints = {
   post_accomodations: "/post_accommodations/",
+  post_accomodation_details: (postAccomodationId) =>
+    `/post_accommodations/${postAccomodationId}/`,
   post_requests: "/post_requests/",
+  post_request_details: (postRequestId) => `/post_requests/${postRequestId}/`,
   user: "/user/",
+  "user-details": (userId) => `/user/?id=${userId}`,
   "current-user": "/user/current-user/",
   login: "/o/token/",
   register: "/user/",
+  comments: (postId) => `/post_accommodations/${postId}/comments/`,
 };
 
 export const authApi = (token) => {

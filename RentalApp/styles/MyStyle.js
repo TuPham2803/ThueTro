@@ -7,12 +7,17 @@ export default StyleSheet.create({
     flex: 1,
   },
   top: {
-    marginTop: 50,
+    marginTop: 20,
   },
   subject: {
     fontSize: 15,
     fontWeight: "",
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: "bold",
     color: "purple",
+    flexShrink: 1,
   },
   header: {
     fontSize: 20,
@@ -21,6 +26,10 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  col:{
+    flexDirection: "column",
     flexWrap: "wrap",
   },
   margin: {
@@ -94,5 +103,4 @@ export default StyleSheet.create({
     justifyContent: "center", // Căn giữa các phần tử trong hàng
     alignItems: "center", // Căn giữa theo trục dọc
   },
-  
 });

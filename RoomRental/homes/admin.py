@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest
+from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest, CommentAccommodation
 import cloudinary
 from django.contrib import admin
 from django.utils.html import mark_safe
@@ -11,7 +11,8 @@ class MyAdminSite(admin.AdminSite):
     site_header = 'Admin_Room'
 
     def get_urls(self):
-        return [path('user-stats/', self.stats_view)] + [path('reviewing-posts/', self.reviewing_posts)] + super().get_urls()
+        return [path('user-stats/', self.stats_view)] + [
+            path('reviewing-posts/', self.reviewing_posts)] + super().get_urls()
 
     def stats_view(self, request):
         return TemplateResponse(request, 'admin/user_stats.html', {})
@@ -67,5 +68,5 @@ admin_site.register(User)
 admin_site.register(PostAccommodation, MyAccommodationAdmin)
 admin_site.register(PostRequest)
 admin_site.register(Follow)
-
+admin_site.register(CommentAccommodation)
 # Register your models here.
