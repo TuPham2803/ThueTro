@@ -110,9 +110,9 @@ const MyTab = () => {
 };
 
 export default function App() {
-  // const userData = { username: "chutro", user_type: "landlord" }
+  const userData = { username: "chutro", user_type: "landlord" , id: 1}
   // const userData = {username: "thuetro", user_type: "tenant"}
-  const userData = null
+  // const userData = null
   const [user, dispatch] = useReducer(MyUserReducer, userData);
   return (
     <NavigationContainer>

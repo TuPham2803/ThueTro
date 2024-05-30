@@ -4,8 +4,10 @@ import { Button, TextInput, IconButton, Icon, Appbar, Picker, Menu, Provider, Sn
 import React, { useState } from "react";
 import * as ImagePicker from 'react-native-image-picker';
 import ListPostAccommodation from "./ListPostAccommodation";
+import { APIs, endpoints } from "../../configs/APIs";
+import axios from "axios";
 
-const UpdatePostAccommodation = ({ navigation }) => {
+const UpdatePostAccommodation = ({route, navigation }) => {
     const [title, setTitle] = React.useState("");
     const [address, setAddress] = React.useState("");
     const [price, setPrice] = React.useState("");
@@ -20,21 +22,32 @@ const UpdatePostAccommodation = ({ navigation }) => {
     const [current_people, setCurrentPeople] = React.useState("");
     const options = ["Nhà 1", "Nhà 2"];
     const [visible, setVisible] = useState(false);
+    const { post } = route.params;
 
+    // Now you can use the `post` object
+    console.log(post);
     const [snackbarVisible, setSnackbarVisible] = useState(false);
-
-    const handleUpdate = () => {
-        // Thực hiện cập nhật bài đăng
-        console.log("Update Pressed");
-        // Gửi dữ liệu cập nhật lên server hoặc thực hiện hành động cập nhật ở đây
-        setSnackbarVisible(true); // Show Snackbar on update
-
-        // Điều hướng về màn hình ListPostAccommodation sau khi snackbar hiển thị
-        setTimeout(() => {
-            navigation.navigate(ListPostAccommodation);
-
-        }, 3000); // Thời gian chờ (3 giây) để hiển thị Snackbar trước khi điều hướng
+    const [postAccommodation, setPostAccommodation] = useState(post);
+    const updatePostAccomodations = async () => {
+        try {
+            let res = await APIs.put(
+                `${endpoints["post_accomodations"]}${post.id}/`,
+                postAccommodation
+            );
+            setPosts(res.data);
+            console.log("Update Pressed");
+            // Gửi dữ liệu cập nhật lên server hoặc thực hiện hành động cập nhật ở đây
+            setSnackbarVisible(true); // Show Snackbar on update
+            setTimeout(() => {
+                navigation.navigate(ListPostAccommodation);
+    
+            }, 3000); // Thời gian chờ (3 giây) để hiển thị Snackbar trước khi điều hướng
+        } catch (ex) {
+            console.error(ex);
+        }
     };
+
+ 
     const pickImage = () => {
         ImagePicker.launchImageLibrary(
             { mediaType: 'photo', selectionLimit: 0 }, // Allow multiple images
@@ -45,6 +58,9 @@ const UpdatePostAccommodation = ({ navigation }) => {
             }
         );
     };
+
+
+
 
     return (
         <Provider>
@@ -59,10 +75,10 @@ const UpdatePostAccommodation = ({ navigation }) => {
 
                     <TextInput
                         label="Title"
-                        value={title}
-                        onChangeText={setTitle}
+                        value={postAccommodation.title}
+                        onChangeText={setPostAccommodation}
                         style={[MyStyle.input, { marginBottom: 10 }]} //Thêm marginBottom để tạo khoảng cách dưới
-                        left={<Icon source="home-account" size={40} color="purple" />}
+                        
                     />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="map-marker" size={30} color="purple" />
@@ -70,10 +86,10 @@ const UpdatePostAccommodation = ({ navigation }) => {
                     </View>
                     <TextInput
                         label="Address"
-                        value={address}
-                        onChangeText={setAddress}
+                        value={postAccommodation.address}
+                        onChangeText={setPostAccommodation}
                         style={[MyStyle.input, { marginBottom: 10 }]}
-                        left={<Icon source="map-marker" />}
+                        
                     />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="currency-usd" size={30} color="purple" />
@@ -256,7 +272,7 @@ const UpdatePostAccommodation = ({ navigation }) => {
 
                     <Button
                         mode="contained"
-                        onPress={handleUpdate}
+                        onPress={updatePostAccomodations}
                         style={[MyStyle.button, { backgroundColor: "purple" }, { marginTop: 10 }]}
                     >
                         Lưu chỉnh sửa
