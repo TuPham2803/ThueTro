@@ -22,6 +22,8 @@ import pymysql
 pymysql.install_as_MySQLdb()
 
 ALLOWED_HOSTS = ['26.14.198.86', '192.168.40.1', 'localhost', '127.0.0.1', '*']
+CORS_ORIGIN_ALLOW = True
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -34,6 +36,7 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'cloudinary',
     'cloudinary_storage',
+    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -58,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'RoomRental.urls'
@@ -88,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'homedb',
         'USER': 'root',
-        'PASSWORD': 'admin@123',
+        'PASSWORD': 'Admin@123',
         'HOST': ''  # mặc định localhost
     }
 }
