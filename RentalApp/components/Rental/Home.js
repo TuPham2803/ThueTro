@@ -36,12 +36,7 @@ const Home = ({ navigation }) => {
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
-
- 
-
-
   return (
-  
     <ScrollView style={[MyStyle.container, MyStyle.top]}>
       <ScrollView>
         <View style={[MyStyle.row]}>
@@ -217,18 +212,7 @@ const Home = ({ navigation }) => {
         ))}
       </ScrollView>
     </ScrollView>
-
-
-    
-
-    
-
-
-
-
-  );
-
-  
+  );  
 };
 
 export default Home;

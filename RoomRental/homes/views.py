@@ -15,9 +15,13 @@ from .perms import RestrictTo
 import cloudinary
 from .sendmail import send_mail
 from threading import Thread
+from .pagination import SmallPagination
+
+
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
+    pagination_class = SmallPagination
 
     def get_permissions(self):
         if self.action == 'comments' and self.request.POST:
@@ -101,7 +105,8 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         for image_file in images:
             upload_result = cloudinary.uploader.upload(image_file)
             uploaded_image_urls.append(upload_result['secure_url'])
-            AccommodationImage.objects.create(image=upload_result['secure_url'], post_accommodation=post)
+            AccommodationImage.objects.create(
+                image=upload_result['secure_url'], post_accommodation=post)
 
         response_data = {
             'post': post_serializer.data
@@ -111,7 +116,8 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.serializer_class(instance, data=request.data, partial=partial)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -158,7 +164,8 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.serializer_class(instance, data=request.data, partial=partial)
+        serializer = self.serializer_class(
+            instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -237,17 +244,16 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 fo.save()
             return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
 
-    
-    
-    @action (methods=['get'], detail=False, url_path='test_sendmail')
+    @action(methods=['get'], detail=False, url_path='test_sendmail')
     def test_sendmail(self, request):
         post_accommodation = PostAccommodation.objects.get(id=1)
         Thread(target=send_mail, args=(post_accommodation, )).start()
         return Response({}, status=status.HTTP_200_OK)
-    
+
     @action(methods=['get'], detail=False, url_path='statistics')
     def user_statistics(self, request):
-        serializer = serializers.UserStatisticSerializer(data=request.query_params)
+        serializer = serializers.UserStatisticSerializer(
+            data=request.query_params)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -290,13 +296,15 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
 
         user_counts = {}
         for user_type in ['landlord', 'tenant']:
-            user_counts[user_type] = User.objects.filter(user_type=user_type, **filters).count()
+            user_counts[user_type] = User.objects.filter(
+                user_type=user_type, **filters).count()
 
         return Response({
             'user_type_counts': user_counts,
             'period': period,
             'period_value': period_value
         }, status=status.HTTP_200_OK)
+
 
 class CommentAccommodationViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):
     queryset = CommentAccommodation.objects.all()
