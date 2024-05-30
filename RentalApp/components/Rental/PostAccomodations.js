@@ -15,12 +15,6 @@ import APIs, { endpoints } from "../../configs/APIs";
 import Swiper from "react-native-swiper";
 import RenderHTML from "react-native-render-html";
 
-/* 
-get all accommodation posts from the server and display them in a list
-show a short details of accommodation posts in Chip card so users can review them first, including the first image and title
-users can click on each item to see more details and contact the owner
-using react-native-paper 
-*/
 const PostAccommodations = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = React.useState(false);

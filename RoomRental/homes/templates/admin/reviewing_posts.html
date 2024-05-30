@@ -16,7 +16,7 @@
             <thead class="table-light">
                 <tr>
                     <th scope="col">Id</th>
-                    <th scope="col">Title</th>  
+                    <th scope="col">Title</th>
                     <th scope="col">City</th>
                     <th scope="col">District</th>
                     <th scope="col">Address</th>
@@ -28,6 +28,7 @@
                     <th scope="col">Max People</th>
                     <th scope="col">Current People</th>
                     <th scope="col">Phone Number</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +50,7 @@
     </ul>
 </nav>
 
-<div class="container mt-4">
+<div class="container mt-4" id="post-details-section" style="display: none;">
     <div class="card">
         <div class="card-header">
             <h2>Post Details</h2>
@@ -90,6 +91,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     const paginationControls = document.querySelector("#pagination-controls");
     const previousPage = document.querySelector("#previous-page");
     const nextPage = document.querySelector("#next-page");
+    const postDetailsSection = document.getElementById("post-details-section");
     let currentPage = 1;
     let totalPages = 1;
 
@@ -113,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (posts.length === 0) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
-            cell.colSpan = 12;
+            cell.colSpan = 13;
             cell.textContent = "No posts available.";
             cell.className = "text-center";
             row.appendChild(cell);
@@ -137,10 +139,60 @@ document.addEventListener("DOMContentLoaded", async function() {
                 <td>${post.max_people}</td>
                 <td>${post.current_people}</td>
                 <td>${post.phone_number}</td>
+                <td>
+                    <button class="btn btn-primary btn-sm review-button" data-id="${post.id}">Review</button>
+                </td>
             `;
 
             tableBody.appendChild(row);
         });
+
+        // Attach event listeners to review buttons
+        document.querySelectorAll(".review-button").forEach(button => {
+            button.addEventListener("click", () => {
+                const postId = button.getAttribute("data-id");
+                loadPostDetails(postId);
+            });
+        });
+    }
+
+    async function fetchPostDetails(id) {
+        const url = `http://127.0.0.1:8000/post_accommodations/${id}`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const post = await response.json();
+            return post;
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+            return null;
+        }
+    }
+
+    async function loadPostDetails(id) {
+        const post = await fetchPostDetails(id);
+        if (post) {
+            document.getElementById("post-title").textContent = post.title;
+            document.getElementById("post-owner").textContent = `Owner: ${post.owner}`;
+            document.getElementById("post-description").textContent = `Description: ${post.description}`;
+            document.getElementById("post-city").textContent = post.city;
+            document.getElementById("post-district").textContent = post.district;
+            document.getElementById("post-address").textContent = post.address;
+            document.getElementById("post-latitude").textContent = post.latitude ?? '';
+            document.getElementById("post-longitude").textContent = post.longitude ?? '';
+            document.getElementById("post-acreage").textContent = post.acreage ?? '';
+            document.getElementById("post-price").textContent = post.price ?? '';
+            document.getElementById("post-room-type").textContent = post.room_type;
+            document.getElementById("post-max-people").textContent = post.max_people;
+            document.getElementById("post-current-people").textContent = post.current_people;
+            document.getElementById("post-phone-number").textContent = post.phone_number;
+            document.getElementById("post-pending-status").textContent = post.pending_status;
+
+            // Show the post details section
+            postDetailsSection.style.display = 'block';
+        }
     }
 
     function updatePaginationControls() {
