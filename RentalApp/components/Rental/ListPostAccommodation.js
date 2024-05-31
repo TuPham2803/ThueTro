@@ -1,22 +1,84 @@
-//hãy tạo cho tôi một cái button tên là sửa bài đăng
-import { View, ScrollView, Text, Image, FlatList, TouchableOpacity } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import { Chip, Card, Searchbar, ActivityIndicator } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
-import { Button, TextInput, IconButton, Icon, Appbar, Picker, Menu, Provider } from "react-native-paper"; // Import IconButton
-import React, { useState } from "react";
-import UpdatePostAccommodation from "./UpdatePostAccommodation";
+import Item from "../../Utils/Item";
+import APIs, { endpoints } from "../../configs/APIs";
+import Swiper from "react-native-swiper";
+import RenderHTML from "react-native-render-html";
+import { MyUserContext } from "../../configs/Contexts";
+import { Button } from "react-native-paper";
+
+
 
 const ListPostAccommodation = ({ navigation }) => {
-    return (
-        <Button
-            mode="contained"
-            style={[MyStyle.Button, { backgroundColor: "purple"}]}
-            onPress={() => navigation.navigate("UpdatePostAccommodation")}
-        >
-            Sưa3 bài đăng
-        </Button>
-    );
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [q, setQ] = React.useState("");
+  const user = useContext(MyUserContext);
+  const loadPostAccomodations = async () => {
+    try {
+      let res = await APIs.get(
+        `${endpoints["post_accomodations"]}?user_post=${user.id}&q=${q}`
+      );
+      setPosts(res.data);
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
+
+  React.useEffect(() => {
+    loadPostAccomodations();
+  }, []);
+
+
+
+  return (
+    <View style={[MyStyle.container, MyStyle.margin]}>
+      <Searchbar placeholder="Search" onChangeText={setQ} value={q} />
+      <ScrollView>
+        <View style={[MyStyle.container, MyStyle.margin]}>
+          {posts === null ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              {posts.map((p) => (
+                <TouchableOpacity
+                  key={p.id}
+                  onPress={() =>
+                    navigation.navigate("UpdatePostAccommodation", {
+                      post: p,
+                    })
+                  }
+                >
+                  <Item instance={p} />
+                </TouchableOpacity>
+              ))}
+            </>
+          )}
+        </View>
+      </ScrollView>
+      <Button
+        mode="contained"
+        style={[MyStyle.Button, { backgroundColor: "purple" }]}
+        onPress={() => navigation.navigate("UpdatePostAccommodation")}
+      >
+        Sưa3 bài đăng
+      </Button>
+    </View>
+  );
+
+
 };
 export default ListPostAccommodation;
 
-   
+
 
