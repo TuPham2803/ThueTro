@@ -59,6 +59,29 @@
         </li>
     </ul>
 </nav>
+<div class="container mt-4" id="user-post-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2>User post information</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <img id="user-post-image" src="" alt="User Post Image" style="max-width: 100%;">
+                </div>
+                <div class="col-md-8">
+                    <p><strong>ID:</strong> <span id="owner-id"></span></p>
+                    <p><strong>Username:</strong> <span id="owner-username"></span></p>
+                    <p><strong>Email:</strong> <span id="owner-email"></span></p>
+                    <p><strong>User Type:</strong> <span id="owner-user-type"></span></p>
+                    <p><strong>First Name:</strong> <span id="owner-first-name"></span></p>
+                    <p><strong>Last Name:</strong> <span id="owner-last-name"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="container mt-4" id="post-details-section" style="display: none;">
     <div class="card">
@@ -112,8 +135,19 @@
             <div id="current-image-info" class="text-center mb-3"></div>
 
             <!-- Add this CSS to adjust the height of carousel images and style the current image number indicator -->
-           
+        </div>
+    </div>
+</div>
 
+<div class="container mt-4" id="review-result-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2>Reviewing Result</h2>
+        </div>
+        <div class="card-body text-center">
+            <p id="review-result"></p>
+            <button id="approve-review" class="btn btn-success">Approve</button>
+            <button id="deny-review" class="btn btn-danger">Deny</button>
         </div>
     </div>
 </div>
@@ -262,7 +296,18 @@ document.addEventListener("DOMContentLoaded", async function() {
                     currentImageInfo.textContent = `Image ${activeIndex + 1} of ${totalImages}`;
                 });
             }
-            
+              // Populate user post section
+            document.getElementById("user-post-section").style.display = 'block';
+            const owner = post.owner;
+            document.getElementById("user-post-image").src = owner.image;
+            document.getElementById("owner-id").textContent = owner.id;
+            document.getElementById("owner-username").textContent = owner.username;
+            document.getElementById("owner-email").textContent = owner.email;
+            document.getElementById("owner-user-type").textContent = owner.user_type;
+            document.getElementById("owner-first-name").textContent = owner.first_name;
+            document.getElementById("owner-last-name").textContent = owner.last_name;
+
+            document.getElementById("review-result-section").style.display = 'block';
         }
     }
 
@@ -312,9 +357,8 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // Load initial posts
     window.onload = (event) => {
-        console.log("page is fully loaded");
+        loadPosts();
     };
-    loadPosts();
 });
 </script>
 
