@@ -96,7 +96,7 @@ class AccomodationImageSerializer(ModelSerializer):
 
 class PostAccommodationSerializer(ModelSerializer):
     images = AccomodationImageSerializer(many=True, read_only=True)
-
+    owner = UserSerializer()
     class Meta:
         model = PostAccommodation
         fields = [
