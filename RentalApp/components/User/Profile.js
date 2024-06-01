@@ -1,15 +1,18 @@
 import React, { useContext } from "react";
 import { View, Text } from "react-native";
-import { Button, IconButton, Card, List, Avatar } from "react-native-paper";
+import { Button, Icon, Card, List, Avatar, Title, Paragraph, Chip } from "react-native-paper";
 import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import MyStyle from "../../styles/MyStyle";
+import { endpoints } from "../../configs/APIs";
+import APIs from "../../configs/APIs";
+import EditProfile from "./EditProfile";
 
 const Profile = ({ navigation }) => {
   const user = useContext(MyUserContext);
   const dispatch = useContext(MyDispatchContext);
 
   return (
-    <View style={[MyStyle.container, MyStyle.center, MyStyle.marginDistantSide, MyStyle.col, {justifyContent: "space-between"}]}>
+    <View style={[MyStyle.container, MyStyle.center, MyStyle.marginDistantSide, MyStyle.col, { justifyContent: "space-between" }]}>
       <View>
         <List.Section>
           <List.Item
@@ -62,9 +65,13 @@ const Profile = ({ navigation }) => {
       <View>
         {/* if not current user profile then show a follow button */}
         {user && user.username !== "current-user" && (
-          <Button mode="contained" style={[MyStyle.button, MyStyle.margin]}>
-            Follow
-          </Button>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Icon source="account-multiple" size={24} />
+            <Text style={{ marginRight: 10 }}>Followers:</Text>
+            <Chip>{user.followersCount}</Chip>
+          </View>
+
+
         )}
 
         {/* Thêm nút "Quản lý bài đăng" */}
@@ -72,10 +79,10 @@ const Profile = ({ navigation }) => {
           <Button
             icon="account-cog"
             mode="contained"
-            onPress={() => console.log("Manage Posts Pressed")}
+            onPress={() => { navigation.navigate("EditProfile"); }}
           // style={[MyStyle.button, MyStyle.margin]}
           >
-            Quản lý bài đăng
+            Chỉnh sửa Profile
           </Button>
 
           <Button

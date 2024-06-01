@@ -4,14 +4,17 @@ import { Button, TextInput, IconButton, Icon, Appbar, Picker, Menu, Provider, Sn
 import React, { useState } from "react";
 import * as ImagePicker from 'react-native-image-picker';
 import ListPostAccommodation from "./ListPostAccommodation";
-import { APIs, endpoints } from "../../configs/APIs";
+import APIs, { endpoints } from "../../configs/APIs";
+
 import axios from "axios";
 
 const UpdatePostAccommodation = ({route, navigation }) => {
-    const [title, setTitle] = React.useState("");
-    const [address, setAddress] = React.useState("");
-    const [price, setPrice] = React.useState("");
-    const [description, setDescription] = React.useState("");
+    const { post } = route.params;
+
+    const [title, setTitle] = React.useState(post.title)
+    const [address, setAddress] = React.useState(post.address);
+    const [price, setPrice] = React.useState(post.price);
+    const [description, setDescription] = React.useState(post.description);
     const [images, setImages] = React.useState("");
     const [longitude, setLongitude] = React.useState("");
     const [latitude, setLatitude] = React.useState("");
@@ -22,7 +25,6 @@ const UpdatePostAccommodation = ({route, navigation }) => {
     const [current_people, setCurrentPeople] = React.useState("");
     const options = ["Nhà 1", "Nhà 2"];
     const [visible, setVisible] = useState(false);
-    const { post } = route.params;
 
     // Now you can use the `post` object
     console.log(post);
@@ -30,10 +32,11 @@ const UpdatePostAccommodation = ({route, navigation }) => {
     const [postAccommodation, setPostAccommodation] = useState(post);
     const updatePostAccomodations = async () => {
         try {
-            let res = await APIs.put(
+            let res = await APIs.patch(
                 `${endpoints["post_accomodations"]}${post.id}/`,
                 postAccommodation
             );
+            
             setPosts(res.data);
             console.log("Update Pressed");
             // Gửi dữ liệu cập nhật lên server hoặc thực hiện hành động cập nhật ở đây
@@ -43,7 +46,7 @@ const UpdatePostAccommodation = ({route, navigation }) => {
     
             }, 3000); // Thời gian chờ (3 giây) để hiển thị Snackbar trước khi điều hướng
         } catch (ex) {
-            console.error(ex);
+            console.log(ex.response);
         }
     };
 
@@ -75,8 +78,8 @@ const UpdatePostAccommodation = ({route, navigation }) => {
 
                     <TextInput
                         label="Title"
-                        value={postAccommodation.title}
-                        onChangeText={setPostAccommodation}
+                        value={title}
+                        onChangeText={setTitle}
                         style={[MyStyle.input, { marginBottom: 10 }]} //Thêm marginBottom để tạo khoảng cách dưới
                         
                     />

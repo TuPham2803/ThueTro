@@ -18,6 +18,7 @@ import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
 import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
 import PostRequests from "./components/Rental/PostRequests";
 import PostRequestDetails from "./components/Rental/PostRequestDetails";
+import EditProfile from "./components/User/EditProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -106,6 +107,7 @@ const ProfileStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
     </Stack.Navigator>
   );
 };
@@ -204,10 +206,10 @@ const MyTab = () => {
 };
 
 export default function App() {
-  const userData = { username: "chutro", user_type: "landlord" , id: 1}
-  // const userData = {username: "thuetro", user_type: "tenant"}
-  // const userData = null
-  const [user, dispatch] = useReducer(MyUserReducer, userData);
+  // const userData = { username: "chutro", user_type: "landlord" , id: 1}
+  // // const userData = {username: "thuetro", user_type: "tenant"}
+  
+  const [user, dispatch] = useReducer(MyUserReducer, null);
   return (
     <NavigationContainer>
       <MyUserContext.Provider value={user}>

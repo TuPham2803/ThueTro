@@ -44,7 +44,7 @@ const Home = ({ navigation }) => {
       let res = await APIs.get(
         `${endpoints["post_accomodations"]}?pending_status=APR`
       );
-      setAccomodation(res.data);
+      setAccomodation(res.data.results);
     } catch (ex) {
       console.error(ex);
     }
@@ -52,7 +52,7 @@ const Home = ({ navigation }) => {
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
-
+  console.log(accommdation);
   return (
     <ScrollView style={[MyStyle.container]}>
       <ScrollView>
