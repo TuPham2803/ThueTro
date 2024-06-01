@@ -8,39 +8,18 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 const CreatePostRequest = ({ navigation }) => {
     const [address, setAddress] = React.useState("");
+	const [city, setCity] = React.useState("");
+	const [district, setDistrict] = React.useState("");
     const [title, setTitle] = React.useState("");
-    const [price, setPrice] = useState(0);
     const [note, setNote] = React.useState("");
-    const [email, setEmail] = React.useState("");
-    const [numOfPeople, setNumOfPeople] = React.useState("");
+    const [acreage, setAcreage] = React.useState(0);
+    const [quanity, setQuanity] = React.useState("");
     const [phone, setPhone] = React.useState("");
-    const [images, setImages] = React.useState([]);
-    const [visible, setVisible] = React.useState(false);
-    const [selectedValue, setSelectedValue] = React.useState("java");
-    const [selectedValue1, setSelectedValue1] = React.useState("java");
     const [selectedHouseType, setSelectedHouseType] = useState('');
     const [priceRange, setPriceRange] = useState([0, 20000000]);
-
-
-    const openMenu = () => setVisible(true);
-
-    const closeMenu = () => setVisible(false);
-
-    const handleChoosePhoto = () => {
-        const options = {
-            noData: true,
-        };
-        ImagePicker.launchImageLibrary(options, response => {
-            if (response.uri) {
-                setImages(response.uri);
-            }
-        });
-    };
-
     const handleHouseTypeSelection = (type) => {
         setSelectedHouseType(type);
     };
-
     return (
         <Provider>
             <View style={[MyStyle.container,{marginTop:20, marginBottom:30}]}>
@@ -50,23 +29,23 @@ const CreatePostRequest = ({ navigation }) => {
                         title={<Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>Bài Đăng Tìm Phòng</Text>}
                     />
                 </Appbar.Header> */}
-
-
-
-
                 <ScrollView style={[ MyStyle.wrapper, { paddingHorizontal: 20 }]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="map-marker" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Địa chỉ mong muốn: </Text>
+                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Khu vực mong muốn: </Text>
                     </View>
                     <TextInput
-                        label="Address"
-                        value={address}
-                        onChangeText={setAddress}
+                        label="Thành phố"
+                        value={city}
+                        onChangeText={setCity}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
-
-
+					<TextInput
+                        label="Quận/Huyện"
+                        value={district}
+                        onChangeText={setDistrict}
+                        style={[MyStyle.input, MyStyle.margin]}
+                    />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="home-account" size={30} color="purple" />
                         <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Tên bài đăng</Text>
@@ -77,41 +56,33 @@ const CreatePostRequest = ({ navigation }) => {
                         onChangeText={setTitle}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
-
-                    <View>
+					<View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                            <Icon name="currency-usd" size={30} color="purple" />
+                            <Icon source="currency-usd" size={30} color="purple" />
                             <Text style={styles.label}>Khoảng Giá</Text>
                         </View>
-
                         <View style={styles.sliderLabels}>
-                            <Text style={styles.sliderLabel}>0</Text>
-                            <Text style={styles.sliderLabel}>20000000</Text>
+                            <Text style={styles.sliderLabel}>   0</Text>
+                            <Text style={styles.sliderLabel}>20.000.000</Text>
                         </View>
-
-                        <View style={styles.sliderContainer}>
-
-                            <MultiSlider
-                                values={priceRange}
-                                onValuesChange={(values) => setPriceRange(values)}
-                                min={0}
-                                max={20000000}
-                                step={500000}
-                                sliderLength={280}
-                                selectedStyle={{ backgroundColor: 'purple' }}
-                                unselectedStyle={{ backgroundColor: '#000000' }}
-                                containerStyle={styles.slider}
-                                trackStyle={{ height: 10 }}
-                                markerStyle={styles.thumbStyle}
-                            />
-
-                        </View>
+							<View style={styles.sliderContainer}>
+							<MultiSlider
+								values={priceRange}
+								onValuesChange={(values) => setPriceRange(values)}
+								min={0}
+								max={20000000}
+								step={500000}
+								selectedStyle={{ backgroundColor: 'purple' }}
+								unselectedStyle={{ backgroundColor: '#000000' }}
+								containerStyle={styles.slider}
+								trackStyle={{ height: 10 }}
+								markerStyle={styles.thumbStyle}
+							/>
+						</View>
                         <Text style={styles.currentValue}>
-                            Giá mong muốn: {priceRange[0]} - {priceRange[1]}
+							Giá mong muốn: {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()}
                         </Text>
                     </View>
-
-
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="file-document" size={30} color="purple" />
                         <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Ghi chú: </Text>
@@ -124,39 +95,15 @@ const CreatePostRequest = ({ navigation }) => {
                     />
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="email" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Email</Text>
+                        <Icon source="ruler" size={30} color="purple" />
+                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Diện tích</Text>
                     </View>
                     <TextInput
-                        label="Email"
-                        value={email}
-                        onChangeText={setEmail}
+                        label="Diện tích"
+                        value={acreage}
+                        onChangeText={setAcreage}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
-
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="account" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Số người hiện tại</Text>
-                    </View>
-
-                    <TextInput
-                        label="Number of people"
-                        value={numOfPeople}
-                        onChangeText={setNumOfPeople}
-                        style={[MyStyle.input, MyStyle.margin]}
-                    />
-
-                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="phone" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Sdt: </Text>
-                    </View>
-                    <TextInput
-                        label="Phone"
-                        value={phone}
-                        onChangeText={setPhone}
-                        style={[MyStyle.input, MyStyle.margin]}
-                    />
-
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
                         <Icon source="door" size={30} color="purple" />
                         <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>loại phòng</Text>
@@ -167,43 +114,51 @@ const CreatePostRequest = ({ navigation }) => {
                         <TouchableOpacity
                             style={[
                                 styles.iconButton,
-                                selectedHouseType === 'Nhà ở Ghép' && styles.selectedButton,
+                                selectedHouseType === 'SH' && styles.selectedButton,
                             ]}
-                            onPress={() => handleHouseTypeSelection('Nhà ở Ghép')}
+                            onPress={() => handleHouseTypeSelection('SH')}
                         >
                             <View style={styles.iconButtonContent}>
                                 <IconButton
                                     icon="home-group"
                                     size={30}
-                                    color={selectedHouseType === 'Nhà ở Ghép' ? "white" : "White"}
+                                    color={selectedHouseType === 'SH' ? "white" : "White"}
                                 />
 
                             </View>
-                            <Text style={styles.buttonText}>Nhà ở Ghép</Text>
+                            <Text style={styles.buttonText}>ở Ghép</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
                                 styles.iconButton,
-                                selectedHouseType === 'Nhà Nguyên Căn' && styles.selectedButton,
+                                selectedHouseType === 'PR' && styles.selectedButton,
                             ]}
-                            onPress={() => handleHouseTypeSelection('Nhà Nguyên Căn')}
+                            onPress={() => handleHouseTypeSelection('PR')}
                         >
                             <View style={styles.iconButtonContent}>
                                 <IconButton
                                     icon="home"
                                     size={30}
-                                    color={selectedHouseType === 'Nhà Nguyên Căn' ? "white" : "White"}
+                                    color={selectedHouseType === 'PR' ? "white" : "White"}
                                 />
                             </View>
-                            <Text style={styles.buttonText}>Nhà Nguyên Căn</Text>
+                            <Text style={styles.buttonText}>Ở riêng</Text>
                         </TouchableOpacity>
                     </View>
-
-
-
-
-
-
+					{selectedHouseType == 'SH' && (
+						<View>
+							<View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+								<Icon source="account" size={30} color="purple" />
+								<Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Số người</Text>
+							</View>
+							<TextInput
+								label="Number of people"
+								value={quanity}
+								onChangeText={setQuanity}
+								style={[MyStyle.input, MyStyle.margin]}
+							/>
+						</View>
+					)}
 
                     <Button
                         mode="contained"
@@ -212,7 +167,6 @@ const CreatePostRequest = ({ navigation }) => {
                     >
                         Post
                     </Button>
-
                 </ScrollView>
             </View>
         </Provider>
@@ -230,6 +184,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
+    sliderContainer: {
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center', // Center the slider horizontally
+    },
     slider: {
         width: '100%',
         height: 40,
@@ -242,6 +201,13 @@ const styles = StyleSheet.create({
     sliderLabels: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    sliderLabel: {
+        color: 'purple',
+        marginRight: 5,
+        fontFamily: 'Roboto',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
     currentValue: {
         textAlign: 'center',
@@ -265,7 +231,6 @@ const styles = StyleSheet.create({
     selectedButton: {
         backgroundColor: '#b39ddb',
     },
-
 });
 
 
