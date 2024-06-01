@@ -62,7 +62,7 @@ class PostRequestSerializer(ModelSerializer):
             'quanity',
             'city',
             'district',
-            'area',
+            'acreage',
             'room_type',
             'description',
             'user_post',

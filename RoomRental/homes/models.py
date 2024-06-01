@@ -76,7 +76,7 @@ class PostRequest(BaseModel):
     title = models.CharField(max_length=100, default=None)
     min_price = models.FloatField(default=None)
     max_price = models.FloatField(default=None)
-    area = models.CharField(max_length=100, blank=True)
+    acreage = models.FloatField(null=True, blank=True)
     description = RichTextField(default=None)
     quanity = models.IntegerField(default=None)
     city = models.CharField(max_length=50, default=None)
