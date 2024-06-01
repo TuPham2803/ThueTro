@@ -78,7 +78,7 @@ class PostRequest(BaseModel):
     max_price = models.FloatField(default=None)
     acreage = models.FloatField(null=True, blank=True)
     description = RichTextField(default=None)
-    quanity = models.IntegerField(default=None)
+    quanity = models.IntegerField(default=None, null=True)
     city = models.CharField(max_length=50, default=None)
     district = models.CharField(max_length=50, default=None)
     room_type = models.CharField(

@@ -2,24 +2,64 @@ import { View, ScrollView, Text, Image, FlatList, TouchableOpacity, ScrollViewBa
 import MyStyle from "../../styles/MyStyle";
 import { Button, TextInput, IconButton, Icon, Appbar, Picker, Menu, Provider } from "react-native-paper"; // Import IconButton
 import React, { useState } from "react";
-import * as ImagePicker from 'react-native-image-picker';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-
+import APIs, {endpoints} from "../../configs/APIs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreatePostRequest = ({ navigation }) => {
-    const [address, setAddress] = React.useState("");
 	const [city, setCity] = React.useState("");
 	const [district, setDistrict] = React.useState("");
     const [title, setTitle] = React.useState("");
     const [note, setNote] = React.useState("");
     const [acreage, setAcreage] = React.useState(0);
     const [quanity, setQuanity] = React.useState("");
-    const [phone, setPhone] = React.useState("");
     const [selectedHouseType, setSelectedHouseType] = useState('');
     const [priceRange, setPriceRange] = useState([0, 20000000]);
     const handleHouseTypeSelection = (type) => {
         setSelectedHouseType(type);
     };
+
+    const handleCreatePostRequest = async () => {
+        // Validate form inputs
+        if (!city || !district || !title || !note || !acreage || !selectedHouseType || (selectedHouseType === 'SH' && !quanity)) {
+            alert('Please fill out all required fields.');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('city', city);
+        formData.append('district', district);
+        formData.append('title', title);
+        formData.append('description', note);
+        formData.append('acreage', acreage);
+        formData.append('quanity', quanity);
+        formData.append('room_type', selectedHouseType);
+        formData.append('min_price', priceRange[0]);
+        formData.append('max_price', priceRange[1]);
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                alert('User is not authenticated');
+                return;
+            }
+            let res = await APIs.post(endpoints["post_requests"], formData, {
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (res.status === 201) {
+                alert('Create post request successfully');
+                navigation.navigate('Home');
+            } else {
+                console.error('Failed to create post request', res.data);
+                alert('Failed to create post request');
+            }
+        } catch (err) {
+            console.error('Error while creating post request', err);
+            alert('An error occurred while creating the post request');
+        }
+    };
+    
     return (
         <Provider>
             <View style={[MyStyle.container,{marginTop:20, marginBottom:30}]}>
@@ -162,7 +202,7 @@ const CreatePostRequest = ({ navigation }) => {
 
                     <Button
                         mode="contained"
-                        onPress={() => console.log("Pressed")}
+                        onPress={handleCreatePostRequest}
                         style={[MyStyle.button, MyStyle.margin]}
                     >
                         Post

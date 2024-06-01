@@ -101,7 +101,6 @@ const PostManagerStack = () => {
 };
 const MessageStack = () => {
   const user = useContext(MyUserContext);
-  
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -156,7 +155,7 @@ const MyTab = () => {
         headerShown: false,
         tabBarStyle: ((route) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "";
-          if (routeName === "Chat") {
+          if (routeName === "Chat" || routeName === "CreatePostRequest") {
             return { display: "none" };
           }
           return {};

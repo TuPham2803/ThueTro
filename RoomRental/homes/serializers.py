@@ -72,7 +72,6 @@ class PostRequestSerializer(ModelSerializer):
         ]
         read_only_fields = ['created_at', 'updated_at', 'user_post']
         extra_kwargs = {
-            'area': {'required': True},
             'description': {'required': True},
         }
 
@@ -84,7 +83,6 @@ class PostRequestSerializer(ModelSerializer):
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
         required_fields = [
-            'area',
             'description',
         ]
         for field in required_fields:
