@@ -90,7 +90,6 @@
         </div>
         <div class="card-body">
             <h3 class="card-title" id="post-title">Title</h3>
-            <h5 class="card-subtitle mb-2 text-muted" id="post-owner">Owner: </h5>
             <p class="card-text" id="post-description">Description: </p>
             
             <div class="row">
@@ -161,6 +160,11 @@ document.addEventListener("DOMContentLoaded", async function() {
     const postDetailsSection = document.getElementById("post-details-section");
     const postImagesContainer = document.getElementById("post-images");
     const carouselIndicatorsContainer = document.getElementById("carousel-indicators");
+    const userPostSection = document.getElementById("user-post-section");
+    const reviewResultSection = document.getElementById("review-result-section");
+    const approveButton = document.getElementById("approve-review");
+    const denyButton = document.getElementById("deny-review");
+
     let currentPage = 1;
     let totalPages = 1;
 
@@ -244,7 +248,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         const post = await fetchPostDetails(id);
         if (post) {
             document.getElementById("post-title").textContent = post.title;
-            document.getElementById("post-owner").textContent = `Owner: ${post.owner}`;
             document.getElementById("post-description").innerHTML = `Description: ${post.description}`;
             document.getElementById("post-city").textContent = post.city;
             document.getElementById("post-district").textContent = post.district;
@@ -263,6 +266,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             postImagesContainer.innerHTML = '';
             carouselIndicatorsContainer.innerHTML = ''; // Clear previous indicators
             if (post.images.length > 0) {
+                document.querySelector('#post-carousel').style.display = 'block'
                 post.images.forEach((image, index) => {
                     const carouselItem = document.createElement("div");
                     carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
@@ -280,12 +284,13 @@ document.addEventListener("DOMContentLoaded", async function() {
                     carouselIndicatorsContainer.appendChild(indicator);
                 });
             } else {
-                postImagesContainer.innerHTML = `<div class="carousel-item active"><img src="https://via.placeholder.com/150" class="d-block w-100" alt="No images available"></div>`;
+                document.querySelector('#post-carousel').style.display = 'none'
             }
 
             // Show the post details section
             postDetailsSection.style.display = 'block';
             // Display current image number
+            document.getElementById('current-image-info').innerHTML = '';
             if (post.images.length){
                 const carousel = document.querySelector('#post-carousel');
                 const currentImageInfo = document.getElementById('current-image-info');
@@ -297,7 +302,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 });
             }
               // Populate user post section
-            document.getElementById("user-post-section").style.display = 'block';
+            userPostSection .style.display = 'block';
             const owner = post.owner;
             document.getElementById("user-post-image").src = owner.image;
             document.getElementById("owner-id").textContent = owner.id;
@@ -307,7 +312,10 @@ document.addEventListener("DOMContentLoaded", async function() {
             document.getElementById("owner-first-name").textContent = owner.first_name;
             document.getElementById("owner-last-name").textContent = owner.last_name;
 
-            document.getElementById("review-result-section").style.display = 'block';
+            reviewResultSection.style.display = 'block';
+            approveButton.setAttribute("data-post-id", post.id)
+            denyButton.setAttribute("data-post-id", post.id)
+
         }
     }
 
@@ -354,7 +362,65 @@ document.addEventListener("DOMContentLoaded", async function() {
             loadPosts();
         }
     });
+    approveButton.addEventListener("click", async () => {
+        const postID = approveButton.getAttribute("data-post-id")
 
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/post_accommodations/${postID}/review/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': ""/* Add authorization token if required */
+                },
+                body: JSON.stringify({ review: "Approved" })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // If the review was successful, reload the table of posts
+            currentPage = 1;
+            loadPosts();
+            // Hide the post details section
+            postDetailsSection.style.display = 'none';
+            userPostSection.style.display = 'none';
+            reviewResultSection.style.display = 'none';
+            // Show a notification indicating review success
+            // You can implement your own notification mechanism here
+            alert("Review successful!");
+        } catch (error) {
+            console.error('Error approving review:', error);
+            // Handle error if necessary
+        }
+    });
+    denyButton.addEventListener("click", async () => {
+        const postID = denyButton.getAttribute("data-post-id")
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/post_accommodations/${postID}/review/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': ""/* Add authorization token if required */
+                },
+                body: JSON.stringify({ review: "Failed" })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // If the review was successful, reload the table of posts
+            currentPage = 1;
+            loadPosts();
+            // Hide the post details section
+            postDetailsSection.style.display = 'none';
+            userPostSection.style.display = 'none';
+            reviewResultSection.style.display = 'none';
+            // Show a notification indicating review success
+            // You can implement your own notification mechanism here
+            alert("Review successful!");
+        } catch (error) {
+            console.error('Error approving review:', error);
+            // Handle error if necessary
+        }
+    });
     // Load initial posts
     window.onload = (event) => {
         loadPosts();
