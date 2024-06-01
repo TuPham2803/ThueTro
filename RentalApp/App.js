@@ -19,6 +19,9 @@ import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation
 import PostRequests from "./components/Rental/PostRequests";
 import PostRequestDetails from "./components/Rental/PostRequestDetails";
 import EditProfile from "./components/User/EditProfile";
+import Conversation from "./components/Rental/Conversation";
+import Chat from "./components/Rental/Chat";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 
 const Stack = createNativeStackNavigator();
 
@@ -98,7 +101,20 @@ const PostManagerStack = () => {
 };
 const MessageStack = () => {
   const user = useContext(MyUserContext);
-  return <Stack.Navigator></Stack.Navigator>;
+  
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Conversation"
+        component={Conversation}
+        options={{ title: "Cuộc trò chuyện" }}
+      />
+      <Stack.Screen
+        name="Chat"
+        component={Chat}
+      />
+    </Stack.Navigator>
+  );
 };
 
 const ProfileStack = () => {
@@ -136,8 +152,17 @@ const MyTab = () => {
 
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false }}
-      tabBarOptions={{ activeTintColor: "purple" }}
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: ((route) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          if (routeName === "Chat") {
+            return { display: "none" };
+          }
+          return {};
+        })(route),
+        tabBarOptions: { activeTintColor: "purple" },
+      })}
     >
       <Tab.Screen
         name="HomeStack"
@@ -208,7 +233,7 @@ const MyTab = () => {
 export default function App() {
   // const userData = { username: "chutro", user_type: "landlord" , id: 1}
   // // const userData = {username: "thuetro", user_type: "tenant"}
-  
+
   const [user, dispatch] = useReducer(MyUserReducer, null);
   return (
     <NavigationContainer>
