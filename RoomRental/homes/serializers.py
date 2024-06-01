@@ -56,7 +56,14 @@ class PostRequestSerializer(ModelSerializer):
         model = PostRequest
         fields = [
             'id',
+            'title',
+            'min_price',
+            'max_price',
+            'quanity',
+            'city',
+            'district',
             'area',
+            'room_type',
             'description',
             'user_post',
             'created_at',

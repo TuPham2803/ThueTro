@@ -6,9 +6,6 @@ import * as ImagePicker from 'react-native-image-picker';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 
-
-// hay tao cho toi trang giao dien tao bai dang thue nha voi cac truong nhu dia chi, tieu de, gia tien, ghi chu, email, so luong nguoi o, sdt, button dang bai, button quay ve trang chu
-
 const CreatePostRequest = ({ navigation }) => {
     const [address, setAddress] = React.useState("");
     const [title, setTitle] = React.useState("");

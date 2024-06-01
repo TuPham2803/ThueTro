@@ -25,7 +25,7 @@ const PostAccommodations = ({ navigation }) => {
       let res = await APIs.get(
         `${endpoints["post_accomodations"]}?pending_status=APR`
       );
-      setPosts(res.data);
+      setPosts(res.data.results || []);
     } catch (ex) {
       console.error(ex);
     }
