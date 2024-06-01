@@ -15,6 +15,7 @@ import Swiper from "react-native-swiper";
 import { isCloseToBottom } from "../../Utils/Utils";
 import moment from "moment";
 import { MyUserContext } from "../../configs/Contexts";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PostAccommodationDetails = ({ route }) => {
   const [post, setPost] = React.useState(null);
@@ -58,10 +59,22 @@ const PostAccommodationDetails = ({ route }) => {
 
   const comment = async () => {
     try {
-      let res = await APIs.post(endpoints["comments"](postId), {
-        content: newComment,
-        user: user.id,
-      });
+      // Retrieve the token from AsyncStorage
+      const token = await AsyncStorage.getItem("token");
+
+      // Include the token in the Authorization header
+      let res = await APIs.post(
+        endpoints["comments"](postId),
+        {
+          content: newComment,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       setComments([res.data, ...comments]);
       setNewComment("");
     } catch (ex) {
