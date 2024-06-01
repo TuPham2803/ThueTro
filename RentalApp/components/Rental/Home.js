@@ -13,6 +13,7 @@ import {
   Searchbar,
   TouchableRipple,
   BottomNavigation,
+  ActivityIndicator,
 } from "react-native-paper";
 import React, { useContext } from "react";
 import Swiper from "react-native-swiper";
@@ -32,12 +33,12 @@ const Home = ({ navigation }) => {
   const user = useContext(MyUserContext);
 
   const handlePress = () => {
-    if (user.user_type === 'landlord') {
-      navigation.navigate('CreatePostAccommodation');
+    if (user.user_type === "landlord") {
+      navigation.navigate("CreatePostAccommodation");
     } else {
-      navigation.navigate('CreatePostRequest');
+      navigation.navigate("CreatePostRequest");
     }
-  }
+  };
 
   const loadPostAccomodations = async () => {
     try {
@@ -49,6 +50,7 @@ const Home = ({ navigation }) => {
       console.error(ex);
     }
   };
+
   React.useEffect(() => {
     loadPostAccomodations();
   }, []);
@@ -176,11 +178,26 @@ const Home = ({ navigation }) => {
 
       <View style={MyStyle.container}>
         <ScrollView>
-          {accommdation.map((a) => (
-            <TouchableOpacity key={a.id}>
-              <Item instance={a} />
-            </TouchableOpacity>
-          ))}
+          <View style={[MyStyle.container, MyStyle.margin]}>
+            {accommdation === null ? (
+              <ActivityIndicator />
+            ) : (
+              <>
+                {accommdation.map((a) => (
+                  <TouchableOpacity
+                    key={a.id}
+                    onPress={() =>
+                      navigation.navigate("PostAccommodationDetails", {
+                        postId: a.id,
+                      })
+                    }
+                  >
+                    <Item instance={a} />
+                  </TouchableOpacity>
+                ))}
+              </>
+            )}
+          </View>
         </ScrollView>
       </View>
       {/* Thêm 5 buttons có chưa hình ảnh và caption, có thể trượt ngang, ấn vào chuyển sang trang tìm kiếm */}

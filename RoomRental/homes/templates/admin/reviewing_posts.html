@@ -8,6 +8,16 @@
 {% comment %} import lib {% endcomment %}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+    .carousel-item img {
+        max-height: 600px; /* Adjust the height as needed */
+        object-fit: cover;
+    }
+    .carousel-indicators {
+        bottom: -30px;
+    }
+    
+</style>
 {% comment %} end import lib {% endcomment %}
 
 <div class="container mt-4">
@@ -49,6 +59,29 @@
         </li>
     </ul>
 </nav>
+<div class="container mt-4" id="user-post-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2>User post information</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <img id="user-post-image" src="" alt="User Post Image" style="max-width: 100%;">
+                </div>
+                <div class="col-md-8">
+                    <p><strong>ID:</strong> <span id="owner-id"></span></p>
+                    <p><strong>Username:</strong> <span id="owner-username"></span></p>
+                    <p><strong>Email:</strong> <span id="owner-email"></span></p>
+                    <p><strong>User Type:</strong> <span id="owner-user-type"></span></p>
+                    <p><strong>First Name:</strong> <span id="owner-first-name"></span></p>
+                    <p><strong>Last Name:</strong> <span id="owner-last-name"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="container mt-4" id="post-details-section" style="display: none;">
     <div class="card">
@@ -57,8 +90,8 @@
         </div>
         <div class="card-body">
             <h3 class="card-title" id="post-title">Title</h3>
-            <h5 class="card-subtitle mb-2 text-muted" id="post-owner">Owner: </h5>
             <p class="card-text" id="post-description">Description: </p>
+            
             <div class="row">
                 <div class="col-md-6">
                     <ul class="list-group list-group-flush">
@@ -81,6 +114,39 @@
                     </ul>
                 </div>
             </div>
+            <!-- Modify the HTML inside your post-details-section -->
+            <div id="post-carousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                <div class="carousel-inner" id="post-images">
+                    <!-- Images will be inserted here by JavaScript -->
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#post-carousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#post-carousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+                <div class="carousel-indicators" id="carousel-indicators">
+                    <!-- Indicators will be inserted here by JavaScript -->
+                </div>
+            </div>
+            <div id="current-image-info" class="text-center mb-3"></div>
+
+            <!-- Add this CSS to adjust the height of carousel images and style the current image number indicator -->
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="review-result-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2>Reviewing Result</h2>
+        </div>
+        <div class="card-body text-center">
+            <p id="review-result"></p>
+            <button id="approve-review" class="btn btn-success">Approve</button>
+            <button id="deny-review" class="btn btn-danger">Deny</button>
         </div>
     </div>
 </div>
@@ -92,6 +158,13 @@ document.addEventListener("DOMContentLoaded", async function() {
     const previousPage = document.querySelector("#previous-page");
     const nextPage = document.querySelector("#next-page");
     const postDetailsSection = document.getElementById("post-details-section");
+    const postImagesContainer = document.getElementById("post-images");
+    const carouselIndicatorsContainer = document.getElementById("carousel-indicators");
+    const userPostSection = document.getElementById("user-post-section");
+    const reviewResultSection = document.getElementById("review-result-section");
+    const approveButton = document.getElementById("approve-review");
+    const denyButton = document.getElementById("deny-review");
+
     let currentPage = 1;
     let totalPages = 1;
 
@@ -115,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         if (posts.length === 0) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
-            cell.colSpan = 13;
+            cell.colSpan = 14;  // Updated to 14 to account for the new column for actions
             cell.textContent = "No posts available.";
             cell.className = "text-center";
             row.appendChild(cell);
@@ -175,8 +248,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const post = await fetchPostDetails(id);
         if (post) {
             document.getElementById("post-title").textContent = post.title;
-            document.getElementById("post-owner").textContent = `Owner: ${post.owner}`;
-            document.getElementById("post-description").textContent = `Description: ${post.description}`;
+            document.getElementById("post-description").innerHTML = `Description: ${post.description}`;
             document.getElementById("post-city").textContent = post.city;
             document.getElementById("post-district").textContent = post.district;
             document.getElementById("post-address").textContent = post.address;
@@ -190,8 +262,60 @@ document.addEventListener("DOMContentLoaded", async function() {
             document.getElementById("post-phone-number").textContent = post.phone_number;
             document.getElementById("post-pending-status").textContent = post.pending_status;
 
+            // Populate carousel with images
+            postImagesContainer.innerHTML = '';
+            carouselIndicatorsContainer.innerHTML = ''; // Clear previous indicators
+            if (post.images.length > 0) {
+                document.querySelector('#post-carousel').style.display = 'block'
+                post.images.forEach((image, index) => {
+                    const carouselItem = document.createElement("div");
+                    carouselItem.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+                    carouselItem.innerHTML = `<img src="${image}" class="d-block w-100" alt="Image ${index + 1}">`;
+                    postImagesContainer.appendChild(carouselItem);
+
+                    // Add carousel indicators
+                    const indicator = document.createElement("button");
+                    indicator.setAttribute("type", "button");
+                    indicator.setAttribute("data-bs-target", "#post-carousel");
+                    indicator.setAttribute("data-bs-slide-to", index.toString());
+                    indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
+                    indicator.setAttribute("aria-label", `Slide ${index + 1}`);
+                    indicator.setAttribute("aria-current", index === 0 ? 'true' : 'false');
+                    carouselIndicatorsContainer.appendChild(indicator);
+                });
+            } else {
+                document.querySelector('#post-carousel').style.display = 'none'
+            }
+
             // Show the post details section
             postDetailsSection.style.display = 'block';
+            // Display current image number
+            document.getElementById('current-image-info').innerHTML = '';
+            if (post.images.length){
+                const carousel = document.querySelector('#post-carousel');
+                const currentImageInfo = document.getElementById('current-image-info');
+                currentImageInfo.textContent = `Image 1 of ${post.images.length}`;
+                carousel.addEventListener('slid.bs.carousel', function (event) {
+                    const activeIndex = event.to;
+                    const totalImages = post.images.length;
+                    currentImageInfo.textContent = `Image ${activeIndex + 1} of ${totalImages}`;
+                });
+            }
+              // Populate user post section
+            userPostSection .style.display = 'block';
+            const owner = post.owner;
+            document.getElementById("user-post-image").src = owner.image;
+            document.getElementById("owner-id").textContent = owner.id;
+            document.getElementById("owner-username").textContent = owner.username;
+            document.getElementById("owner-email").textContent = owner.email;
+            document.getElementById("owner-user-type").textContent = owner.user_type;
+            document.getElementById("owner-first-name").textContent = owner.first_name;
+            document.getElementById("owner-last-name").textContent = owner.last_name;
+
+            reviewResultSection.style.display = 'block';
+            approveButton.setAttribute("data-post-id", post.id)
+            denyButton.setAttribute("data-post-id", post.id)
+
         }
     }
 
@@ -238,9 +362,69 @@ document.addEventListener("DOMContentLoaded", async function() {
             loadPosts();
         }
     });
+    approveButton.addEventListener("click", async () => {
+        const postID = approveButton.getAttribute("data-post-id")
 
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/post_accommodations/${postID}/review/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': ""/* Add authorization token if required */
+                },
+                body: JSON.stringify({ review: "Approved" })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // If the review was successful, reload the table of posts
+            currentPage = 1;
+            loadPosts();
+            // Hide the post details section
+            postDetailsSection.style.display = 'none';
+            userPostSection.style.display = 'none';
+            reviewResultSection.style.display = 'none';
+            // Show a notification indicating review success
+            // You can implement your own notification mechanism here
+            alert("Review successful!");
+        } catch (error) {
+            console.error('Error approving review:', error);
+            // Handle error if necessary
+        }
+    });
+    denyButton.addEventListener("click", async () => {
+        const postID = denyButton.getAttribute("data-post-id")
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/post_accommodations/${postID}/review/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': ""/* Add authorization token if required */
+                },
+                body: JSON.stringify({ review: "Failed" })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            // If the review was successful, reload the table of posts
+            currentPage = 1;
+            loadPosts();
+            // Hide the post details section
+            postDetailsSection.style.display = 'none';
+            userPostSection.style.display = 'none';
+            reviewResultSection.style.display = 'none';
+            // Show a notification indicating review success
+            // You can implement your own notification mechanism here
+            alert("Review successful!");
+        } catch (error) {
+            console.error('Error approving review:', error);
+            // Handle error if necessary
+        }
+    });
     // Load initial posts
-    loadPosts();
+    window.onload = (event) => {
+        loadPosts();
+    };
 });
 </script>
 

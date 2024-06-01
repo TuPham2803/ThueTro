@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import PostAccommodation, User, PostRequest, CommentAccommodation, CommentRequest, LikeAccommodation, \
-    LikeRequest, AccommodationImage
+    LikeRequest, AccommodationImage, PendingStatus
 from . import serializers, perms
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -54,7 +54,19 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
 
         return Response(serializers.LikeAccommodationSerializer(li).data,
                         status=status.HTTP_201_CREATED)
-
+        
+    @action(methods=['POST'], url_path='review', detail=True)
+    def review(self, request, pk):
+        post = self.get_object()
+        data = request.data
+        review = data.get('review')
+        if review not in ['Approved', 'Failed']:
+            return Response({'error': 'Reivew must is Approved or Failed'}, status=status.HTTP_400_BAD_REQUEST)
+        post.pending_status = review=='Approved' and PendingStatus.APPROVED or PendingStatus.FAILED
+        post.save()
+        if review == 'Approved':
+            Thread(target=send_mail, args=(post,)).start()
+        return Response(serializers.PostAccommodationSerializer(post).data, status=status.HTTP_200_OK)
     def get_queryset(self):
         queryset = self.queryset
 
@@ -259,12 +271,6 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
                 fo.active = not fo.active
                 fo.save()
             return Response(serializers.FollowSerializer(fo).data, status=status.HTTP_201_CREATED)
-
-    @action(methods=['get'], detail=False, url_path='test_sendmail')
-    def test_sendmail(self, request):
-        post_accommodation = PostAccommodation.objects.get(id=1)
-        Thread(target=send_mail, args=(post_accommodation,)).start()
-        return Response({}, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=False, url_path='statistics')
     def user_statistics(self, request):
