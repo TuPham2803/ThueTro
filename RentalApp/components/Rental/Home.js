@@ -20,6 +20,7 @@ import Swiper from "react-native-swiper";
 import APIs, { endpoints } from "../../configs/APIs";
 import Item from "../../Utils/Item";
 import { MyUserContext } from "../../configs/Contexts";
+import { isCloseToBottom } from "../../Utils/Utils";
 
 const Home = ({ navigation }) => {
   const [search, setSearch] = React.useState("");
@@ -31,6 +32,8 @@ const Home = ({ navigation }) => {
   ];
   const [accommdation, setAccomodation] = React.useState([]);
   const user = useContext(MyUserContext);
+  const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(false);
 
   const handlePress = () => {
     if (user.user_type === "landlord") {
@@ -41,13 +44,24 @@ const Home = ({ navigation }) => {
   };
 
   const loadPostAccomodations = async () => {
-    try {
-      let res = await APIs.get(
-        `${endpoints["post_accomodations"]}?pending_status=APR`
-      );
-      setAccomodation(res.data);
-    } catch (ex) {
-      console.error(ex);
+    if (page > 0) {
+      let url = `${endpoints["post_accomodations"]}?pending_status=APR?page=${page}`;
+      try {
+        setLoading(true);
+        let res = await APIs.get(url);
+        if (page === 1) {
+          setAccomodation(res.data.results);
+        } else if (page > 1) {
+          setAccomodation((current) => {
+            return [...current, ...res.data.results];
+          });
+        }
+        if (res.data.next === null) setPage(0);
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -55,150 +69,152 @@ const Home = ({ navigation }) => {
     loadPostAccomodations();
   }, []);
 
+  const loadMore = ({ nativeEvent }) => {
+    if (loading === false && isCloseToBottom(nativeEvent)) {
+      setPage(page + 1);
+    }
+  };
+
   return (
-    <ScrollView style={[MyStyle.container]}>
-      <ScrollView>
+    <ScrollView onScroll={loadMore} style={[MyStyle.container]}>
+      <View style={[MyStyle.row]}>
+        <Searchbar
+          placeholder="Search"
+          value={search}
+          onChangeText={setSearch}
+          style={[MyStyle.searchBar, MyStyle.margin]}
+        />
+
+        <IconButton
+          icon="cart"
+          iconColor="purple"
+          size={20}
+          onPress={() => console.log("Pressed")}
+          style={MyStyle.icon}
+        />
+        <IconButton
+          icon="wechat"
+          iconColor="purple"
+          size={20}
+          onPress={() => console.log("Pressed")}
+          style={MyStyle.icon}
+        />
+
+        <IconButton
+          icon="account"
+          iconColor="purple"
+          size={20}
+          onPress={() => {
+            navigation.navigate(user ? "Profile" : "Login");
+          }}
+          style={MyStyle.icon}
+        />
+      </View>
+
+      <View style={[MyStyle.top, MyStyle.wrapper]}>
+        <Swiper style={MyStyle.wrapper} showsButtons={false}>
+          {images.map((image, index) => (
+            <View style={MyStyle.slide} key={index}>
+              <Image
+                source={{ uri: image }}
+                style={MyStyle.image}
+                resizeMode="cover"
+              />
+            </View>
+          ))}
+        </Swiper>
+      </View>
+
+      <View style={[MyStyle.container, MyStyle.top]}>
         <View style={[MyStyle.row]}>
-          <Searchbar
-            placeholder="Search"
-            value={search}
-            onChangeText={setSearch}
-            style={[MyStyle.searchBar, MyStyle.margin]}
-          />
-
-          <IconButton
-            icon="cart"
-            iconColor="purple"
-            size={20}
+          <TouchableRipple
+            onPress={() => navigation.navigate("PostRequests")}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={[MyStyle.iconFeature, MyStyle.margin]}
+          >
+            <View style={[MyStyle.alignCenter]}>
+              <IconButton icon="map-marker" color="purple" size={20} />
+              <Text>Tìm kiếm theo vị trí</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={() => navigation.navigate("PostAccommodations")}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={[MyStyle.iconFeature, MyStyle.margin]}
+          >
+            <View style={[MyStyle.alignCenter]}>
+              <IconButton icon="cash" color="purple" size={20} />
+              <Text>Tìm kiếm theo giá</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
             onPress={() => console.log("Pressed")}
-            style={MyStyle.icon}
-          />
-          <IconButton
-            icon="wechat"
-            iconColor="purple"
-            size={20}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={[MyStyle.iconFeature, MyStyle.margin]}
+          >
+            <View style={[MyStyle.alignCenter]}>
+              <IconButton icon="account-group" color="purple" size={20} />
+              <Text>Bạn ở chungggg</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
             onPress={() => console.log("Pressed")}
-            style={MyStyle.icon}
-          />
-
-          <IconButton
-            icon="account"
-            iconColor="purple"
-            size={20}
-            onPress={() => {
-              navigation.navigate(user ? "Profile" : "Login");
-            }}
-            style={MyStyle.icon}
-          />
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={[MyStyle.iconFeature, MyStyle.margin]}
+          >
+            <View style={[MyStyle.alignCenter]}>
+              <IconButton icon="bed" color="purple" size={20} />
+              <Text>Phòng riêng</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={() => console.log("Pressed")}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={[MyStyle.iconFeature, MyStyle.margin]}
+          >
+            <View style={[MyStyle.alignCenter]}>
+              <IconButton icon="home" color="purple" size={20} />
+              <Text>Nhà nhanh</Text>
+            </View>
+          </TouchableRipple>
+          <TouchableRipple
+            onPress={handlePress}
+            rippleColor="rgba(0, 0, 0, .32)"
+            style={[MyStyle.iconFeature, MyStyle.margin]}
+          >
+            <View style={[MyStyle.alignCenter]}>
+              <IconButton icon="plus" color="purple" size={20} />
+              <Text>Đăng tin</Text>
+            </View>
+          </TouchableRipple>
         </View>
+      </View>
 
-        <View style={[MyStyle.top, MyStyle.wrapper]}>
-          <Swiper style={MyStyle.wrapper} showsButtons={false}>
-            {images.map((image, index) => (
-              <View style={MyStyle.slide} key={index}>
-                <Image
-                  source={{ uri: image }}
-                  style={MyStyle.image}
-                  resizeMode="cover"
-                />
-              </View>
-            ))}
-          </Swiper>
-        </View>
-
-        <View style={[MyStyle.container, MyStyle.top]}>
-          <View style={[MyStyle.row]}>
-            <TouchableRipple
-              onPress={() => navigation.navigate("PostRequests")}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={[MyStyle.iconFeature, MyStyle.margin]}
-            >
-              <View style={[MyStyle.alignCenter]}>
-                <IconButton icon="map-marker" color="purple" size={20} />
-                <Text>Tìm kiếm theo vị trí</Text>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple
-              onPress={() => navigation.navigate("PostAccommodations")}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={[MyStyle.iconFeature, MyStyle.margin]}
-            >
-              <View style={[MyStyle.alignCenter]}>
-                <IconButton icon="cash" color="purple" size={20} />
-                <Text>Tìm kiếm theo giá</Text>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple
-              onPress={() => console.log("Pressed")}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={[MyStyle.iconFeature, MyStyle.margin]}
-            >
-              <View style={[MyStyle.alignCenter]}>
-                <IconButton icon="account-group" color="purple" size={20} />
-                <Text>Bạn ở chungggg</Text>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple
-              onPress={() => console.log("Pressed")}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={[MyStyle.iconFeature, MyStyle.margin]}
-            >
-              <View style={[MyStyle.alignCenter]}>
-                <IconButton icon="bed" color="purple" size={20} />
-                <Text>Phòng riêng</Text>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple
-              onPress={() => console.log("Pressed")}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={[MyStyle.iconFeature, MyStyle.margin]}
-            >
-              <View style={[MyStyle.alignCenter]}>
-                <IconButton icon="home" color="purple" size={20} />
-                <Text>Nhà nhanh</Text>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple
-              onPress={handlePress}
-              rippleColor="rgba(0, 0, 0, .32)"
-              style={[MyStyle.iconFeature, MyStyle.margin]}
-            >
-              <View style={[MyStyle.alignCenter]}>
-                <IconButton icon="plus" color="purple" size={20} />
-                <Text>Đăng tin</Text>
-              </View>
-            </TouchableRipple>
-          </View>
-        </View>
-
-        <View style={[MyStyle.container, MyStyle.margin, MyStyle.top]}>
-          <Text style={MyStyle.header}>Search trending and quality</Text>
-        </View>
-      </ScrollView>
+      <View style={[MyStyle.container, MyStyle.margin, MyStyle.top]}>
+        <Text style={MyStyle.header}>Search trending and quality</Text>
+      </View>
 
       <View style={MyStyle.container}>
-        <ScrollView>
-          <View style={[MyStyle.container, MyStyle.margin]}>
-            {accommdation === null ? (
-              <ActivityIndicator />
-            ) : (
-              <>
-                {accommdation.map((a) => (
-                  <TouchableOpacity
-                    key={a.id}
-                    onPress={() =>
-                      navigation.navigate("PostAccommodationDetails", {
-                        postId: a.id,
-                      })
-                    }
-                  >
-                    <Item instance={a} />
-                  </TouchableOpacity>
-                ))}
-              </>
-            )}
-          </View>
-        </ScrollView>
+        <View style={[MyStyle.container, MyStyle.margin]}>
+          {accommdation === null ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              {accommdation.map((a) => (
+                <TouchableOpacity
+                  key={a.id}
+                  onPress={() =>
+                    navigation.navigate("PostAccommodationDetails", {
+                      postId: a.id,
+                    })
+                  }
+                >
+                  <Item instance={a} />
+                </TouchableOpacity>
+              ))}
+            </>
+          )}
+        </View>
       </View>
       {/* Thêm 5 buttons có chưa hình ảnh và caption, có thể trượt ngang, ấn vào chuyển sang trang tìm kiếm */}
       <ScrollView horizontal={true} style={MyStyle.horizontalScroll}>
