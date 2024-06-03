@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -90,10 +90,10 @@ WSGI_APPLICATION = 'RoomRental.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'homedb',
-        'USER': 'root',
-        'PASSWORD': 'Admin@123',
-        'HOST': ''  # mặc định localhost
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_localhost')
     }
 }
 AUTH_USER_MODEL = 'homes.User'
@@ -122,9 +122,9 @@ AUTH_PASSWORD_VALIDATORS = [
 import cloudinary
 
 cloudinary.config(
-    cloud_name="dbyeacxv4",
-    api_key="691338469635563",
-    api_secret="dHHQ-iAJHwlZQXHmqe0eTU1p8NE"
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
