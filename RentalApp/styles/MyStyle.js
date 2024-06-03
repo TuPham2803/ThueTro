@@ -41,7 +41,7 @@ export default StyleSheet.create({
     borderRadius: 20,
   },
   searchBar: {
-    width: "60%",
+    width: "95%",
   },
   icon: {
     width: "8%",
@@ -78,7 +78,7 @@ export default StyleSheet.create({
     paddingLeft: 10,
   },
   card: {
-    width: screenWidth / 3 - 20, // Ensures three cards fit within the screen width
+    width: screenWidth / 2.5 - 20, // Ensures three cards fit within the screen width
     marginHorizontal: 5,
   },
   cardImage: {

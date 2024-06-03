@@ -167,6 +167,7 @@ const MyTab = () => {
         name="HomeStack"
         component={HomeStack}
         options={{
+          title: "Home",
           tabBarIcon: () => <Icon size={30} color="purple" source="home" />,
         }}
       />
