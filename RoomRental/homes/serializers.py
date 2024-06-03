@@ -56,7 +56,14 @@ class PostRequestSerializer(ModelSerializer):
         model = PostRequest
         fields = [
             'id',
-            'area',
+            'title',
+            'min_price',
+            'max_price',
+            'quanity',
+            'city',
+            'district',
+            'acreage',
+            'room_type',
             'description',
             'user_post',
             'created_at',
@@ -65,7 +72,6 @@ class PostRequestSerializer(ModelSerializer):
         ]
         read_only_fields = ['created_at', 'updated_at', 'user_post']
         extra_kwargs = {
-            'area': {'required': True},
             'description': {'required': True},
         }
 
@@ -77,7 +83,6 @@ class PostRequestSerializer(ModelSerializer):
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
         required_fields = [
-            'area',
             'description',
         ]
         for field in required_fields:
@@ -96,7 +101,7 @@ class AccomodationImageSerializer(ModelSerializer):
 
 class PostAccommodationSerializer(ModelSerializer):
     images = AccomodationImageSerializer(many=True, read_only=True)
-
+    owner = UserSerializer()
     class Meta:
         model = PostAccommodation
         fields = [

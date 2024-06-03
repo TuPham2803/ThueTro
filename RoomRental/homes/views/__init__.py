@@ -1,0 +1,5 @@
+from .PostAccommodationView import PostAccommodationViewSet
+from .PostRequestView import PostRequestViewSet
+from .UserView import UserViewSet
+from .CommentAccommodationView import CommentAccommodationViewSet
+from .CommentRequestView import CommentRequestViewSet

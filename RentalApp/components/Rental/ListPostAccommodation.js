@@ -29,7 +29,7 @@ const ListPostAccommodation = ({ navigation }) => {
       let res = await APIs.get(
         `${endpoints["post_accomodations"]}?user_post=${user.id}&q=${q}`
       );
-      setPosts(res.data);
+      setPosts(res.data.results);
     } catch (ex) {
       console.error(ex);
     }
@@ -57,22 +57,23 @@ const ListPostAccommodation = ({ navigation }) => {
                     navigation.navigate("UpdatePostAccommodation", {
                       post: p,
                     })
+
                   }
                 >
                   <Item instance={p} />
+
+                  <Text style={{ fontStyle: 'italic', color: 'gray', alignSelf: 'center', marginTop: 5 }}>
+                    {p.pending_status === "PD" ? "Chưa được xét duyệt" : "Đã được xét duyệt"}
+                  </Text>
+
                 </TouchableOpacity>
               ))}
             </>
           )}
         </View>
+
       </ScrollView>
-      <Button
-        mode="contained"
-        style={[MyStyle.Button, { backgroundColor: "purple" }]}
-        onPress={() => navigation.navigate("UpdatePostAccommodation")}
-      >
-        Sưa3 bài đăng
-      </Button>
+
     </View>
   );
 
