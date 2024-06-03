@@ -28,7 +28,7 @@ export default StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
   },
-  col:{
+  col: {
     flexDirection: "column",
     flexWrap: "wrap",
   },

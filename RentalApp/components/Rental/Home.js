@@ -30,55 +30,72 @@ const Home = ({ navigation }) => {
   ];
   const [accommdation, setAccomodation] = React.useState([]);
   const user = useContext(MyUserContext);
+  const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(false);
 
   const handlePress = () => {
     if (user) {
       if (user.user_type === "landlord") {
         navigation.navigate("CreatePostAccommodation");
       } else {
-        navigation.navigate('PostManagerStack', {
-          screen: 'CreatePostRequest',
+        navigation.navigate("PostManagerStack", {
+          screen: "CreatePostRequest",
         });
       }
     } else {
       navigation.navigate("Login");
     }
   };
-
-  const loadPostAccomodations = async () => {
-    try {
-      let res = await APIs.get(
-        `${endpoints["post_accomodations"]}?pending_status=APR`
-      );
-      setAccomodation(res.data.results);
-    } catch (ex) {
-      console.error(ex);
+  const loadMore = ({ nativeEvent }) => {
+    if (loading === false && isCloseToBottom(nativeEvent)) {
+      setPage(page + 1);
     }
   };
- 
-      
+  const loadPostAccomodations = async () => {
+    if (page > 0) {
+      let url = `${endpoints["post_accomodations"]}?pending_status=APR?page=${page}`;
+      try {
+        setLoading(true);
+        let res = await APIs.get(url);
+        if (page === 1) {
+          setAccomodation(res.data.results);
+        } else if (page > 1) {
+          setAccomodation((current) => {
+            return [...current, ...res.data.results];
+          });
+        }
+        if (res.data.next === null) setPage(0);
+      } catch (ex) {
+        console.error(ex);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   React.useEffect(() => {
     loadPostAccomodations();
-    
   }, []);
   return (
-    <ScrollView style={[MyStyle.container]}>
+    <ScrollView onScroll={loadMore} style={[MyStyle.container]}>
       <View style={[MyStyle.wrapper]}>
-        <Swiper style={MyStyle.wrapper} showsButtons={false} autoplay={true} autoplayTimeout={2}
+        <Swiper
+          style={MyStyle.wrapper}
+          showsButtons={false}
+          autoplay={true}
+          autoplayTimeout={2}
           dotColor="rgba(255, 255, 255, 0.5)"
-          activeDotColor="#fff">
+          activeDotColor="#fff"
+        >
           {images.map((image, index) => (
             <View style={MyStyle.slide} key={index}>
-              <Image
-                source={image}
-                style={MyStyle.image}
-                resizeMode="cover"
-              />
+              <Image source={image} style={MyStyle.image} resizeMode="cover" />
             </View>
           ))}
         </Swiper>
       </View>
-      <View style={[MyStyle.searchBar, MyStyle.row,{display:'flex', justifyContent:'center'}]}>
+
+      <View style={[MyStyle.row]}>
         <Searchbar
           placeholder="Search"
           value={search}
@@ -87,6 +104,7 @@ const Home = ({ navigation }) => {
         />
 
         {/* <IconButton
+        <IconButton
           icon="cart"
           iconColor="purple"
           size={20}
@@ -180,7 +198,11 @@ const Home = ({ navigation }) => {
         <Text style={MyStyle.header}>Search trending and quality</Text>
       </View>
 
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={MyStyle.horizontalScroll}>
+      <ScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        style={MyStyle.horizontalScroll}
+      >
         {[
           {
             image: ImagesAssets.quan1,
@@ -221,30 +243,28 @@ const Home = ({ navigation }) => {
           </Card>
         ))}
       </ScrollView>
-      <View style={MyStyle.container}>
-        <ScrollView>
-          <View style={[MyStyle.container, MyStyle.margin]}>
-            {accommdation === null ? (
-              <ActivityIndicator />
-            ) : (
-              <>
-                {accommdation.map((a) => (
-                  <TouchableOpacity
-                    key={a.id}
-                    onPress={() =>
-                      navigation.navigate("PostAccommodationDetails", {
-                        postId: a.id,
-                      })
-                    }
-                  >
-                    <Item instance={a} />
-                  </TouchableOpacity>
-                ))}
-              </>
-            )}
-          </View>
-        </ScrollView>
-      </View>
+      {/* <View style={MyStyle.container}>
+        <View style={[MyStyle.container, MyStyle.margin]}>
+          {accommdation === null ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              {accommdation.map((a) => (
+                <TouchableOpacity
+                  key={a.id}
+                  onPress={() =>
+                    navigation.navigate("PostAccommodationDetails", {
+                      postId: a.id,
+                    })
+                  }
+                >
+                  <Item instance={a} />
+                </TouchableOpacity>
+              ))}
+            </>
+          )}
+        </View>
+      </View> */}
     </ScrollView>
   );
 };
