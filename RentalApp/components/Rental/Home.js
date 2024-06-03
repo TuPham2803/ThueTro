@@ -36,7 +36,9 @@ const Home = ({ navigation }) => {
       if (user.user_type === "landlord") {
         navigation.navigate("CreatePostAccommodation");
       } else {
-        navigation.navigate("CreatePostRequest");
+        navigation.navigate('PostManagerStack', {
+          screen: 'CreatePostRequest',
+        });
       }
     } else {
       navigation.navigate("Login");
@@ -59,7 +61,6 @@ const Home = ({ navigation }) => {
     loadPostAccomodations();
     
   }, []);
-  console.log(accommdation);
   return (
     <ScrollView style={[MyStyle.container]}>
       <View style={[MyStyle.wrapper]}>
@@ -179,7 +180,7 @@ const Home = ({ navigation }) => {
         <Text style={MyStyle.header}>Search trending and quality</Text>
       </View>
 
-      <ScrollView horizontal={true} style={MyStyle.horizontalScroll}>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={MyStyle.horizontalScroll}>
         {[
           {
             image: ImagesAssets.quan1,

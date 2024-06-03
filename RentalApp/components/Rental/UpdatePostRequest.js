@@ -191,7 +191,7 @@ const UpdatePostRequest = ({route, navigation }) => {
                         mode="contained"
                         onPress={handleUpdatePostRequest}
                     >
-                        Đăng tin
+                        Cập nhật
                     </Button>
                 </ScrollView>
             </View>
