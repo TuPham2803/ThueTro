@@ -65,3 +65,21 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
 
         return Response(serializers.LikeRequestSerializer(li).data,
                         status=status.HTTP_201_CREATED)
+    
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.action.__eq__('list'):
+            district = self.request.query_params.get('district')
+            if district:
+                queryset = queryset.filter(district__icontains=district)
+            city = self.request.query_params.get('city')
+            if city:
+                queryset = queryset.filter(city__icontains=city)
+            room_type = self.request.query_params.get('room_type')
+            if room_type:
+                queryset = queryset.filter(room_type__icontains=room_type)
+            user_post = self.request.query_params.get('user_post')
+            if user_post:
+                queryset = queryset.filter(user_post__exact=user_post)
+        return queryset
