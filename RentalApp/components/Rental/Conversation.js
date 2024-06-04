@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useContext, useMemo, useReducer } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import React, { useState, useCallback, useContext, useEffect, useReducer } from "react";
+import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { IconButton } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import db from "../../configs/firebase";
@@ -30,69 +30,73 @@ const Conversation = ({ navigation }) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch (action.type) {
       case 'SET_CONVERSATIONS':
-        return { ...state, conversations: action.payload };
+        return { ...state, conversations: action.payload, loading: false };
       default:
         return state;
     }
-  }, { conversations: [] });
+  }, { conversations: [], loading: true }); // Added loading state
 
   const user = useContext(MyUserContext);
 
   const fetchData = useCallback(async () => {
-    const q = query(
-      collection(db, "conversations"),
-      where("participantIds", "array-contains", user.id)
-    );
-    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-      const convs = await Promise.all(
-        querySnapshot.docs.map(async (conversation) => {
-          const data = conversation.data();
-          let lastMessage = {};
-          let friendDetails = {};
-
-          if (data.lastMessageId) {
-            try {
-              const lastMessageDocRef = doc(db, "messages", data.lastMessageId);
-              const lastMessageDoc = await getDoc(lastMessageDocRef);
-              if (lastMessageDoc.exists()) {
-                lastMessage = lastMessageDoc.data();
-              }
-            } catch (error) {
-              console.error("Error fetching last message:", error);
-            }
-          }
-
-          const friendId = data.participantIds.find((id) => id !== user.id);
-          if (friendId) {
-            try {
-              friendDetails = await handleGetUser(friendId);
-            } catch (error) {
-              console.error("Error fetching friend details:", error);
-            }
-          }
-
-          return {
-            id: conversation.id,
-            ...data,
-            image: friendDetails.image,
-            username: friendDetails.username || "Unknown",
-            content: lastMessage.content || "",
-            createdAt: lastMessage.createdAt
-              ? moment(lastMessage.createdAt.toDate()).fromNow()
-              : "",
-          };
-        })
+    try {
+      const q = query(
+        collection(db, "conversations"),
+        where("participantIds", "array-contains", user.id)
       );
+      const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+        const convs = await Promise.all(
+          querySnapshot.docs.map(async (conversation) => {
+            const data = conversation.data();
+            let lastMessage = {};
+            let friendDetails = {};
 
-      dispatch({ type: 'SET_CONVERSATIONS', payload: convs });
-    });
+            if (data.lastMessageId) {
+              try {
+                const lastMessageDocRef = doc(db, "messages", data.lastMessageId);
+                const lastMessageDoc = await getDoc(lastMessageDocRef);
+                if (lastMessageDoc.exists()) {
+                  lastMessage = lastMessageDoc.data();
+                }
+              } catch (error) {
+                console.error("Error fetching last message:", error);
+              }
+            }
 
-    return () => unsubscribe();
+            const friendId = data.participantIds.find((id) => id !== user.id);
+            if (friendId) {
+              try {
+                friendDetails = await handleGetUser(friendId);
+              } catch (error) {
+                console.error("Error fetching friend details:", error);
+              }
+            }
+
+            return {
+              id: conversation.id,
+              ...data,
+              image: friendDetails.image || "", // Handle missing image gracefully
+              username: friendDetails.username || "Unknown",
+              content: lastMessage.content || "",
+              createdAt: lastMessage.createdAt
+                ? moment(lastMessage.createdAt.toDate()).fromNow()
+                : "",
+            };
+          })
+        );
+
+        dispatch({ type: 'SET_CONVERSATIONS', payload: convs });
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
   }, [user.id]);
 
-  useFocusEffect(useCallback(() => {
+  useEffect(() => {
     fetchData();
-  }, [fetchData]));
+  }, [fetchData]);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -102,6 +106,7 @@ const Conversation = ({ navigation }) => {
       <Image
         source={{ uri: item.image }}
         style={ConversationStyle.avatar}
+        resizeMode="cover" // Adjusted resizeMode
       />
       <View style={ConversationStyle.textContainer}>
         <Text style={ConversationStyle.name}>
@@ -119,6 +124,10 @@ const Conversation = ({ navigation }) => {
       />
     </TouchableOpacity>
   );
+
+  if (state.loading) {
+    return <ActivityIndicator size="large" />;
+  }
 
   return (
     <View style={ConversationStyle.container}>
