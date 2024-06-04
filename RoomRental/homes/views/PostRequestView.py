@@ -50,7 +50,7 @@ class PostRequestViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.status = False
+        instance.active = False
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
