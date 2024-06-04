@@ -31,7 +31,8 @@ const CreatePostRequest = ({ navigation }) => {
         formData.append('title', title);
         formData.append('description', note);
         formData.append('acreage', acreage);
-        formData.append('quanity', quanity);
+        if(selectedHouseType === 'SH')
+            formData.append('quanity', quanity);
         formData.append('room_type', selectedHouseType);
         formData.append('min_price', priceRange[0]);
         formData.append('max_price', priceRange[1]);
@@ -49,7 +50,7 @@ const CreatePostRequest = ({ navigation }) => {
             });
             if (res.status === 201) {
                 alert('Create post request successfully');
-                navigation.navigate('Home');
+                navigation.navigate('ListPostRequest');
             } else {
                 console.error('Failed to create post request', res.data);
                 alert('Failed to create post request');

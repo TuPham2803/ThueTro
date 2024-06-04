@@ -13,7 +13,7 @@ const UpdatePostRequest = ({route, navigation }) => {
     const [title, setTitle] = useState(post.title);
     const [description, setDescription] = useState(post.description);
     const [acreage, setAcreage] = useState(String(post.acreage));
-    const [quanity, setQuanity] = useState(String(post.quanity));
+    const [quanity, setQuanity] = useState(String(post.room_type==='PR' ? '' : post.quanity));
     const [selectedHouseType, setSelectedHouseType] = useState(post.room_type);
     const [priceRange, setPriceRange] = useState([post.min_price, post.max_price]);
 
@@ -32,10 +32,12 @@ const UpdatePostRequest = ({route, navigation }) => {
         formData.append('title', title);
         formData.append('description', description);
         formData.append('acreage', acreage);
-        formData.append('quanity', quanity);
+        if(selectedHouseType=='SH')
+            formData.append('quanity', quanity);
         formData.append('room_type', selectedHouseType);
         formData.append('min_price', priceRange[0]);
         formData.append('max_price', priceRange[1]);
+        console.log('formData', formData);
         try {
             const token = await AsyncStorage.getItem('token');
             if (!token) {
