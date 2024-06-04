@@ -36,10 +36,10 @@ const Login = () => {
       let formData = new FormData();
       formData.append("username", user.username);
       formData.append("password", user.password);
-      formData.append("client_id", "oYGHb8Bt1odfEu8Wz2o8UHyLo52sI4rzCsB0xESW");
+      formData.append("client_id", "zvQusM9TN6uYKseb7Mi4p3vwvXO31lEhG0acoZcE");
       formData.append(
         "client_secret",
-        "5Ztf235KBvE5ycS00gNcJxLMoicbDuslEvenhSufkeUA4mbySMK1lFD9TWljaE3322g2gK9LIIjRQChdk7tbxGCBvV9CNLcpcccSGhqBRXRW1OjOYKd20vTMoKgVxFYl"
+        "N0kSzcvS7aDSuH8kftrMI18LWz7pbsP9sRDafR9XepNzbQ0REJL7lUa9IiAX0kKlJbCo5llXVLiYA98yxNz3Q0meulrES3nG1Hsvq0SksPHVmpRKZKeLJIIIcJjS7V2F"
       );
       formData.append("grant_type", "password");
 
@@ -48,8 +48,6 @@ const Login = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.info(res.data);
 
       await AsyncStorage.setItem("token", res.data.access_token);
 
@@ -102,9 +100,9 @@ const Login = () => {
             style={MyStyle.margin}
             loading={loading}
           >
-            Sign in
+            Đăng nhập
           </Button>
-          <Button
+          {/* <Button
             icon="account-lock-open"
             mode="contained"
             onPress={() => nav.navigate("Register")}
@@ -112,7 +110,7 @@ const Login = () => {
             loading={loading}
           >
             Sign up
-          </Button>
+          </Button> */}
         </View>
         <Text>Forgot password?</Text>
       </View>

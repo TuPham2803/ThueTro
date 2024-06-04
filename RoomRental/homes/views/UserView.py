@@ -6,10 +6,9 @@ from homes.models import User
 from homes import serializers, perms
 from datetime import datetime
 
-class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
+class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
-
     # permission_classes = [permissions.IsAuthenticated, IsTenantAndFollowLandlord]
 
     def get_queryset(self):
@@ -18,7 +17,8 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView):
         if self.action.__eq__('list'):
             user_id = self.request.query_params.get('id')
             if user_id:
-                queryset = queryset.filter(id__icontains=user_id)
+                # queryset = queryset.filter(id__icontains=user_id)
+                queryset = queryset.filter(id__exact=user_id)
 
             return queryset
 
