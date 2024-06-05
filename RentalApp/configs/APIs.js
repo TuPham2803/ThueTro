@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://192.168.40.1:8081/";
+const BASE_URL = "http://192.168.1.4:8000/";
 
 export const endpoints = {
   post_accomodations: "/post_accommodations/",

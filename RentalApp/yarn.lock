@@ -4163,7 +4163,7 @@ expo-status-bar@~1.12.1:
   resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-1.12.1.tgz"
   integrity sha512-/t3xdbS8KB0prj5KG5w7z+wZPFlPtkgs95BsmrP/E7Q0xHXTcDcQ6Cu2FkFuRM+PKTb17cJDnLkawyS5vDLxMA==
 
-expo@*, expo@~51.0.6:
+expo@*:
   version "51.0.6"
   resolved "https://registry.npmjs.org/expo/-/expo-51.0.6.tgz"
   integrity sha512-cl3FBuSZ1gE1UcPqsMinCPmwyqedF1kug7+SK6G4vYSB8JulWmCOwjgpcOIK5lkKgNwU5sQS1nG9hPcXFB79pA==
