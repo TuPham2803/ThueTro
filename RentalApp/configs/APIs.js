@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}/`;
+const BASE_URL = `http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`;
 
 export const endpoints = {
   post_accomodations: "/post_accommodations/",
