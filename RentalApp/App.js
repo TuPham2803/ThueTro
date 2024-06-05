@@ -15,7 +15,9 @@ import PostAccommodationDetails from "./components/Rental/PostAccommodationDetai
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-paper";
 import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
+import ListPostRequest from "./components/Rental/ListPostRequest";
 import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
+import UpdatePostRequest from "./components/Rental/UpdatePostRequest";
 import PostRequests from "./components/Rental/PostRequests";
 import PostRequestDetails from "./components/Rental/PostRequestDetails";
 import EditProfile from "./components/User/EditProfile";
@@ -41,11 +43,6 @@ const HomeStack = () => {
         options={{ title: "Profile" }}
       />
       <Stack.Screen
-        name="CreatePostRequest"
-        component={CreatePostRequest}
-        options={{ title: "CreatePostRequest" }}
-      />
-      <Stack.Screen
         name="PostAccommodations"
         component={PostAccommodations}
         options={{ title: "Bài đăng cho thuê nhà" }}
@@ -65,11 +62,6 @@ const HomeStack = () => {
         component={PostRequestDetails}
         options={{ title: "Chi tiết bài đăng" }}
       />
-      <Stack.Screen
-        name="CreatePostAccommodation"
-        component={CreatePostAccommodation}
-        options={{ title: "Tạo bài đăng" }}
-      />
     </Stack.Navigator>
   );
 };
@@ -82,17 +74,37 @@ const PostManagerStack = () => {
       {user.user_type == "landlord" ? (
         <>
           <Stack.Screen
+            name="ListPostAccommodation"
+            component={ListPostAccommodation}
+            options={{ title: "Danh sách bài đăng" }}
+          />
+          <Stack.Screen
+            name="UpdatePostAccommodation"
+            component={UpdatePostAccommodation}
+            options={{ title: "Chỉnh sửa bài đăng" }}
+          />
+          <Stack.Screen
             name="CreatePostAccommodation"
             component={CreatePostAccommodation}
-            options={{ title: "Tạo tin cho thuê" }}
+            options={{ title: "Đăng tin cho thuê" }}
           />
         </>
       ) : (
         <>
+         <Stack.Screen
+            name="ListPostRequest"
+            component={ListPostRequest}
+            options={{ title: "Danh sách bài đăng" }}
+          />
+          <Stack.Screen
+            name="UpdatePostRequest"
+            component={UpdatePostRequest}
+            options={{ title: "Chỉnh sửa bài đăng" }}
+          />
           <Stack.Screen
             name="CreatePostRequest"
             component={CreatePostRequest}
-            options={{ title: "Tạo tin tìm phòng" }}
+            options={{ title: "Đăng tin tìm phòng" }}
           />
         </>
       )}
@@ -108,10 +120,7 @@ const MessageStack = () => {
         component={Conversation}
         options={{ title: "Cuộc trò chuyện" }}
       />
-      <Stack.Screen
-        name="Chat"
-        component={Chat}
-      />
+      <Stack.Screen name="Chat" component={Chat} />
     </Stack.Navigator>
   );
 };
@@ -123,24 +132,6 @@ const ProfileStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
-    </Stack.Navigator>
-  );
-};
-
-const ListPostAccommodationStack = () => {
-  const user = useContext(MyUserContext);
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="ListPostAccommodation"
-        component={ListPostAccommodation}
-        options={{ title: "Danh sách bài đăng" }}
-      />
-      <Stack.Screen
-        name="UpdatePostAccommodation"
-        component={UpdatePostAccommodation}
-        options={{ title: "Chỉnh sửa bài đăng" }}
-      />
     </Stack.Navigator>
   );
 };
@@ -167,6 +158,7 @@ const MyTab = () => {
         name="HomeStack"
         component={HomeStack}
         options={{
+          title: "Home",
           tabBarIcon: () => <Icon size={30} color="purple" source="home" />,
         }}
       />
@@ -196,8 +188,8 @@ const MyTab = () => {
       ) : (
         <>
           <Tab.Screen
-            name="ListPostAccommodationStack"
-            component={ListPostAccommodationStack}
+            name="PostManagerStack"
+            component={PostManagerStack}
             options={{
               title: "Danh sách Bài đăng",
               tabBarIcon: () => <Icon size={30} color="purple" source="post" />,

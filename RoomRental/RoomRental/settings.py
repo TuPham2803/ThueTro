@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,9 +21,7 @@ import pymysql
 
 pymysql.install_as_MySQLdb()
 
-ALLOWED_HOSTS = ['26.14.198.86', '192.168.40.1', 'localhost', '127.0.0.1', '*']
-CORS_ORIGIN_ALLOW = True
-CORS_ORIGIN_ALLOW_ALL = True
+
 
 # Application definition
 
@@ -36,13 +34,13 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'cloudinary',
     'cloudinary_storage',
-    'corsheaders',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -52,8 +50,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
+ALLOWED_HOSTS=['*']
+CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,8 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
+
 
 ROOT_URLCONF = 'RoomRental.urls'
 
@@ -90,10 +91,10 @@ WSGI_APPLICATION = 'RoomRental.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'homedb',
-        'USER': 'root',
-        'PASSWORD': 'admin@123',
-        'HOST': ''  # mặc định localhost
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST')
     }
 }
 AUTH_USER_MODEL = 'homes.User'
@@ -122,9 +123,9 @@ AUTH_PASSWORD_VALIDATORS = [
 import cloudinary
 
 cloudinary.config(
-    cloud_name="dbyeacxv4",
-    api_key="691338469635563",
-    api_secret="dHHQ-iAJHwlZQXHmqe0eTU1p8NE"
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

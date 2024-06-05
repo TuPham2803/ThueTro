@@ -1,8 +1,7 @@
-import { ActivityIndicator, List, Text } from "react-native-paper";
+import { ActivityIndicator, List, Text, Icon} from "react-native-paper";
 import moment from "moment";
-import { Image, View, useWindowDimensions } from "react-native";
+import { View, useWindowDimensions } from "react-native";
 import MyStyle from "../styles/MyStyle";
-import { RenderHTML } from "react-native-render-html";
 import { useEffect, useState } from "react";
 import APIs, { endpoints } from "../configs/APIs";
 import { htmlToText } from "html-to-text";
@@ -37,7 +36,7 @@ const ItemPostRequest = ({ instance }) => {
       titleStyle={MyStyle.header}
       title={
         instance.description ? (
-          <Text style={MyStyle.header}>{htmlToText(instance.description)}</Text>
+          <Text style={MyStyle.header}>{instance.title}</Text>
         ) : (
           "No description available"
         )
@@ -45,22 +44,22 @@ const ItemPostRequest = ({ instance }) => {
       description={
         <View style={{ flexDirection: "column" }}>
           {instance.district && instance.city ? (
+            
             <Text>
-              {instance.district}, {instance.city}
+               <Icon source="map-marker" size={20} color="purple" />{instance.district}, {instance.city}
             </Text>
           ) : null}
-          {instance.created_at ? (
-            <Text>{moment(instance.created_at).fromNow()}</Text>
+          {/* Add minimum and maximum prices */}
+          {instance.min_price && instance.max_price ? (
+            <Text>
+              <Icon source="currency-usd" size={20} color="purple"/>${instance.min_price} - {instance.max_price}
+            </Text>
           ) : null}
         </View>
       }
-      left={() =>
-        user ? (
-          <Image style={MyStyle.avatar} source={{ uri: user.image }} />
-        ) : null
-      }
       right={() => (
         <View style={[{ justifyContent: "flex-end", alignItems: "flex-end" }]}>
+           <Text>{moment(instance.created_at).fromNow()}</Text>
           <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
             <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
               <List.Icon icon="heart-outline" />
