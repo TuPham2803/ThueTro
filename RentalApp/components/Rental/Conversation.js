@@ -34,7 +34,7 @@ const Conversation = ({ navigation }) => {
       default:
         return state;
     }
-  }, { conversations: [], loading: true }); // Added loading state
+  }, { conversations: [], loading: true });
 
   const user = useContext(MyUserContext);
 
@@ -74,8 +74,9 @@ const Conversation = ({ navigation }) => {
 
             return {
               id: conversation.id,
+              friendId,
               ...data,
-              image: friendDetails.image || "", // Handle missing image gracefully
+              image: friendDetails.image || "",
               username: friendDetails.username || "Unknown",
               content: lastMessage.content || "",
               createdAt: lastMessage.createdAt
@@ -101,12 +102,12 @@ const Conversation = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={ConversationStyle.conversationItem}
-      onPress={() => navigation.navigate("Chat", { conversationId: item.id })}
+      onPress={() => navigation.navigate("Chat", { conversationId: item.id, friendId: item.friendId })}
     >
       <Image
         source={{ uri: item.image }}
         style={ConversationStyle.avatar}
-        resizeMode="cover" // Adjusted resizeMode
+        resizeMode="cover"
       />
       <View style={ConversationStyle.textContainer}>
         <Text style={ConversationStyle.name}>
@@ -120,7 +121,7 @@ const Conversation = ({ navigation }) => {
       <IconButton
         icon="chevron-right"
         size={24}
-        onPress={() => navigation.navigate("Chat", { conversationId: item.id })}
+        onPress={() => navigation.navigate("Chat", { conversationId: item.id, friendId: item.friendId })}
       />
     </TouchableOpacity>
   );
