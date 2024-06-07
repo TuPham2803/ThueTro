@@ -36,11 +36,8 @@ const Login = () => {
       let formData = new FormData();
       formData.append("username", user.username);
       formData.append("password", user.password);
-      formData.append("client_id", "oYGHb8Bt1odfEu8Wz2o8UHyLo52sI4rzCsB0xESW");
-      formData.append(
-        "client_secret",
-        "5Ztf235KBvE5ycS00gNcJxLMoicbDuslEvenhSufkeUA4mbySMK1lFD9TWljaE3322g2gK9LIIjRQChdk7tbxGCBvV9CNLcpcccSGhqBRXRW1OjOYKd20vTMoKgVxFYl"
-      );
+      formData.append("client_id", process.env.SERVER_CLIENT_ID);
+      formData.append("client_secret", process.env.SERVER_CLIENT_SECRET);
       formData.append("grant_type", "password");
 
       let res = await APIs.post(endpoints["login"], formData, {
@@ -48,8 +45,6 @@ const Login = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.info(res.data);
 
       await AsyncStorage.setItem("token", res.data.access_token);
 
@@ -102,9 +97,9 @@ const Login = () => {
             style={MyStyle.margin}
             loading={loading}
           >
-            Sign in
+            Đăng nhập
           </Button>
-          <Button
+          {/* <Button
             icon="account-lock-open"
             mode="contained"
             onPress={() => nav.navigate("Register")}
@@ -112,7 +107,7 @@ const Login = () => {
             loading={loading}
           >
             Sign up
-          </Button>
+          </Button> */}
         </View>
         <Text>Forgot password?</Text>
       </View>

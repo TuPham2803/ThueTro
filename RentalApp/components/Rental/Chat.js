@@ -1,104 +1,110 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { View, Text, FlatList, TextInput, TouchableOpacity } from "react-native";
 import ChatStyle from "../../styles/ChatStyle"; // Ensure you have ChatStyle.js in your styles directory
-
-const dummyMessages = {
-    '1': [
-        { id: '1', text: 'Hey, how are you?', sender: 'John Doe', time: '2:45 PM' },
-        { id: '2', text: 'I am good, thanks!', sender: 'Me', time: '2:46 PM' }
-    ],
-    '2': [
-        { id: '1', text: 'Are we still meeting tomorrow?', sender: 'Jane Smith', time: '1:15 PM' },
-        { id: '2', text: 'Yes, we are!', sender: 'Me', time: '1:16 PM' }
-    ],
-    '3': [
-        { id: '1', text: 'Great job on the presentation!', sender: 'Bob Johnson', time: '11:30 AM' },
-        { id: '2', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '3', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '4', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '5', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '6', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '7', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '8', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-        { id: '9', text: 'Thank you!', sender: 'Me', time: '11:31 AM' },
-    ],
-    // Add more dummy messages as needed
-};
+import db from "../../configs/firebase";
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc } from "firebase/firestore";
+import { MyUserContext } from "../../configs/Contexts";
 
 const Chat = ({ route }) => {
-    const { conversationId } = route.params;
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-    const flatListRef = useRef(null); // Create a reference for the FlatList
+  const { conversationId, friendId } = route.params;
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const flatListRef = useRef(null);
+  const user = useContext(MyUserContext);
 
-    useEffect(() => {
-        setMessages(dummyMessages[conversationId] || []);
-    }, [conversationId]);
+  useEffect(() => {
+    console.log("Setting up snapshot listener for conversationId:", conversationId);
 
-    useEffect(() => {
-        setTimeout(() => {
-            if (flatListRef.current) {
-                flatListRef.current.scrollToEnd({ animated: true });
-            }
-        }, 100); // Delay to ensure messages are rendered before scrolling
-    }, [messages]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            if (flatListRef.current) {
-                flatListRef.current.scrollToEnd({ animated: true });
-            }
-        }, 100); // Delay to ensure messages are rendered before scrolling
-    }, []);
-
-    const handleSend = () => {
-        if (newMessage.trim()) {
-            const newMessageObj = {
-                id: (messages.length + 1).toString(),
-                text: newMessage,
-                sender: 'Me',
-                time: new Date().toLocaleTimeString(),
-            };
-            setMessages([...messages, newMessageObj]);
-            setNewMessage('');
-        }
-    };
-
-    const renderItem = ({ item }) => {
-        const isMe = item.sender === 'Me'; // Check if the message is sent by "Me"
-        return (
-            <View style={[ChatStyle.messageItem, isMe ? ChatStyle.sentMessage : ChatStyle.receivedMessage]}>
-                <Text style={ChatStyle.sender}>{item.sender}</Text>
-                <Text style={ChatStyle.text}>{item.text}</Text>
-                <Text style={ChatStyle.time}>{item.time}</Text>
-            </View>
-        );
-    };
-
-    return (
-        <View style={ChatStyle.container}>
-            <FlatList
-                ref={flatListRef} // Assign the reference to the FlatList
-                data={messages}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                style={ChatStyle.messageList}
-                contentContainerStyle={{ paddingBottom: 20 }} // Add padding to the bottom of the FlatList
-                onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })} // Scroll to the end when the content size changes
-            />
-            <View style={ChatStyle.inputContainer}>
-                <TextInput
-                    style={ChatStyle.input}
-                    value={newMessage}
-                    onChangeText={setNewMessage}
-                    placeholder="Type a message"
-                />
-                <TouchableOpacity onPress={handleSend} style={ChatStyle.sendButton}>
-                    <Text style={ChatStyle.sendButtonText}>Send</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+    const q = query(
+      collection(db, "messages"),
+      where("conversationId", "==", conversationId),
+      orderBy("createdAt", "asc")
     );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      console.log("Received new snapshot for messages");
+      const msgs = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        time: doc.data().createdAt ? doc.data().createdAt.toDate().toLocaleTimeString() : ''
+      }));
+      console.log("Messages:", msgs);
+      setMessages(msgs);
+
+      setTimeout(() => {
+        if (flatListRef.current) {
+          flatListRef.current.scrollToEnd({ animated: true });
+        }
+      }, 100);
+    });
+
+    return () => {
+      console.log("Cleaning up snapshot listener for conversationId:", conversationId);
+      unsubscribe();
+    };
+  }, [conversationId]);
+
+  const handleSend = async () => {
+    if (newMessage.trim()) {
+      const newMessageObj = {
+        conversationId,
+        content: newMessage,
+        userId: user.id,
+        createdAt: serverTimestamp(),
+      };
+
+      try {
+        console.log("Sending message:", newMessageObj);
+        const messageRef = await addDoc(collection(db, "messages"), newMessageObj);
+        setNewMessage('');
+        
+        // Update lastMessageId in the conversation
+        const conversationRef = doc(db, "conversations", conversationId);
+        await updateDoc(conversationRef, {
+          lastMessageId: messageRef.id
+        });
+        console.log("Updated lastMessageId in conversation");
+      } catch (error) {
+        console.error("Error sending message: ", error);
+      }
+    }
+  };
+
+  const renderItem = ({ item }) => {
+    const isMe = item.userId === user.id;
+    return (
+      <View style={[ChatStyle.messageItem, isMe ? ChatStyle.sentMessage : ChatStyle.receivedMessage]}>
+        <Text style={ChatStyle.sender}>{isMe ? "Me" : friendId}</Text>
+        <Text style={ChatStyle.text}>{item.content}</Text>
+        <Text style={ChatStyle.time}>{item.time}</Text>
+      </View>
+    );
+  };
+
+  return (
+    <View style={ChatStyle.container}>
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={ChatStyle.messageList}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
+      />
+      <View style={ChatStyle.inputContainer}>
+        <TextInput
+          style={ChatStyle.input}
+          value={newMessage}
+          onChangeText={setNewMessage}
+          placeholder="Type a message"
+        />
+        <TouchableOpacity onPress={handleSend} style={ChatStyle.sendButton}>
+          <Text style={ChatStyle.sendButtonText}>Send</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
 export default Chat;
