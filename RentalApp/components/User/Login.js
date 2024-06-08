@@ -8,6 +8,8 @@ import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = () => {
+  const SERVER_CLIENT_ID = process.env.SERVER_CLIENT_ID;
+  const SERVER_CLIENT_SECRET = process.env.SERVER_CLIENT_SECRET;
   const [user, setUser] = React.useState({});
   const fields = [
     {
@@ -36,8 +38,8 @@ const Login = () => {
       let formData = new FormData();
       formData.append("username", user.username);
       formData.append("password", user.password);
-      formData.append("client_id", process.env.SERVER_CLIENT_ID);
-      formData.append("client_secret", process.env.SERVER_CLIENT_SECRET);
+      formData.append("client_id", SERVER_CLIENT_ID);
+      formData.append("client_secret", SERVER_CLIENT_SECRET);
       formData.append("grant_type", "password");
 
       let res = await APIs.post(endpoints["login"], formData, {
