@@ -18,6 +18,9 @@ import * as ImagePicker from "expo-image-picker";
 import ImageViewing from "react-native-image-viewing";
 import MyStyle from "../../styles/MyStyle";
 import styles from "../../styles/CreateUpdatePostAccommodationStyle";
+import mime from "react-native-mime-types"; // Use react-native-mime-types
+import APIs, { endpoints } from "../../configs/APIs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreatePostAccommodation = ({ navigation }) => {
   const [title, setTitle] = useState("");
@@ -29,12 +32,15 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [images, setImages] = useState([]);
   const [acreage, setAcreage] = useState(0);
   const [phone, setPhone] = useState("");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
   const [selectedHouseType, setSelectedHouseType] = useState("");
   const [max_people, setMaxPeople] = useState("");
   const [current_people, setCurrentPeople] = useState("");
   const [visible, setVisible] = useState(false);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleHouseTypeSelection = (type) => {
     setSelectedHouseType(type);
@@ -52,7 +58,7 @@ const CreatePostAccommodation = ({ navigation }) => {
         quality: 1,
       });
       if (!res.cancelled) {
-        setImages([...images, ...res.assets]);
+        setImages([...images, res.assets[0]]);
       }
     }
   };
@@ -66,10 +72,84 @@ const CreatePostAccommodation = ({ navigation }) => {
     setImageViewVisible(true);
   };
 
+  const handleCreatePostAccommodation = async () => {
+    if (
+      title === "" ||
+      city === "" ||
+      district === "" ||
+      address === "" ||
+      price === "" ||
+      description === "" ||
+      images.length < 3 ||
+      acreage === 0 ||
+      phone === "" ||
+      selectedHouseType === ""
+    ) {
+      Alert.alert("Rental", "Please fill all the fields and upload at least three images!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("city", city);
+    formData.append("district", district);
+    formData.append("address", address);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("acreage", acreage);
+    formData.append("phone_number", phone);
+    formData.append("latitude", latitude);
+    formData.append("longitude", longitude);
+    formData.append("room_type", selectedHouseType);
+    if (selectedHouseType === "SH") {
+      formData.append("max_people", max_people);
+      formData.append("current_people", current_people);
+    }
+    
+    // Append images one by one to formData
+    images.forEach((image, index) => {
+      formData.append("images", {
+        uri: image.uri,
+        name: image.uri.split("/").pop(),
+        type: mime.lookup(image.uri) || "image/jpeg",
+      });
+    });
+
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        alert("User is not authenticated");
+        return;
+      }
+
+      let res = await APIs.post(endpoints["post_accomodations"], formData, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.status === 201) {
+        alert("Create post accommodation successfully");
+        navigation.navigate("ListPostAccommodation");
+      } else {
+        console.error("Failed to create post accommodation", res.data);
+        alert("Failed to create post accommodation");
+      }
+    } catch (err) {
+      console.error("Error while creating post accommodation", err);
+      alert("An error occurred while creating the post accommodation");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Provider>
       <View style={[MyStyle.container, styles.container]}>
         <ScrollView style={[MyStyle.wrapper, styles.wrapper]}>
+          {/* Input fields for the form */}
           <View style={styles.iconTextContainer}>
             <Icon source="home-account" size={30} color="purple" />
             <Text style={styles.iconText}>Tên bài đăng</Text>
@@ -79,7 +159,7 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setTitle}
             style={[MyStyle.input, styles.textInput]}
           />
-
+          {/* More input fields */}
           <View style={styles.iconTextContainer}>
             <Icon source="map-marker" size={30} color="purple" />
             <Text style={styles.iconText}>Địa chỉ: </Text>
@@ -102,7 +182,7 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setAddress}
             style={[MyStyle.input, styles.textInput]}
           />
-
+          {/* Price */}
           <View style={styles.iconTextContainer}>
             <Icon source="currency-usd" size={30} color="purple" />
             <Text style={styles.iconText}>Giá</Text>
@@ -112,7 +192,7 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setPrice}
             style={[MyStyle.input, styles.textInput]}
           />
-
+          {/* Description */}
           <View style={styles.iconTextContainer}>
             <Icon source="file-document" size={30} color="purple" />
             <Text style={styles.iconText}>Mô tả: </Text>
@@ -124,17 +204,17 @@ const CreatePostAccommodation = ({ navigation }) => {
             multiline={true}
             numberOfLines={4}
           />
-
+          {/* Acreage */}
           <View style={styles.iconTextContainer}>
             <Icon source="ruler" size={30} color="purple" />
             <Text style={styles.iconText}>Diện tích</Text>
           </View>
           <TextInput
-            value={acreage}
+            value={acreage.toString()}
             onChangeText={setAcreage}
             style={[MyStyle.input, MyStyle.margin]}
           />
-
+          {/* Phone */}
           <View style={styles.iconTextContainer}>
             <Icon source="phone" size={30} color="purple" />
             <Text style={styles.iconText}>SĐT </Text>
@@ -144,7 +224,7 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setPhone}
             style={[MyStyle.input, styles.textInput]}
           />
-
+          {/* House Type */}
           <View style={styles.iconTextContainer}>
             <Icon source="door" size={30} color="purple" />
             <Text style={styles.iconText}>Loại phòng</Text>
@@ -205,7 +285,7 @@ const CreatePostAccommodation = ({ navigation }) => {
               />
             </View>
           )}
-
+          {/* Images */}
           <View style={styles.iconTextContainer}>
             <Icon source="camera" size={30} color="purple" />
             <Text style={styles.iconText}>Hình ảnh</Text>
@@ -228,12 +308,10 @@ const CreatePostAccommodation = ({ navigation }) => {
               <IconButton icon="plus" size={30} color="purple" />
             </TouchableOpacity>
           </View>
-
-          <Button mode="contained" onPress={console.log("s")}>
+          <Button mode="contained" onPress={handleCreatePostAccommodation} loading={loading}>
             Đăng tin
           </Button>
         </ScrollView>
-
         <ImageViewing
           images={images.map((image) => ({ uri: image.uri }))}
           imageIndex={currentImageIndex}
