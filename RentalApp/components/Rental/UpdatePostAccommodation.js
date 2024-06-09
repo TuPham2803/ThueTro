@@ -23,7 +23,6 @@ import APIs, { endpoints } from "../../configs/APIs";
 
 const UpdatePostAcccommodation = ({ route, navigation }) => {
   const { post } = route.params;
-  console.log(post);
   const [title, setTitle] = useState(post.title);
   const [city, setCity] = useState(post.city);
   const [district, setDistrict] = useState(post.district);

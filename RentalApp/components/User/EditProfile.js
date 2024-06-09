@@ -18,69 +18,60 @@ import * as ImagePicker from "expo-image-picker";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import MyStyle from "../../styles/MyStyle";
-import APIs, { authApi, endpoints } from "../../configs/APIs";
-import { MyUserContext } from "../../configs/Contexts";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import APIs, { endpoints } from "../../configs/APIs";
+import mime from "react-native-mime-types";
+import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
+import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
+import { useContext, useState, useEffect } from "react";
 
-const EditProfile = ({ navigation }) => {
-  const [user, setUser] = React.useState({});
+const EditProfile = () => {
+  const [user, setUser] = React.useState(useContext(MyUserContext));
   const [err, setErr] = React.useState(false);
-  const currentUser = React.useContext(MyUserContext);
+  const [oldPassword, setOldPassword] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [showOldPassword, setShowOldPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  console.log(user);
   const fields = [
     {
       label: "First name",
       icon: "text",
       name: "first_name",
-      value: currentUser.first_name,
     },
     {
       label: "Last name",
       icon: "text",
       name: "last_name",
-      value: currentUser.last_name,
     },
     {
       label: "Email",
       icon: "mail",
       name: "email",
-      value: currentUser.email,
     },
     {
       label: "Username",
       icon: "account",
       name: "username",
-      value: currentUser.username,
-    },
-    {
-      label: "Password",
-      icon: "eye",
-      name: "password",
-      secureTextEntry: true,
-      value: currentUser.password,
-    },
-    {
-      label: "Confirm password",
-      icon: "eye",
-      name: "confirm",
-      secureTextEntry: true,
-      value: currentUser.password,
-    },
-    {
-      label: "User type",
-      icon: "account",
-      name: "user_type",
-      hidden: true,
-      value: currentUser.user_type,
     },
   ];
   const nav = useNavigation();
   const [loading, setLoading] = React.useState(false);
+  const [isViewerVisible, setViewerVisible] = React.useState(false); // State for image viewer
 
   const picker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") Alert.alert("Rental", "Permissions Denied!");
-    else {
-      let res = await ImagePicker.launchImageLibraryAsync();
+    if (status !== "granted") {
+      Alert.alert("Rental", "Permissions Denied!");
+    } else {
+      let res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
       if (!res.canceled) {
         updateSate("image", res.assets[0]);
       }
@@ -93,153 +84,118 @@ const EditProfile = ({ navigation }) => {
     });
   };
 
-  const update = async () => {
-    if (user["password"] !== user["confirm"]) setErr(true);
-    else {
-      setErr(false);
-
-      let form = new FormData();
-      for (let key in user) {
-        if (key !== "confirm") {
-          if (key === "image") {
-            form.append(key, {
-              uri: user.image.uri,
-              name: user.image.fileName,
-              type: user.image.type,
-            });
-          } else {
-            form.append(key, user[key]);
-          }
-        }
-      }
-
-      setLoading(true);
-      let token = await AsyncStorage.getItem("token");
-
-      try {
-        let res = await authApi(token).patch(
-          endpoints["update_profile"],
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        if (res.status === 201) nav.navigate("Login");
-      } catch (ex) {
-        console.error(
-          "Updated failed: ",
-          ex.response ? ex.response.data : ex.message
-        );
-      } finally {
-        setLoading(false);
-      }
-    }
+  const deleteImage = () => {
+    updateSate("image", null);
   };
-
-  //thêm thông báo trước khi thoát trang EditProfile
-  React.useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault();
-
-        Alert.alert("Xác nhận thoát", "Bạn có chắc muốn thoát không?", [
-          { text: "Cancel", style: "cancel", onPress: () => {} },
-          {
-            text: "Thoát",
-            style: "destructive",
-            onPress: () => navigation.dispatch(e.data.action),
-          },
-        ]);
-      }),
-    [navigation]
-  ),
-    [currentUser];
 
   return (
     <View
       style={[MyStyle.container, MyStyle.margin, MyStyle.justifyContentCenter]}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <ScrollView>
-          <Text style={MyStyle.subject}>Profile của bạn</Text>
+      <ScrollView>
+        <Text style={[MyStyle.title, MyStyle.margin]}>Cập nhật profile</Text>
+        {fields.map((c) =>
+          !c.hidden ? (
+            <TextInput
+              secureTextEntry={c.secureTextEntry}
+              value={user[c.name]}
+              onChangeText={(t) => updateSate(c.name, t)}
+              style={MyStyle.margin}
+              key={c.name}
+              label={c.label}
+              right={c.icon ? <TextInput.Icon icon={c.icon} /> : null}
+            />
+          ) : null
+        )}
 
-          {fields.map((c) =>
-            !c.hidden ? (
-              <TextInput
-                secureTextEntry={c.secureTextEntry}
-                value={c.value}
-                onChangeText={(t) => updateSate(c.name, t)}
-                style={MyStyle.margin}
-                key={c.name}
-                label={c.label}
-                right={c.icon ? <TextInput.Icon icon={c.icon} /> : null}
+        <HelperText type="error" visible={err}>
+          Mật khẩu không khớp!
+        </HelperText>
+
+        <View
+          style={[
+            MyStyle.container,
+            MyStyle.row,
+            MyStyle.border,
+            MyStyle.margin,
+            MyStyle.alignCenter,
+          ]}
+        >
+          <TouchableRipple
+            style={[MyStyle.margin, MyStyle.border, MyStyle.alignCenter]}
+            onPress={picker}
+          >
+            <Text>Chọn ảnh đại diện...</Text>
+          </TouchableRipple>
+
+          {user.image && (
+            <TouchableRipple onPress={() => setViewerVisible(true)}>
+              <Image
+                source={{ uri: user.image.uri ? user.image.uri : user.image }}
+                style={MyStyle.avatar}
               />
-            ) : null
+            </TouchableRipple>
           )}
 
-          <HelperText type="error" visible={err}>
-            Mật khẩu không khớp!
-          </HelperText>
+          {user.image && (
+            <Button icon="delete" mode="contained" onPress={deleteImage}>
+              Xóa ảnh
+            </Button>
+          )}
+        </View>
 
-          <View
-            style={[
-              MyStyle.container,
-              MyStyle.row,
-              MyStyle.border,
-              MyStyle.margin,
-              MyStyle.alignCenter,
-            ]}
-          >
-            <TouchableRipple
-              style={[MyStyle.margin, MyStyle.border, MyStyle.alignCenter]}
-              onPress={picker}
-            >
-              <Text>Chọn ảnh đại diện...</Text>
-            </TouchableRipple>
+        <Button
+          icon="account"
+          mode="contained"
+          onPress={console.log()}
+          style={MyStyle.margin}
+        >
+          Cập nhật profile
+        </Button>
+        <Text style={[MyStyle.title, MyStyle.margin]}>Cập nhật mật khẩu</Text>
+        <TextInput
+          secureTextEntry={true}
+          value={oldPassword}
+          onChangeText={(t) => setOldPassword(t)}
+          style={MyStyle.margin}
+          label="Mật khẩu cũ"
+          right={<TextInput.Icon icon="eye" />}
+        />
+        <TextInput
+          secureTextEntry={true}
+          value={password}
+          onChangeText={(t) => setPassword(t)}
+          style={MyStyle.margin}
+          label="Mật khẩu cũ"
+          right={<TextInput.Icon icon="eye" />}
+        />
+        <TextInput
+          secureTextEntry={true}
+          value={confirmPassword}
+          onChangeText={(t) => setConfirmPassword(t)}
+          style={MyStyle.margin}
+          label="Xác nhận mật khẩu"
+          right={<TextInput.Icon icon="eye" />}
+        />
 
-            {user.image ? (
-              <>
-                <Image
-                  source={{ uri: user.image.uri }}
-                  style={MyStyle.avatar}
-                />
-              </>
-            ) : (
-              <>
-                <Image
-                  source={currentUser.image ? { uri: currentUser.image } : null}
-                  style={MyStyle.avatar}
-                />
-              </>
-            )}
-          </View>
+        <Button
+          icon="lock"
+          mode="contained"
+          onPress={console.log()}
+          style={MyStyle.margin}
+        >
+          Cập nhật mật khẩu
+        </Button>
+      </ScrollView>
 
-          <View style={[MyStyle.margin, MyStyle.border]}>
-            <Text style={MyStyle.margin}>Loại người dùng</Text>
-            <RadioButton.Group
-              onValueChange={(value) => updateSate("user_type", value)}
-              value={user.user_type}
-            >
-              <RadioButton.Item label="Landlord" value="landlord" />
-              <RadioButton.Item label="Tenant" value="tenant" />
-            </RadioButton.Group>
-          </View>
-
-          <Button
-            icon="account"
-            loading={loading}
-            mode="contained"
-            onPress={update}
-          >
-            Lưu chỉnh sửa
-          </Button>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      {user.image && (
+        <ImageViewing
+          images={[{ uri: user.image.uri ? user.image.uri : user.image }]}
+          imageIndex={0}
+          visible={isViewerVisible}
+          onRequestClose={() => setViewerVisible(false)}
+        />
+      )}
     </View>
   );
 };

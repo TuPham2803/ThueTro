@@ -7,7 +7,6 @@ import MyStyle from "../../styles/MyStyle";
 const Profile = ({ navigation }) => {
   const user = useContext(MyUserContext);
   const dispatch = useContext(MyDispatchContext);
-  console.log("User", user);
 
   return (
     <View
