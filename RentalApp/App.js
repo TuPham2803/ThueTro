@@ -227,8 +227,6 @@ const MyTab = () => {
 };
 
 export default function App() {
-  // const userData = { username: "chutro", user_type: "landlord" , id: 1}
-  // // const userData = {username: "thuetro", user_type: "tenant"}
 
   const [user, dispatch] = useReducer(MyUserReducer, null);
   return (
