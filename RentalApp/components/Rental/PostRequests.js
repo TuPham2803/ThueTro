@@ -35,7 +35,6 @@ const PostRequests = ({ navigation }) => {
           });
         }
         if (res.data.next === null) setPage(0);
-        console.log(res.data.results);
       } catch (ex) {
         console.error(ex);
       } finally {

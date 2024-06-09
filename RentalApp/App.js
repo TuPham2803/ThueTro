@@ -62,6 +62,11 @@ const HomeStack = () => {
         component={PostRequestDetails}
         options={{ title: "Chi tiết bài đăng" }}
       />
+      <Stack.Screen
+        name="CreatePostAccommodation"
+        component={CreatePostAccommodation}
+        options={{ title: "Tạo bài đăng" }}
+      />
     </Stack.Navigator>
   );
 };
@@ -91,7 +96,7 @@ const PostManagerStack = () => {
         </>
       ) : (
         <>
-         <Stack.Screen
+          <Stack.Screen
             name="ListPostRequest"
             component={ListPostRequest}
             options={{ title: "Danh sách bài đăng" }}

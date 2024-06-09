@@ -92,19 +92,24 @@ const Register = () => {
       for (let key in user) {
         if (key !== "confirm") {
           if (key === "image") {
-            form.append(key, {
-              uri: user.image.uri,
-              name: user.image.fileName,
-              type: user.image.type,
-            });
+            form.append(
+              key,
+              JSON.stringify({
+                uri: user.image.uri,
+                name: user.image.fileName,
+                type: user.image.type,
+              })
+            );
           } else {
             form.append(key, user[key]);
           }
         }
       }
 
-      console.info(form);
+      console.info(form._parts);
+
       setLoading(true);
+
       try {
         let res = await APIs.post(endpoints["register"], form, {
           headers: {

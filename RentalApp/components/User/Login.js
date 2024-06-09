@@ -7,9 +7,11 @@ import { useNavigation } from "@react-navigation/native";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const SERVER_CLIENT_ID = process.env.SERVER_CLIENT_ID; //Eh65pe9lGWTeVJBzZBj4sNbgshpOlEWvnLZ0en3b
+const SERVER_CLIENT_SECRET = process.env.SERVER_CLIENT_SECRET; //mWbFHj6vwBRccXBwvOtQMLrOmuUmZiAjjTLFRCEma8zISfOr6p8zHyDnhYYMcVY85ac4AOgme4KlONf9i2VmNaSGkayLmnZo5KC6tvQ9bbjFuPc8yandkEvaSmjljzWh
+console.log(SERVER_CLIENT_ID, SERVER_CLIENT_SECRET);
+
 const Login = () => {
-  const SERVER_CLIENT_ID = process.env.SERVER_CLIENT_ID;
-  const SERVER_CLIENT_SECRET = process.env.SERVER_CLIENT_SECRET;
   const [user, setUser] = React.useState({});
   const fields = [
     {
@@ -54,7 +56,6 @@ const Login = () => {
         let user = await authApi(res.data.access_token).get(
           endpoints["current-user"]
         );
-        console.info(user.data);
 
         const loginUser = (userData) => ({
           type: "login",

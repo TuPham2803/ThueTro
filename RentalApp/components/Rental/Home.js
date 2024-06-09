@@ -19,8 +19,9 @@ import React, { useContext } from "react";
 import Swiper from "react-native-swiper";
 import APIs, { endpoints } from "../../configs/APIs";
 import Item from "../../Utils/Item";
-import { MyUserContext } from "../../configs/Contexts"; 
+import { MyUserContext } from "../../configs/Contexts";
 import { ImagesAssets } from "../../assest/images/ImagesAssets";
+
 const Home = ({ navigation }) => {
   const [search, setSearch] = React.useState("");
   const images = [
@@ -32,6 +33,18 @@ const Home = ({ navigation }) => {
   const user = useContext(MyUserContext);
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
+
+  const postHandlePress = () => {
+    if (user) {
+      if (user.user_type === "landlord") {
+        navigation.navigate("PostRequests");
+      } else {
+        navigation.navigate("PostAccommodations");
+      }
+    } else {
+      navigation.navigate("PostAccommodations");
+    }
+  };
 
   const handlePress = () => {
     if (user) {
@@ -75,7 +88,7 @@ const Home = ({ navigation }) => {
 
   React.useEffect(() => {
     loadPostAccomodations();
-  }, []);
+  }, [user]);
   return (
     <ScrollView onScroll={loadMore} style={[MyStyle.container]}>
       <View style={[MyStyle.wrapper]}>
@@ -132,7 +145,7 @@ const Home = ({ navigation }) => {
       <View style={[MyStyle.container]}>
         <View style={[MyStyle.row]}>
           <TouchableRipple
-            onPress={() => navigation.navigate("PostRequests")}
+            onPress={postHandlePress}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
@@ -142,7 +155,7 @@ const Home = ({ navigation }) => {
             </View>
           </TouchableRipple>
           <TouchableRipple
-            onPress={() => navigation.navigate("PostAccommodations")}
+            onPress={postHandlePress}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >

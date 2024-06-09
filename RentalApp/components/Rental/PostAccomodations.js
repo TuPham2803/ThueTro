@@ -42,7 +42,6 @@ const PostAccommodations = ({ navigation }) => {
           });
         }
         if (res.data.next === null) setPage(0);
-        console.log(page);
       } catch (ex) {
         console.error(ex);
       } finally {

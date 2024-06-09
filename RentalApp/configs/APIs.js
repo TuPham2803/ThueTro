@@ -17,6 +17,7 @@ export const endpoints = {
   login: "/o/token/",
   register: "/user/",
   comments: (postId) => `/post_accommodations/${postId}/comments/`,
+  update_profile: "/user/current-user/",
 };
 
 export const authApi = (token) => {

@@ -8,11 +8,15 @@ const Item = ({ instance }) => {
   return (
     <List.Item
       style={MyStyle.margin}
-      title={instance.title}
+      title={
+        <Text numberOfLines={null} style={MyStyle.header}>
+          {instance.title}
+        </Text>
+      }
       titleStyle={MyStyle.header}
       description={
         <View style={{ flexDirection: "column" }}>
-          {instance.price ? <Text>{instance.price} đ/Tháng</Text> : null}
+          {/* {instance.price ? <Text>{instance.price} đ/Tháng</Text> : null} */}
           {instance.district && instance.city ? (
             <Text>
               {instance.district}, {instance.city}
