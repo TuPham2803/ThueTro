@@ -17,7 +17,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import ImageViewing from "react-native-image-viewing";
 import MyStyle from "../../styles/MyStyle";
-import styles from "../../styles/CreatePostAccommodationStyle";
+import styles from "../../styles/CreateUpdatePostAccommodationStyle";
 
 const CreatePostAccommodation = ({ navigation }) => {
   const [title, setTitle] = useState("");

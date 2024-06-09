@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+
 import {
   View,
   Text,
@@ -34,10 +36,11 @@ const ListPostAccommodation = ({ navigation }) => {
       console.error(ex);
     }
   };
-
-  React.useEffect(() => {
-    loadPostAccomodations();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadPostAccomodations();
+    }, [q])
+  );
 
   React.useEffect(() => {
     navigation.setOptions({
