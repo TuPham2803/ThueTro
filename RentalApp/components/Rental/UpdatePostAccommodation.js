@@ -18,6 +18,8 @@ import * as ImagePicker from "expo-image-picker";
 import ImageViewing from "react-native-image-viewing";
 import MyStyle from "../../styles/MyStyle";
 import styles from "../../styles/CreateUpdatePostAccommodationStyle";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import APIs, { endpoints } from "../../configs/APIs";
 
 const UpdatePostAcccommodation = ({ route, navigation }) => {
   const { post } = route.params;
@@ -42,7 +44,30 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
   const handleHouseTypeSelection = (type) => {
     setSelectedHouseType(type);
   };
-
+  const handleDeletePostAccommodation = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        alert("User is not authenticated");
+        return;
+      }
+      let res = await APIs.delete(endpoints["post_accomodation_details"](post.id), {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      if (res.status === 204) {
+        alert("Delete post accommodation successfully");
+        navigation.navigate("ListPostAccommodation");
+      } else {
+        console.error("Failed to delete post accommodation", res.data);
+        alert("Failed to delete post accommodation");
+      }
+    } catch (err) {
+      console.error("Error while delete post accommodation", err);
+      alert("An error occurred while delete the post accommodation");
+    }
+  };
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -55,7 +80,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
         quality: 1,
       });
       if (!res.cancelled) {
-        setImages([...images, ...res.assets]);
+        setImages([...images, res.assets[0]]);
       }
     }
   };
@@ -84,7 +109,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   text: "Không",
                   style: "cancel",
                 },
-                { text: "Có", onPress: () => console.log('delete') },
+                { text: "Có", onPress: () => handleDeletePostAccommodation() },
               ],
               { cancelable: false }
             );
