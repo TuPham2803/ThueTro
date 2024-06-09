@@ -19,6 +19,7 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import MyStyle from "../../styles/MyStyle";
 import APIs, { endpoints } from "../../configs/APIs";
+import mime from 'react-native-mime-types';  // Use react-native-mime-types
 
 const Register = () => {
   const [user, setUser] = React.useState({});
@@ -68,8 +69,9 @@ const Register = () => {
 
   const picker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") Alert.alert("Rental", "Permissions Denied!");
-    else {
+    if (status !== "granted") {
+      Alert.alert("Rental", "Permissions Denied!");
+    } else {
       let res = await ImagePicker.launchImageLibraryAsync();
       if (!res.canceled) {
         updateSate("image", res.assets[0]);
@@ -84,22 +86,20 @@ const Register = () => {
   };
 
   const register = async () => {
-    if (user["password"] !== user["confirm"]) setErr(true);
-    else {
+    if (user["password"] !== user["confirm"]) {
+      setErr(true);
+    } else {
       setErr(false);
 
       let form = new FormData();
       for (let key in user) {
         if (key !== "confirm") {
           if (key === "image") {
-            form.append(
-              key,
-              JSON.stringify({
-                uri: user.image.uri,
-                name: user.image.fileName,
-                type: user.image.type,
-              })
-            );
+            form.append(key, {
+              uri: user.image.uri,
+              name: user.image.uri.split('/').pop(),
+              type: mime.lookup(user.image.uri) || 'image/jpeg',
+            });
           } else {
             form.append(key, user[key]);
           }
@@ -131,11 +131,11 @@ const Register = () => {
 
   return (
     <View
-      style={[MyStyle.container, MyStyle.margin, MyStyle.justifyContentCenter]}
+      style={[MyStyle.container, MyStyle.margin, MyStyle.justifyContentCenter, {marginTop:50}]}
     >
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
+      > */}
         <ScrollView>
           <Text style={MyStyle.subject}>ĐĂNG KÝ NGƯỜI DÙNG</Text>
 
@@ -198,7 +198,7 @@ const Register = () => {
             ĐĂNG KÝ
           </Button>
         </ScrollView>
-      </KeyboardAvoidingView>
+      {/* </KeyboardAvoidingView> */}
     </View>
   );
 };
