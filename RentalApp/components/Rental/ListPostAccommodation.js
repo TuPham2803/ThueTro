@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Chip, Card, Searchbar, ActivityIndicator } from "react-native-paper";
+import { IconButton, Searchbar, ActivityIndicator } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
 import Item from "../../Utils/Item";
 import APIs, { endpoints } from "../../configs/APIs";
@@ -39,7 +39,18 @@ const ListPostAccommodation = ({ navigation }) => {
     loadPostAccomodations();
   }, []);
 
-
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="plus"
+          iconColor="purple"
+          size={30}
+          onPress={() => navigation.navigate("CreatePostAccommodation")}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={[MyStyle.container, MyStyle.margin]}>
