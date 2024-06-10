@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,8 +21,6 @@ CKEDITOR_UPLOAD_PATH = "ckeditors/images/"
 import pymysql
 
 pymysql.install_as_MySQLdb()
-
-
 
 # Application definition
 
@@ -50,7 +49,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
-ALLOWED_HOSTS=['*']
+
+ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
@@ -63,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'RoomRental.urls'
 
@@ -123,9 +122,9 @@ AUTH_PASSWORD_VALIDATORS = [
 import cloudinary
 
 cloudinary.config(
-    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
-    api_key=config('CLOUDINARY_API_KEY'),
-    api_secret=config('CLOUDINARY_API_SECRET'),
+    cloud_name="dbyeacxv4",
+    api_key="691338469635563",
+    api_secret="dHHQ-iAJHwlZQXHmqe0eTU1p8NE"
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest, CommentAccommodation
+from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest, \
+    CommentAccommodation
 import cloudinary
 from django.contrib import admin
 from django.utils.html import mark_safe

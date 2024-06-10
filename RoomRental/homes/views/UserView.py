@@ -5,10 +5,13 @@ from rest_framework.decorators import action
 from homes.models import User
 from homes import serializers, perms
 from datetime import datetime
+import cloudinary
+
 
 class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
+
     # permission_classes = [permissions.IsAuthenticated, IsTenantAndFollowLandlord]
 
     def get_queryset(self):
@@ -20,7 +23,7 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Retriev
                 # queryset = queryset.filter(id__icontains=user_id)
                 queryset = queryset.filter(id__exact=user_id)
 
-            return queryset
+        return queryset
 
     def get_permissions(self):
         if self.action == 'get_current_user':
@@ -28,6 +31,45 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Retriev
         if self.action == 'follows' and self.request.method == 'POST':
             return [perms.IsTenantAndFollowLandlord()]
         return [permissions.AllowAny()]
+
+    def update(self, request, *args, **kwargs):
+        user = self.get_object()  # Lấy thông tin người dùng hiện tại
+        data = request.data.copy()  # Sao chép dữ liệu từ yêu cầu
+
+        # Xử lý tải ảnh lên
+        image = request.FILES.get('image')
+        if image:
+            try:
+                upload_result = cloudinary.uploader.upload(image)
+                data['image'] = upload_result['secure_url']
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Cập nhật các trường khác của người dùng
+        serializer = self.get_serializer(user, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()  # Sao chép dữ liệu từ yêu cầu
+
+        # Xử lý tải ảnh lên
+        image = request.FILES.get('image')
+        if image:
+            try:
+                upload_result = cloudinary.uploader.upload(image)
+                data['image'] = upload_result['secure_url']
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Tạo người dùng mới
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(methods=['post'], url_path='forgot', detail=False)
     def forgot_password(self, request):

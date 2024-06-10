@@ -11,6 +11,7 @@ from homes.sendmail import send_mail
 from threading import Thread
 from homes.pagination import SmallPagination
 
+
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = PostAccommodation.objects.filter(active=True)
     serializer_class = serializers.PostAccommodationSerializer
@@ -47,7 +48,7 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
 
         return Response(serializers.LikeAccommodationSerializer(li).data,
                         status=status.HTTP_201_CREATED)
-        
+
     @action(methods=['POST'], url_path='review', detail=True)
     def review(self, request, pk):
         post = self.get_object()
@@ -55,11 +56,12 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         review = data.get('review')
         if review not in ['Approved', 'Failed']:
             return Response({'error': 'Reivew must is Approved or Failed'}, status=status.HTTP_400_BAD_REQUEST)
-        post.pending_status = review=='Approved' and PendingStatus.APPROVED or PendingStatus.FAILED
+        post.pending_status = review == 'Approved' and PendingStatus.APPROVED or PendingStatus.FAILED
         post.save()
         if review == 'Approved':
             Thread(target=send_mail, args=(post,)).start()
         return Response(serializers.PostAccommodationSerializer(post).data, status=status.HTTP_200_OK)
+
     def get_queryset(self):
         queryset = self.queryset
 
