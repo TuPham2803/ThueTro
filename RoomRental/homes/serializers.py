@@ -7,6 +7,7 @@ import cloudinary
 from cloudinary.models import CloudinaryField
 from datetime import datetime
 
+
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -102,6 +103,7 @@ class AccomodationImageSerializer(ModelSerializer):
 class PostAccommodationSerializer(ModelSerializer):
     images = AccomodationImageSerializer(many=True, read_only=True)
     owner = UserSerializer()
+
     class Meta:
         model = PostAccommodation
         fields = [
@@ -149,8 +151,7 @@ class PostAccommodationSerializer(ModelSerializer):
             'active': {'required': True, 'read_only': True},
             'pending_status': {'required': True, 'read_only': True},
         }
-        read_only_fields = ['created_at',
-                            'updated_at', 'active', 'pending_status']
+        read_only_fields = ['created_at', 'updated_at', 'active', 'pending_status']
 
     def validate(self, data):
         # Kiểm tra các trường bắt buộc không nhận giá trị null
@@ -246,7 +247,7 @@ class UserStatisticSerializer(Serializer):
     ]
 
     period = ChoiceField(choices=PERIOD_CHOICES)
-    period_value =CharField()
+    period_value = CharField()
 
     def validate_period_value(self, value):
         period = self.initial_data.get('period')
@@ -261,7 +262,7 @@ class UserStatisticSerializer(Serializer):
         elif period == 'quarter':
             try:
                 quarter, year = value.split('-')
-                year = int(year) 
+                year = int(year)
                 if quarter not in ['Q1', 'Q2', 'Q3', 'Q4']:
                     raise ValidationError('Invalid quarter. Use Q1, Q2, Q3, or Q4.')
             except ValueError:
