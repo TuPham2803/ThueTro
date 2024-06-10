@@ -14,6 +14,7 @@ import {
   Searchbar,
   ActivityIndicator,
   Button,
+  Icon,
 } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
 import Item from "../../Utils/Item";
@@ -62,7 +63,38 @@ const PostAccommodations = ({ navigation }) => {
 
   return (
     <View style={[MyStyle.container, MyStyle.margin]}>
-      <Searchbar placeholder="Search" onChangeText={setQ} value={q} />
+      <View
+        style={[MyStyle.row, MyStyle.margin, { justifyContent: "flex-end" }]}
+      >
+        <Searchbar
+          style={{ width: "90%" }}
+          placeholder="Search"
+          onChangeText={setQ}
+          value={q}
+        />
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Sort")}
+          style={{
+            width: "10%",
+            backgroundColor: "pink",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 10,
+          }}
+        >
+          <Icon
+            source="sort"
+            size={20}
+            style={{
+              position: "absolute",
+              right: 0,
+              top: "50%",
+              transform: [{ translateY: -12 }],
+            }}
+          />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView onScroll={loadMore}>
         <View style={[MyStyle.container, MyStyle.margin]}>
           {posts === null ? (
@@ -72,7 +104,7 @@ const PostAccommodations = ({ navigation }) => {
               {posts.map((p) =>
                 p ? (
                   <TouchableOpacity
-                    style={[MyStyle.top, MyStyle.border]}
+                    style={[MyStyle.top, MyStyle.post_accomodations]}
                     key={p.id}
                     onPress={() =>
                       navigation.navigate("PostAccommodationDetails", {

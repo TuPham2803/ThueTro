@@ -106,8 +106,6 @@ const Register = () => {
         }
       }
 
-      console.info(form._parts);
-
       setLoading(true);
 
       try {

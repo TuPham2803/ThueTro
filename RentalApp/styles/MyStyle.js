@@ -103,4 +103,24 @@ export default StyleSheet.create({
     justifyContent: "center", // Căn giữa các phần tử trong hàng
     alignItems: "center", // Căn giữa theo trục dọc
   },
+  post_accomodations: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+    width: "100%",
+    height: 350,
+    borderRadius: 10,
+  },
+  post_thumbnail: {
+    width: "90%",
+    height: "60%",
+    alignSelf: "center",
+    marginTop: 10,
+    borderRadius: 10,
+  },
 });
