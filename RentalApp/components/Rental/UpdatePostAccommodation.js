@@ -1,504 +1,299 @@
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
   Text,
   Image,
-  FlatList,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import MyStyle from "../../styles/MyStyle";
 import {
   Button,
   TextInput,
   IconButton,
   Icon,
-  Appbar,
-  Picker,
-  Menu,
   Provider,
-  Snackbar,
-} from "react-native-paper"; // Import IconButton
-import React, { useState } from "react";
-import * as ImagePicker from "react-native-image-picker";
-import ListPostAccommodation from "./ListPostAccommodation";
+} from "react-native-paper";
+import * as ImagePicker from "expo-image-picker";
+import ImageViewing from "react-native-image-viewing";
+import MyStyle from "../../styles/MyStyle";
+import styles from "../../styles/CreateUpdatePostAccommodationStyle";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import APIs, { endpoints } from "../../configs/APIs";
 
-import axios from "axios";
-
-const UpdatePostAccommodation = ({ route, navigation }) => {
+const UpdatePostAcccommodation = ({ route, navigation }) => {
   const { post } = route.params;
+  const [title, setTitle] = useState(post.title);
+  const [city, setCity] = useState(post.city);
+  const [district, setDistrict] = useState(post.district);
+  const [address, setAddress] = useState(post.address);
+  const [price, setPrice] = useState(String(post.price));
+  const [description, setDescription] = useState(post.description);
+  const [images, setImages] = useState(post.images);
+  const [acreage, setAcreage] = useState(String(post.acreage));
+  const [phone, setPhone] = useState(post.phone_number);
+  const [selectedHouseType, setSelectedHouseType] = useState(post.room_type);
+  const [max_people, setMaxPeople] = useState(String(post.max_people));
+  const [current_people, setCurrentPeople] = useState(
+    String(post.current_people)
+  );
+  const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const [title, setTitle] = React.useState(post.title);
-  const [address, setAddress] = React.useState(post.address);
-  const [price, setPrice] = React.useState(post.price);
-  const [description, setDescription] = React.useState(post.description);
-  const [images, setImages] = React.useState("");
-  const [longitude, setLongitude] = React.useState("");
-  const [latitude, setLatitude] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [phone, setPhone] = React.useState("");
-  const [room_type, setRoomType] = React.useState("");
-  const [max_people, setMaxPeople] = React.useState("");
-  const [current_people, setCurrentPeople] = React.useState("");
-  const options = ["Nhà 1", "Nhà 2"];
-  const [visible, setVisible] = useState(false);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [postAccommodation, setPostAccommodation] = useState(post);
-
-  const updatePostAccomodations = async () => {
+  const handleHouseTypeSelection = (type) => {
+    setSelectedHouseType(type);
+  };
+  const handleDeletePostAccommodation = async () => {
     try {
-      let res = await APIs.patch(
-        `${endpoints["post_accomodations"]}${post.id}/`,
-        postAccommodation
-      );
-
-      setPosts(res.data);
-      console.log("Update Pressed");
-      // Gửi dữ liệu cập nhật lên server hoặc thực hiện hành động cập nhật ở đây
-      setSnackbarVisible(true); // Show Snackbar on update
-      setTimeout(() => {
-        navigation.navigate(ListPostAccommodation);
-      }, 3000); // Thời gian chờ (3 giây) để hiển thị Snackbar trước khi điều hướng
-    } catch (ex) {
-      console.log(ex.response);
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        alert("User is not authenticated");
+        return;
+      }
+      let res = await APIs.delete(endpoints["post_accomodation_details"](post.id), {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      if (res.status === 204) {
+        alert("Delete post accommodation successfully");
+        navigation.navigate("ListPostAccommodation");
+      } else {
+        console.error("Failed to delete post accommodation", res.data);
+        alert("Failed to delete post accommodation");
+      }
+    } catch (err) {
+      console.error("Error while delete post accommodation", err);
+      alert("An error occurred while delete the post accommodation");
+    }
+  };
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Rental", "Permissions Denied!");
+    } else {
+      let res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!res.cancelled) {
+        setImages([...images, res.assets[0]]);
+      }
     }
   };
 
-  const pickImage = () => {
-    ImagePicker.launchImageLibrary(
-      { mediaType: "photo", selectionLimit: 0 }, // Allow multiple images
-      (response) => {
-        if (response.assets) {
-          setImages(response.assets);
-        }
-      }
-    );
+  const deleteImage = (uri) => {
+    setImages(images.filter((image) => image.uri !== uri));
   };
 
+  const openImageViewer = (index) => {
+    setCurrentImageIndex(index);
+    setImageViewVisible(true);
+  };
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="delete"
+          iconColor="purple"
+          size={30}
+          onPress={() => {
+            Alert.alert(
+              "Xác nhận xóa",
+              "Bạn có chắc chắn muốn xóa bài đăng này không?",
+              [
+                {
+                  text: "Không",
+                  style: "cancel",
+                },
+                { text: "Có", onPress: () => handleDeletePostAccommodation() },
+              ],
+              { cancelable: false }
+            );
+          }}
+        />
+      ),
+    });
+  }, [navigation]);
   return (
     <Provider>
-      <View style={[MyStyle.container, { marginTop: 20, marginBottom: 30 }]}>
-        <ScrollView style={[MyStyle.wrapper, { paddingHorizontal: 20 }]}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
+      <View style={[MyStyle.container, styles.container]}>
+        <ScrollView style={[MyStyle.wrapper, styles.wrapper]}>
+          <View style={styles.iconTextContainer}>
             <Icon source="home-account" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Tên bài đăng
-            </Text>
+            <Text style={styles.iconText}>Tên bài đăng</Text>
           </View>
-
           <TextInput
-            label="Title"
             value={title}
             onChangeText={setTitle}
-            style={[MyStyle.input, { marginBottom: 10 }]} //Thêm marginBottom để tạo khoảng cách dưới
+            style={[MyStyle.input, styles.textInput]}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
+
+          <View style={styles.iconTextContainer}>
             <Icon source="map-marker" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Địa chỉ nhà:{" "}
-            </Text>
+            <Text style={styles.iconText}>Địa chỉ: </Text>
           </View>
           <TextInput
-            label="Address"
-            value={postAccommodation.address}
-            onChangeText={setPostAccommodation}
-            style={[MyStyle.input, { marginBottom: 10 }]}
+            label="Thành phố"
+            value={city}
+            onChangeText={setCity}
+            style={[MyStyle.input, styles.textInput]}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
+          <TextInput
+            label="Quận/Huyện"
+            value={district}
+            onChangeText={setDistrict}
+            style={[MyStyle.input, styles.textInput]}
+          />
+          <TextInput
+            label="Địa chỉ"
+            value={address}
+            onChangeText={setAddress}
+            style={[MyStyle.input, styles.textInput]}
+          />
+
+          <View style={styles.iconTextContainer}>
             <Icon source="currency-usd" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Giá
-            </Text>
+            <Text style={styles.iconText}>Giá</Text>
           </View>
           <TextInput
-            label="Price"
             value={price}
             onChangeText={setPrice}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="currency-usd" />}
+            style={[MyStyle.input, styles.textInput]}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
+
+          <View style={styles.iconTextContainer}>
             <Icon source="file-document" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Mô tả:{" "}
-            </Text>
+            <Text style={styles.iconText}>Mô tả: </Text>
           </View>
           <TextInput
-            label="Description"
             value={description}
             onChangeText={setDescription}
-            style={[MyStyle.input, { height: 100, marginBottom: 10 }]}
+            style={[MyStyle.input, styles.multilineTextInput]}
             multiline={true}
             numberOfLines={4}
-            left={<Icon source="file-document" />}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="longitude" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Tọa độ:{" "}
-            </Text>
-          </View>
-          <TextInput
-            label="Longitude"
-            value={longitude}
-            onChangeText={setLongitude}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="longitude" />}
-          />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="latitude" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Tọa độ
-            </Text>
-          </View>
-          <TextInput
-            label="Latitude"
-            value={latitude}
-            onChangeText={setLatitude}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="latitude" />}
-          />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="email" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Email
-            </Text>
-          </View>
-          <TextInput
-            label="Email"
-            value={email}
-            onChangeText={setEmail}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="email" />}
-          />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="phone" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Sdt:{" "}
-            </Text>
-          </View>
 
+          <View style={styles.iconTextContainer}>
+            <Icon source="ruler" size={30} color="purple" />
+            <Text style={styles.iconText}>Diện tích</Text>
+          </View>
           <TextInput
-            label="Phone"
+            value={acreage}
+            onChangeText={setAcreage}
+            style={[MyStyle.input, MyStyle.margin]}
+          />
+
+          <View style={styles.iconTextContainer}>
+            <Icon source="phone" size={30} color="purple" />
+            <Text style={styles.iconText}>SĐT </Text>
+          </View>
+          <TextInput
             value={phone}
             onChangeText={setPhone}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="phone" />}
+            style={[MyStyle.input, styles.textInput]}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
+
+          <View style={styles.iconTextContainer}>
             <Icon source="door" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              loại phòng
-            </Text>
+            <Text style={styles.iconText}>Loại phòng</Text>
           </View>
-
-          <Menu
-            visible={visible}
-            onDismiss={() => setVisible(false)}
-            anchor={
-              <TouchableOpacity onPress={() => setVisible(true)}>
-                <TextInput
-                  label="Room Type"
-                  value={room_type}
-                  style={[MyStyle.input, { marginBottom: 10 }]}
-                  editable={false}
-                  right={<TextInput.Icon source="menu-down" />}
-                />
-              </TouchableOpacity>
-            }
-          >
-            {options.map((option, index) => (
-              <Menu.Item
-                key={index}
-                onPress={() => {
-                  setRoomType(option);
-                  setVisible(false);
-                }}
-                title={option}
-              />
-            ))}
-          </Menu>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="account-group" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Số lượng người tối đa:{" "}
-            </Text>
-          </View>
-          <TextInput
-            label="Max People"
-            value={max_people}
-            onChangeText={setMaxPeople}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="account-group" />}
-          />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="account" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Số người hiện tại
-            </Text>
-          </View>
-          <TextInput
-            label="Current People"
-            value={current_people}
-            onChangeText={setCurrentPeople}
-            style={[MyStyle.input, { marginBottom: 10 }]}
-            left={<Icon source="account" />}
-          />
-          {/* Other TextInput components */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="home-account" size={30} color="purple" />
-            <Text
-              style={{
-                color: "purple",
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Hình ảnh:{" "}
-            </Text>
-          </View>
-          <Text style={{ fontStyle: "italic", color: "purple" }}>
-            (Vui lòng chọn ít nhất 3 hình ảnh)
-          </Text>
-          <View style={{ marginBottom: 10 }}>
+          <View style={styles.buttonGroup}>
             <TouchableOpacity
-              style={{
-                borderWidth: 1,
-                borderColor: "purple",
-                borderStyle: "dashed",
-                alignItems: "center",
-                justifyContent: "center",
-                height: 100,
-                width: 100,
-                marginTop: 10,
-                marginBottom: 10,
-              }}
-              onPress={pickImage}
+              style={[
+                styles.iconButton,
+                selectedHouseType === "SH" && styles.selectedButton,
+              ]}
+              onPress={() => handleHouseTypeSelection("SH")}
             >
-              <Icon source="camera" size={40} color="purple" />
+              <View style={styles.iconButtonContent}>
+                <IconButton
+                  icon="home-group"
+                  size={30}
+                  color={selectedHouseType === "SH" ? "white" : "white"}
+                />
+              </View>
+              <Text style={styles.buttonText}>Ở Ghép</Text>
             </TouchableOpacity>
-            <FlatList
-              data={images}
-              horizontal
-              renderItem={({ item, index }) => (
-                <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: 100, height: 100, margin: 5 }}
-                  key={index}
+            <TouchableOpacity
+              style={[
+                styles.iconButton,
+                selectedHouseType === "PR" && styles.selectedButton,
+              ]}
+              onPress={() => handleHouseTypeSelection("PR")}
+            >
+              <View style={styles.iconButtonContent}>
+                <IconButton
+                  icon="home"
+                  size={30}
+                  color={selectedHouseType === "PR" ? "white" : "white"}
                 />
-              )}
-              ListEmptyComponent={() => (
-                <Image
-                  source={{ uri: "https://via.placeholder.com/100" }} // Default image
-                  style={{ width: 100, height: 100, margin: 5 }}
-                />
-              )}
-              ListFooterComponent={() =>
-                images.length > 3 && (
-                  <View
-                    style={{
-                      width: 100,
-                      height: 100,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "rgba(0,0,0,0.5)",
-                    }}
-                  >
-                    <Text style={{ color: "white" }}>+{images.length - 3}</Text>
-                  </View>
-                )
-              }
-              keyExtractor={(item, index) => index.toString()}
-              style={{ marginTop: 10 }}
-            />
+              </View>
+              <Text style={styles.buttonText}>Ở riêng</Text>
+            </TouchableOpacity>
+          </View>
+          {selectedHouseType === "SH" && (
+            <View>
+              <View style={styles.iconTextContainer}>
+                <Icon source="account" size={30} color="purple" />
+                <Text style={styles.iconText}>Số người tối đa</Text>
+              </View>
+              <TextInput
+                value={max_people}
+                onChangeText={setMaxPeople}
+                style={[MyStyle.input, styles.textInput]}
+              />
+              <View style={styles.iconTextContainer}>
+                <Icon source="account-group" size={30} color="purple" />
+                <Text style={styles.iconText}>Số người hiện tại</Text>
+              </View>
+              <TextInput
+                value={current_people}
+                onChangeText={setCurrentPeople}
+                style={[MyStyle.input, styles.textInput]}
+              />
+            </View>
+          )}
+
+          <View style={styles.iconTextContainer}>
+            <Icon source="camera" size={30} color="purple" />
+            <Text style={styles.iconText}>Hình ảnh</Text>
+          </View>
+          <View style={styles.imageWrapper}>
+            {images.map((image, index) => (
+              <View key={index} style={styles.imageContainer}>
+                <TouchableOpacity onPress={() => openImageViewer(index)}>
+                  <Image source={{ uri: image.uri }} style={styles.image} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.imageDeleteButton}
+                  onPress={() => deleteImage(image.uri)}
+                >
+                  <IconButton icon="delete" size={20} color="purple" />
+                </TouchableOpacity>
+              </View>
+            ))}
+            <TouchableOpacity style={styles.addButton} onPress={pickImage}>
+              <IconButton icon="plus" size={30} color="purple" />
+            </TouchableOpacity>
           </View>
 
-          <Button
-            mode="contained"
-            onPress={updatePostAccomodations}
-            style={[
-              MyStyle.button,
-              { backgroundColor: "purple" },
-              { marginTop: 10 },
-            ]}
-          >
-            Lưu chỉnh sửa
+          <Button mode="contained" onPress={console.log("s")}>
+            Đăng tin
           </Button>
-
-          <Snackbar
-            visible={snackbarVisible}
-            onDismiss={() => setSnackbarVisible(false)}
-            duration={3000}
-          >
-            Đã lưu thành công
-          </Snackbar>
         </ScrollView>
+
+        <ImageViewing
+          images={images.map((image) => ({ uri: image.uri }))}
+          imageIndex={currentImageIndex}
+          visible={isImageViewVisible}
+          onRequestClose={() => setImageViewVisible(false)}
+        />
       </View>
     </Provider>
   );
 };
 
-export default UpdatePostAccommodation;
+export default UpdatePostAcccommodation;

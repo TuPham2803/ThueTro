@@ -102,7 +102,8 @@ class AccomodationImageSerializer(ModelSerializer):
 
 class PostAccommodationSerializer(ModelSerializer):
     images = AccomodationImageSerializer(many=True, read_only=True)
-    owner = UserSerializer()
+    owner = UserSerializer(read_only=True)
+    user_post = UserSerializer(read_only=True)
 
     class Meta:
         model = PostAccommodation
@@ -130,7 +131,6 @@ class PostAccommodationSerializer(ModelSerializer):
             'pending_status'
         ]
         extra_kwargs = {
-            'owner': {'required': True},
             'title': {'required': True},
             'city': {'required': True},
             'district': {'required': True},
@@ -145,7 +145,6 @@ class PostAccommodationSerializer(ModelSerializer):
             'phone_number': {'required': True},
             'description': {'required': True},
             'images': {'required': True},
-            'user_post': {'required': True},
             'created_at': {'required': True, 'read_only': True},
             'updated_at': {'required': True},
             'active': {'required': True, 'read_only': True},
@@ -154,12 +153,10 @@ class PostAccommodationSerializer(ModelSerializer):
         read_only_fields = ['created_at', 'updated_at', 'active', 'pending_status']
 
     def validate(self, data):
-        # Kiểm tra các trường bắt buộc không nhận giá trị null
         required_fields = [
-            'owner', 'title', 'city', 'district', 'address', 'latitude', 'longitude', 'acreage', 'price', 'room_type',
-            'max_people', 'current_people', 'phone_number', 'description', 'user_post'
+            'title', 'city', 'district', 'address', 'latitude', 'longitude', 'acreage', 'price', 'room_type',
+            'max_people', 'current_people', 'phone_number', 'description'
         ]
-        # Cần chỉnh sửa lại current_people và max_people. Lý do là tụi nó vẫn cần giá trị chứ không nhận null
         if data.get('room_type') == 'PR':
             required_fields.remove('current_people')
             required_fields.remove('max_people')
@@ -167,7 +164,6 @@ class PostAccommodationSerializer(ModelSerializer):
             if data.get(field) in [None, '']:
                 raise ValidationError(
                     {field: 'This field is required and cannot be null or empty.'})
-
         return data
 
     def to_representation(self, instance):
@@ -180,12 +176,6 @@ class PostAccommodationSerializer(ModelSerializer):
                 images_data.append(image.image.url)
         rep['images'] = images_data
         return rep
-
-
-class AccommodationSerializer(ModelSerializer):
-    class Meta:
-        model = PostAccommodation
-        fields = ['owner', 'title', 'address', 'contact_number', 'description']
 
 
 class CommentAccommodationSerializer(ModelSerializer):
@@ -255,25 +245,31 @@ class UserStatisticSerializer(Serializer):
             try:
                 datetime.strptime(value, '%Y-%m')
             except ValueError:
-                raise ValidationError('Invalid period_value for month. Use YYYY-MM format.')
+                raise ValidationError(
+                    'Invalid period_value for month. Use YYYY-MM format.')
         elif period == 'year':
             if not value.isdigit() or len(value) != 4:
-                raise ValidationError('Invalid period_value for year. Use YYYY format.')
+                raise ValidationError(
+                    'Invalid period_value for year. Use YYYY format.')
         elif period == 'quarter':
             try:
                 quarter, year = value.split('-')
                 year = int(year)
                 if quarter not in ['Q1', 'Q2', 'Q3', 'Q4']:
-                    raise ValidationError('Invalid quarter. Use Q1, Q2, Q3, or Q4.')
+                    raise ValidationError(
+                        'Invalid quarter. Use Q1, Q2, Q3, or Q4.')
             except ValueError:
-                raise ValidationError('Invalid period_value for quarter. Use QX-YYYY format.')
+                raise ValidationError(
+                    'Invalid period_value for quarter. Use QX-YYYY format.')
         elif period == 'time_period':
             try:
                 start_date, end_date = value.split('_to_')
                 start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
                 end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
                 if start_date_obj > end_date_obj:
-                    raise ValidationError('start_date must be before or equal end_date.')
+                    raise ValidationError(
+                        'start_date must be before or equal end_date.')
             except ValueError:
-                raise ValidationError('Invalid period_value for time_period. Use YYYY-MM-DD_to_YYYY-MM-DD format.')
+                raise ValidationError(
+                    'Invalid period_value for time_period. Use YYYY-MM-DD_to_YYYY-MM-DD format.')
         return value

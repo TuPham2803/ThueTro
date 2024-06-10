@@ -97,12 +97,16 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         return queryset
 
     def create(self, request, *args, **kwargs):
-        # Tạo bài đăng mới từ dữ liệu yêu cầu
+        # Include user information in the data before validation
+        request.data['owner'] = request.user.id
+        request.data['user_post'] = request.user.id
+
         post_serializer = self.get_serializer(data=request.data)
         if not post_serializer.is_valid():
+            print(post_serializer.errors)
             return Response(post_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Kiểm tra số lượng hình ảnh tải lên
+        # Check the number of uploaded images
         images = request.FILES.getlist('images')
         if len(images) < 3:
             return Response({'error': 'At least three images are required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -115,12 +119,11 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # Chỉ khi tất cả hình ảnh được tải lên thành công, lưu bài đăng và ảnh vào cơ sở dữ liệu
+        # Save the post and images to the database only if all images are uploaded successfully
         post = post_serializer.save(owner=request.user, user_post=request.user)
         for url in uploaded_image_urls:
             AccommodationImage.objects.create(image=url, post_accommodation=post)
 
-        # Chuẩn bị dữ liệu phản hồi
         response_data = {
             'post': post_serializer.data
         }

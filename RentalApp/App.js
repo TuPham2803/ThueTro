@@ -25,14 +25,28 @@ import Conversation from "./components/Rental/Conversation";
 import Chat from "./components/Rental/Chat";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import Sort from "./components/Rental/Sort";
+import { ColorAssets } from "./assest/ColorAssets";
 
 const Stack = createNativeStackNavigator();
 
 const HomeStack = () => {
   const user = useContext(MyUserContext);
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={Home} options={{ title: "Home" }} />
+    <Stack.Navigator
+      screenOptions={() => ({
+        headerStyle: { backgroundColor: ColorAssets.header.background },
+        headerTintColor: ColorAssets.header.text,
+        statusBarColor: ColorAssets.header.background,
+        navigationBarColor: ColorAssets.nav.background,
+      })}
+    >
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          title: "Home",
+        }}
+      />
       <Stack.Screen
         name="Login"
         component={Login}
@@ -76,7 +90,14 @@ const PostManagerStack = () => {
   const user = useContext(MyUserContext);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={() => ({
+        headerStyle: { backgroundColor: ColorAssets.header.background },
+        headerTintColor: ColorAssets.header.text,
+        statusBarColor: ColorAssets.header.background,
+        navigationBarColor: ColorAssets.nav.background,
+      })}
+    >
       {user.user_type == "landlord" ? (
         <>
           <Stack.Screen
@@ -120,7 +141,14 @@ const PostManagerStack = () => {
 const MessageStack = () => {
   const user = useContext(MyUserContext);
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={() => ({
+        headerStyle: { backgroundColor: ColorAssets.header.background },
+        headerTintColor: ColorAssets.header.text,
+        statusBarColor: ColorAssets.header.background,
+        navigationBarColor: ColorAssets.nav.background,
+      })}
+    >
       <Stack.Screen
         name="Conversation"
         component={Conversation}
@@ -135,7 +163,14 @@ const ProfileStack = () => {
   const user = useContext(MyUserContext);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={() => ({
+        headerStyle: { backgroundColor: ColorAssets.header.background },
+        headerTintColor: ColorAssets.header.text,
+        statusBarColor: ColorAssets.header.background,
+        navigationBarColor: ColorAssets.nav.background,
+      })}
+    >
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
     </Stack.Navigator>
@@ -150,14 +185,48 @@ const MyTab = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarInactiveBackgroundColor: "#fff",
+        tabBarActiveTintColor: ColorAssets.nav.icon,
         tabBarStyle: ((route) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "";
+          let style = { backgroundColor: ColorAssets.nav.background };
+
           if (routeName === "Chat" || routeName === "CreatePostRequest") {
-            return { display: "none" };
+            style.display = "none";
           }
-          return {};
+
+          return style;
         })(route),
-        tabBarOptions: { activeTintColor: "purple" },
+        tabBarLabelStyle: ({ focused }) => ({
+          color: focused ? ColorAssets.nav.background : ColorAssets.nav.text,
+        }),
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "HomeStack") {
+            iconName = "home";
+          } else if (route.name === "Register") {
+            iconName = "account";
+          } else if (route.name === "Login") {
+            iconName = "login";
+          } else if (route.name === "PostManagerStack") {
+            iconName = "post";
+          } else if (route.name === "Message") {
+            iconName = "message";
+          } else if (route.name === "ProfileStack") {
+            iconName = "account";
+          }
+
+          return (
+            <Icon
+              source={iconName}
+              size={size}
+              color={
+                focused ? ColorAssets.nav.icon : ColorAssets.nav.background
+              }
+            />
+          );
+        },
       })}
     >
       <Tab.Screen
@@ -165,7 +234,6 @@ const MyTab = () => {
         component={HomeStack}
         options={{
           title: "Home",
-          tabBarIcon: () => <Icon size={30} color="purple" source="home" />,
         }}
       />
       {user === null ? (
@@ -175,9 +243,6 @@ const MyTab = () => {
             component={Register}
             options={{
               title: "Đăng ký",
-              tabBarIcon: () => (
-                <Icon size={30} color="purple" source="account" />
-              ),
             }}
           />
           <Tab.Screen
@@ -185,9 +250,6 @@ const MyTab = () => {
             component={Login}
             options={{
               title: "Đăng nhập",
-              tabBarIcon: () => (
-                <Icon size={30} color="purple" source="login" />
-              ),
             }}
           />
         </>
@@ -198,7 +260,6 @@ const MyTab = () => {
             component={PostManagerStack}
             options={{
               title: "Danh sách Bài đăng",
-              tabBarIcon: () => <Icon size={30} color="purple" source="post" />,
             }}
           />
           <Tab.Screen
@@ -206,9 +267,6 @@ const MyTab = () => {
             component={MessageStack}
             options={{
               title: "Tin nhắn",
-              tabBarIcon: () => (
-                <Icon size={30} color="purple" source="message" />
-              ),
             }}
           />
           <Tab.Screen
@@ -216,9 +274,6 @@ const MyTab = () => {
             component={ProfileStack}
             options={{
               title: user.username,
-              tabBarIcon: () => (
-                <Icon size={30} color="purple" source="account" />
-              ),
             }}
           />
         </>
@@ -228,9 +283,6 @@ const MyTab = () => {
 };
 
 export default function App() {
-  // const userData = { username: "chutro", user_type: "landlord" , id: 1}
-  // // const userData = {username: "thuetro", user_type: "tenant"}
-
   const [user, dispatch] = useReducer(MyUserReducer, null);
   return (
     <NavigationContainer>

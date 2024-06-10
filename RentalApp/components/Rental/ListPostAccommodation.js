@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
+
 import {
   View,
   Text,
@@ -8,7 +10,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { Chip, Card, Searchbar, ActivityIndicator } from "react-native-paper";
+import { IconButton, Searchbar, ActivityIndicator } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
 import Item from "../../Utils/Item";
 import APIs, { endpoints } from "../../configs/APIs";
@@ -34,12 +36,24 @@ const ListPostAccommodation = ({ navigation }) => {
       console.error(ex);
     }
   };
+  useFocusEffect(
+    useCallback(() => {
+      loadPostAccomodations();
+    }, [q])
+  );
 
   React.useEffect(() => {
-    loadPostAccomodations();
-  }, []);
-
-
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon="plus"
+          iconColor="purple"
+          size={30}
+          onPress={() => navigation.navigate("CreatePostAccommodation")}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={[MyStyle.container, MyStyle.margin]}>
