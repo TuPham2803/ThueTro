@@ -99,6 +99,23 @@ class UserViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.Retriev
 
         return Response(serializers.UserSerializer(user).data)
 
+    @action(methods=['PATCH'], url_path='update-password', detail=False)
+    def update_password(self, request):
+        user = request.user
+        data = request.data
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+        if new_password != confirm_password:
+            return Response({'error': 'Confirm password not match'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if user.check_password(old_password):
+            user.set_password(new_password)
+            user.save()
+            return Response(serializers.UserSerializer(user).data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Old password not match'}, status=status.HTTP_400_BAD_REQUEST)
+        
     @action(methods=['GET', 'POST'], detail=True, url_path='follows')
     def follows(self, request, pk=None):
         if request.method == 'GET':

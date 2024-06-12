@@ -18,6 +18,7 @@ export const endpoints = {
   register: "/user/",
   comments: (postId) => `/post_accommodations/${postId}/comments/`,
   update_profile: "/user/current-user/",
+  update_password: "/user/update-password/",
 };
 
 export const authApi = (token) => {
