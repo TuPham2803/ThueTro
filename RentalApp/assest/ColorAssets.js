@@ -9,7 +9,7 @@ export const ColorAssets = {
     icon: "#38ab9e",
     background: "",
     border: "",
-    text: "",
+    text: "#fff",
     subtext: "",
   },
   input: {

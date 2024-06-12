@@ -21,7 +21,7 @@ import APIs, { endpoints } from "../../configs/APIs";
 import Item from "../../Utils/Item";
 import { MyUserContext } from "../../configs/Contexts";
 import { ImagesAssets } from "../../assest/images/ImagesAssets";
-
+import { ColorAssets } from "../../assest/ColorAssets";
 const Home = ({ navigation }) => {
   const [search, setSearch] = React.useState("");
   const images = [
@@ -49,7 +49,9 @@ const Home = ({ navigation }) => {
   const handlePress = () => {
     if (user) {
       if (user.user_type === "landlord") {
-        navigation.navigate("CreatePostAccommodation");
+        navigation.navigate("PostManagerStack", {
+          screen: "CreatePostAccommodation",
+        });
       } else {
         navigation.navigate("PostManagerStack", {
           screen: "CreatePostRequest",
@@ -110,6 +112,8 @@ const Home = ({ navigation }) => {
 
       <View style={[MyStyle.row]}>
         <Searchbar
+          iconColor={ColorAssets.content.icon}
+          rippleColor={ColorAssets.content.icon}
           placeholder="Search"
           value={search}
           onChangeText={setSearch}
@@ -150,7 +154,11 @@ const Home = ({ navigation }) => {
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
-              <IconButton icon="map-marker" color="purple" size={20} />
+              <IconButton
+                icon="map-marker"
+                iconColor={ColorAssets.content.icon}
+                size={20}
+              />
               <Text>Tìm kiếm theo vị trí</Text>
             </View>
           </TouchableRipple>
@@ -160,7 +168,11 @@ const Home = ({ navigation }) => {
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
-              <IconButton icon="cash" color="purple" size={20} />
+              <IconButton
+                icon="cash"
+                iconColor={ColorAssets.content.icon}
+                size={20}
+              />
               <Text>Tìm kiếm theo giá</Text>
             </View>
           </TouchableRipple>
@@ -170,17 +182,27 @@ const Home = ({ navigation }) => {
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
-              <IconButton icon="account-group" color="purple" size={20} />
+              <IconButton
+                icon="account-group"
+                iconColor={ColorAssets.content.icon}
+                size={20}
+              />
               <Text>Bạn ở chungggg</Text>
             </View>
           </TouchableRipple>
+        </View>
+        <View style={[MyStyle.row, {marginTop: 10}]}>
           <TouchableRipple
             onPress={() => console.log("Pressed")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
-              <IconButton icon="bed" color="purple" size={20} />
+              <IconButton
+                icon="bed"
+                iconColor={ColorAssets.content.icon}
+                size={20}
+              />
               <Text>Phòng riêng</Text>
             </View>
           </TouchableRipple>
@@ -190,7 +212,11 @@ const Home = ({ navigation }) => {
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
-              <IconButton icon="home" color="purple" size={20} />
+              <IconButton
+                icon="home"
+                iconColor={ColorAssets.content.icon}
+                size={20}
+              />
               <Text>Nhà nhanh</Text>
             </View>
           </TouchableRipple>
@@ -200,7 +226,11 @@ const Home = ({ navigation }) => {
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
-              <IconButton icon="plus" color="purple" size={20} />
+              <IconButton
+                icon="plus"
+                iconColor={ColorAssets.content.icon}
+                size={20}
+              />
               <Text>Đăng tin</Text>
             </View>
           </TouchableRipple>
@@ -245,7 +275,7 @@ const Home = ({ navigation }) => {
         ].map((item, index) => (
           <Card key={index} style={[MyStyle.card]}>
             <TouchableOpacity
-              style={MyStyle.button}
+              style={[MyStyle.button, { borderRadius: 10 }]}
               onPress={() => navigation.navigate(item.screen)}
             >
               <Card.Cover source={item.image} style={MyStyle.cardImage} />

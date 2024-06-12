@@ -46,6 +46,8 @@ export default StyleSheet.create({
   },
   searchBar: {
     width: "95%",
+    alignItems: "center",
+    backgroundColor: ColorAssets.input.background,
   },
   icon: {
     width: "8%",
@@ -94,8 +96,9 @@ export default StyleSheet.create({
     color: ColorAssets.button.text,
   },
   buttonCaption: {
-    marginTop: 5,
+    margin: 5,
     textAlign: "center",
+    color: ColorAssets.content.text,
   },
   border: {
     borderColor: ColorAssets.content.title,
