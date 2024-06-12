@@ -17,6 +17,7 @@ export const ColorAssets = {
     text: "",
     borderFocus: "#38ab9e",
     border: "#fbfbfb",
+    icon: "#38ab9e",
   },
   range: {
     selected: "#38ab9e",
