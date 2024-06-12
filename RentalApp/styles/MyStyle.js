@@ -1,10 +1,14 @@
 import { Dimensions, StyleSheet } from "react-native";
-
+import { ColorAssets } from "../assest/ColorAssets";
 const screenWidth = Dimensions.get("window").width;
 
 export default StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+  input: {
+    backgroundColor: ColorAssets.input.background,
   },
   top: {
     marginTop: 20,
@@ -86,7 +90,10 @@ export default StyleSheet.create({
     height: 80,
   },
   button: {
+    width: "100%",
     alignItems: "center",
+    backgroundColor: ColorAssets.button.background,
+    color: ColorAssets.button.text,
   },
   buttonCaption: {
     marginTop: 5,
