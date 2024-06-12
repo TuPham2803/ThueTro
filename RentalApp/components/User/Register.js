@@ -19,9 +19,9 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import MyStyle from "../../styles/MyStyle";
 import APIs, { endpoints } from "../../configs/APIs";
-import mime from 'react-native-mime-types';
+import mime from "react-native-mime-types";
 import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
-
+import { ColorAssets } from "../../assest/ColorAssets";
 const Register = () => {
   const [user, setUser] = React.useState({});
   const [err, setErr] = React.useState(false);
@@ -108,8 +108,8 @@ const Register = () => {
           if (key === "image" && user.image) {
             form.append(key, {
               uri: user.image.uri,
-              name: user.image.uri.split('/').pop(),
-              type: mime.lookup(user.image.uri) || 'image/jpeg',
+              name: user.image.uri.split("/").pop(),
+              type: mime.lookup(user.image.uri) || "image/jpeg",
             });
           } else {
             form.append(key, user[key]);
@@ -140,21 +140,38 @@ const Register = () => {
 
   return (
     <View
-      style={[MyStyle.container, MyStyle.margin, MyStyle.justifyContentCenter, { marginTop: 50 }]}
+      style={[
+        MyStyle.container,
+        MyStyle.margin,
+        MyStyle.justifyContentCenter,
+        { marginTop: 0 },
+      ]}
     >
       <ScrollView>
-        <Text style={MyStyle.subject}>ĐĂNG KÝ NGƯỜI DÙNG</Text>
+        <Text style={[MyStyle.header, { textAlign: "center" }]}>
+          ĐĂNG KÝ NGƯỜI DÙNG
+        </Text>
 
         {fields.map((c) =>
           !c.hidden ? (
             <TextInput
+              mode="outlined"
+              outlineColor={ColorAssets.input.border}
+              activeOutlineColor={ColorAssets.input.borderFocus}
               secureTextEntry={c.secureTextEntry}
               value={user[c.name]}
               onChangeText={(t) => updateSate(c.name, t)}
-              style={MyStyle.margin}
+              style={[MyStyle.margin, MyStyle.input]}
               key={c.name}
               label={c.label}
-              right={c.icon ? <TextInput.Icon icon={c.icon} /> : null}
+              right={
+                c.icon ? (
+                  <TextInput.Icon
+                    color={ColorAssets.input.icon}
+                    icon={c.icon}
+                  />
+                ) : null
+              }
             />
           ) : null
         )}
@@ -186,7 +203,12 @@ const Register = () => {
           )}
 
           {user.image && (
-            <Button icon="delete" mode="contained" onPress={deleteImage}>
+            <Button
+              icon="delete"
+              mode="contained"
+              onPress={deleteImage}
+              style={[MyStyle.button]}
+            >
               Xóa ảnh
             </Button>
           )}
@@ -198,12 +220,21 @@ const Register = () => {
             onValueChange={(value) => updateSate("user_type", value)}
             value={user.user_type}
           >
-            <RadioButton.Item label="Landlord" value="landlord" />
-            <RadioButton.Item label="Tenant" value="tenant" />
+            <RadioButton.Item
+              color={ColorAssets.checkbox.selected}
+              label="Landlord"
+              value="landlord"
+            />
+            <RadioButton.Item
+              color={ColorAssets.checkbox.selected}
+              label="Tenant"
+              value="tenant"
+            />
           </RadioButton.Group>
         </View>
 
         <Button
+          style={[MyStyle.button]}
           icon="account"
           loading={loading}
           mode="contained"

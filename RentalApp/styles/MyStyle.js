@@ -1,10 +1,14 @@
 import { Dimensions, StyleSheet } from "react-native";
-
+import { ColorAssets } from "../assest/ColorAssets";
 const screenWidth = Dimensions.get("window").width;
 
 export default StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+  input: {
+    backgroundColor: ColorAssets.input.background,
   },
   top: {
     marginTop: 20,
@@ -16,13 +20,13 @@ export default StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "purple",
+    color: ColorAssets.content.title,
     flexShrink: 1,
   },
   header: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "purple",
+    color: ColorAssets.content.title,
   },
   row: {
     flexDirection: "row",
@@ -42,6 +46,8 @@ export default StyleSheet.create({
   },
   searchBar: {
     width: "95%",
+    alignItems: "center",
+    backgroundColor: ColorAssets.input.background,
   },
   icon: {
     width: "8%",
@@ -86,14 +92,16 @@ export default StyleSheet.create({
     height: 80,
   },
   button: {
-    alignItems: "center",
+    backgroundColor: ColorAssets.button.background,
+    color: ColorAssets.button.text,
   },
   buttonCaption: {
-    marginTop: 5,
+    margin: 5,
     textAlign: "center",
+    color: ColorAssets.content.text,
   },
   border: {
-    borderColor: "purple",
+    borderColor: ColorAssets.content.title,
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,

@@ -5,23 +5,32 @@ export const ColorAssets = {
     background: "#38ab9e",
   },
   content: {
-    title: "",
-    icon: "",
+    title: "#38ab9e",
+    icon: "#38ab9e",
     background: "",
     border: "",
-    text: "",
+    text: "#fff",
     subtext: "",
   },
-  input:{
-    background: "ededed",
+  input: {
+    background: "#f5f5f6",
     text: "",
-    border: "",
-  
+    borderFocus: "#38ab9e",
+    border: "#fbfbfb",
+    icon: "#38ab9e",
+  },
+  range: {
+    selected: "#38ab9e",
+    unselected: "#f5f5f6",
+    track: "#38ab9e",
+  },
+  checkbox: {
+    selected: "#38ab9e",
+    text: "#fff",
   },
   button: {
-    background: "",
-    text: "",
-    border: "",
+    background: "#38ab9e",
+    text: "#fff",
   },
   nav: {
     background: "#38ab9e",

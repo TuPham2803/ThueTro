@@ -5,7 +5,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MyStyle from "../../styles/MyStyle";
-
+import { ColorAssets } from "../../assest/ColorAssets";
 const CreatePostRequest = ({ navigation }) => {
     const [city, setCity] = useState("");
     const [district, setDistrict] = useState("");
@@ -66,25 +66,35 @@ const CreatePostRequest = ({ navigation }) => {
             <View style={[MyStyle.container, { padding: 10 }]}>
                 <ScrollView style={[MyStyle.wrapper]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="home-account" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Tên bài đăng</Text>
+                        <Icon source="home-account" size={30} color={ColorAssets.content.icon} />
+                        <Text style={{ color: ColorAssets.content.title, marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Tên bài đăng</Text>
                     </View>
                     <TextInput
+                        mode="outlined"
+                        outlineColor={ColorAssets.input.border}
+                        activeOutlineColor={ColorAssets.input.borderFocus}
+                        outlineStyle={borderRadius=50}
                         value={title}
                         onChangeText={setTitle}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="map-marker" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Khu vực mong muốn: </Text>
+                        <Icon source="map-marker" size={30} color={ColorAssets.content.icon} />
+                        <Text style={{ color: ColorAssets.content.title, marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Khu vực mong muốn: </Text>
                     </View>
                     <TextInput
+                        mode="outlined"
+                        outlineColor={ColorAssets.input.border}
+                        activeOutlineColor={ColorAssets.input.borderFocus}
                         label="Thành phố"
                         value={city}
                         onChangeText={setCity}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
                     <TextInput
+                        mode="outlined"
+                        outlineColor={ColorAssets.input.border}
+                        activeOutlineColor={ColorAssets.input.borderFocus}
                         label="Quận/Huyện"
                         value={district}
                         onChangeText={setDistrict}
@@ -92,7 +102,7 @@ const CreatePostRequest = ({ navigation }) => {
                     />
                     <View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                            <Icon source="currency-usd" size={30} color="purple" />
+                            <Icon source="currency-usd" size={30} color={ColorAssets.content.icon} />
                             <Text style={styles.label}>Khoảng Giá</Text>
                         </View>
                         <View style={styles.sliderLabels}>
@@ -106,10 +116,9 @@ const CreatePostRequest = ({ navigation }) => {
                                 min={0}
                                 max={20000000}
                                 step={500000}
-                                selectedStyle={{ backgroundColor: 'purple' }}
-                                unselectedStyle={{ backgroundColor: '#000000' }}
+                                selectedStyle={{ backgroundColor: ColorAssets.range.selected }}
+                                unselectedStyle={{ backgroundColor: ColorAssets.range.unselected }}
                                 containerStyle={styles.slider}
-                                trackStyle={{ height: 10 }}
                                 markerStyle={styles.thumbStyle}
                             />
                         </View>
@@ -118,26 +127,32 @@ const CreatePostRequest = ({ navigation }) => {
                         </Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="file-document" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Ghi chú: </Text>
+                        <Icon source="file-document" size={30} color={ColorAssets.content.icon} />
+                        <Text style={{ color: ColorAssets.content.title, marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Ghi chú: </Text>
                     </View>
                     <TextInput
+                        mode="outlined"
+                        outlineColor={ColorAssets.input.border}
+                        activeOutlineColor={ColorAssets.input.borderFocus}
                         value={note}
                         onChangeText={setNote}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="ruler" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Diện tích</Text>
+                        <Icon source="ruler" size={30} color={ColorAssets.content.icon} />
+                        <Text style={{ color: ColorAssets.content.title, marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Diện tích</Text>
                     </View>
                     <TextInput
+                        mode="outlined"
+                        outlineColor={ColorAssets.input.border}
+                        activeOutlineColor={ColorAssets.input.borderFocus}
                         value={acreage}
                         onChangeText={setAcreage}
                         style={[MyStyle.input, MyStyle.margin]}
                     />
                     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                        <Icon source="door" size={30} color="purple" />
-                        <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Loại phòng</Text>
+                        <Icon source="door" size={30} color={ColorAssets.content.icon} />
+                        <Text style={{ color: ColorAssets.content.title, marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Loại phòng</Text>
                     </View>
                     <View style={styles.buttonGroup}>
                         <TouchableOpacity
@@ -151,10 +166,9 @@ const CreatePostRequest = ({ navigation }) => {
                                 <IconButton
                                     icon="home-group"
                                     size={30}
-                                    color={selectedHouseType === 'SH' ? "white" : "White"}
                                 />
                             </View>
-                            <Text style={styles.buttonText}>Ở Ghép</Text>
+                            <Text >Ở Ghép</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
@@ -167,19 +181,21 @@ const CreatePostRequest = ({ navigation }) => {
                                 <IconButton
                                     icon="home"
                                     size={30}
-                                    color={selectedHouseType === 'PR' ? "white" : "White"}
                                 />
                             </View>
-                            <Text style={styles.buttonText}>Ở riêng</Text>
+                            <Text >Ở riêng</Text>
                         </TouchableOpacity>
                     </View>
                     {selectedHouseType === 'SH' && (
                         <View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                                <Icon source="account" size={30} color="purple" />
-                                <Text style={{ color: "purple", marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Số người</Text>
+                                <Icon source="account" size={30} color={ColorAssets.content.icon} />
+                                <Text style={{ color: ColorAssets.content.title, marginRight: 5, fontFamily: 'Roboto', fontWeight: 'bold', fontSize: 16 }}>Số người</Text>
                             </View>
                             <TextInput
+                                mode="outlined"
+                                outlineColor={ColorAssets.input.border}
+                        activeOutlineColor={ColorAssets.input.borderFocus}
                                 value={quanity}
                                 onChangeText={setQuanity}
                                 style={[MyStyle.input, MyStyle.margin]}
@@ -187,6 +203,7 @@ const CreatePostRequest = ({ navigation }) => {
                         </View>
                     )}
                     <Button
+                        style={[MyStyle.button]}
                         mode="contained"
                         onPress={handleCreatePostRequest}
                     >
@@ -202,7 +219,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     label: {
-        color: "purple",
+        color: ColorAssets.content.title,
         marginRight: 5,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
@@ -220,20 +237,20 @@ const styles = StyleSheet.create({
     thumbStyle: {
         height: 20,
         width: 20,
-        backgroundColor: 'purple',
     },
     sliderLabels: {
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     sliderLabel: {
-        color: 'purple',
+        color: ColorAssets.content.title,
         marginRight: 5,
         fontFamily: 'Roboto',
         fontWeight: 'bold',
         fontSize: 16,
     },
     currentValue: {
+        color: ColorAssets.content.title,
         textAlign: 'center',
         marginTop: 10,
         fontSize: 16,
@@ -253,7 +270,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     selectedButton: {
-        backgroundColor: '#b39ddb',
+        backgroundColor: ColorAssets.checkbox.selected,
     },
 });
 
