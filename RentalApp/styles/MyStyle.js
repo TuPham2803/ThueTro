@@ -90,7 +90,6 @@ export default StyleSheet.create({
     height: 80,
   },
   button: {
-    alignItems: "center",
     backgroundColor: ColorAssets.button.background,
     color: ColorAssets.button.text,
   },

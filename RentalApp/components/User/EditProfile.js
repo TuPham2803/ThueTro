@@ -23,7 +23,7 @@ import mime from "react-native-mime-types";
 import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
 import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import { useContext, useState, useEffect } from "react";
-
+import { ColorAssets } from "../../assest/ColorAssets";
 const EditProfile = () => {
   const [user, setUser] = React.useState(useContext(MyUserContext));
   const [err, setErr] = React.useState(false);
@@ -34,7 +34,6 @@ const EditProfile = () => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
-  console.log(user);
   const fields = [
     {
       label: "First name",
@@ -88,6 +87,10 @@ const EditProfile = () => {
     updateSate("image", null);
   };
 
+  const handleUpdatePassword = async () => {
+    console.log("abc");
+  }
+
   return (
     <View
       style={[MyStyle.container, MyStyle.margin, MyStyle.justifyContentCenter]}
@@ -97,13 +100,23 @@ const EditProfile = () => {
         {fields.map((c) =>
           !c.hidden ? (
             <TextInput
+              mode="outlined"
+              outlineColor={ColorAssets.input.border}
+              activeOutlineColor={ColorAssets.input.borderFocus}
               secureTextEntry={c.secureTextEntry}
               value={user[c.name]}
               onChangeText={(t) => updateSate(c.name, t)}
-              style={MyStyle.margin}
+              style={[MyStyle.margin, MyStyle.input]}
               key={c.name}
               label={c.label}
-              right={c.icon ? <TextInput.Icon icon={c.icon} /> : null}
+              right={
+                c.icon ? (
+                  <TextInput.Icon
+                    icon={c.icon}
+                    color={ColorAssets.content.icon}
+                  />
+                ) : null
+              }
             />
           ) : null
         )}
@@ -138,7 +151,7 @@ const EditProfile = () => {
           )}
 
           {user.image && (
-            <Button icon="delete" mode="contained" onPress={deleteImage}>
+            <Button icon="delete" mode="contained" onPress={deleteImage} style={MyStyle.button}>
               Xóa ảnh
             </Button>
           )}
@@ -147,42 +160,51 @@ const EditProfile = () => {
         <Button
           icon="account"
           mode="contained"
-          onPress={console.log()}
-          style={MyStyle.margin}
+          onPress={console.log('abc')}
+          style={[MyStyle.margin, MyStyle.button]}
         >
           Cập nhật profile
         </Button>
         <Text style={[MyStyle.title, MyStyle.margin]}>Cập nhật mật khẩu</Text>
         <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
           value={oldPassword}
           onChangeText={(t) => setOldPassword(t)}
-          style={MyStyle.margin}
+          style={[MyStyle.margin, MyStyle.input]}
           label="Mật khẩu cũ"
-          right={<TextInput.Icon icon="eye" />}
+          right={<TextInput.Icon icon="eye" color={ColorAssets.content.icon} />}
         />
         <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
           value={password}
           onChangeText={(t) => setPassword(t)}
-          style={MyStyle.margin}
+          style={[MyStyle.margin, MyStyle.input]}
           label="Mật khẩu cũ"
-          right={<TextInput.Icon icon="eye" />}
+          right={<TextInput.Icon icon="eye" color={ColorAssets.content.icon} />}
         />
         <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
           value={confirmPassword}
           onChangeText={(t) => setConfirmPassword(t)}
-          style={MyStyle.margin}
+          style={[MyStyle.margin, MyStyle.input]}
           label="Xác nhận mật khẩu"
-          right={<TextInput.Icon icon="eye" />}
+          right={<TextInput.Icon icon="eye" color={ColorAssets.content.icon} />}
         />
 
         <Button
           icon="lock"
           mode="contained"
-          onPress={console.log()}
-          style={MyStyle.margin}
+          onPress={handleUpdatePassword}
+          style={[MyStyle.margin, MyStyle.button]}
         >
           Cập nhật mật khẩu
         </Button>
