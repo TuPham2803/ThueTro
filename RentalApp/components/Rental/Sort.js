@@ -21,15 +21,16 @@ import React, { useState } from "react";
 import SortStyle from "../../styles/SortStyle";
 import data from "../../Utils/CitiesData";
 
-const Sort = () => {
-  const [priceRange, setPriceRange] = useState([0, 20000000]);
+const Sort = ({ navigation }) => {
+  const [priceRange, setPriceRange] = useState([0, 100000000]);
   const [selectedCity, setSelectedCity] = useState(Object.keys(data)[0]);
   const [selectedDistrict, setSelectedDistrict] = useState(
     data[Object.keys(data)[0]][0]
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState(""); // 'city' hoặc 'district'
-  const flatListRef = React.useRef();
+  const [minPeople, setMinPeople] = useState(999999);
+  const [maxPeople, setMaxPeople] = useState(1);
 
   const handleCitySelect = (city) => {
     setSelectedCity(city);
@@ -42,6 +43,20 @@ const Sort = () => {
     setModalVisible(false);
   };
 
+  const handleSortClick = () => {
+    navigation.navigate("PostAccommodations", {
+      data: {
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
+        city: selectedCity === "Chọn thành phố" ? "" : selectedCity,
+        district:
+          selectedDistrict === "Chọn quận/huyện" ? "" : selectedDistrict,
+        minPeople: minPeople,
+        maxPeople: maxPeople,
+      },
+    });
+  };
+
   return (
     <View style={[MyStyle.top]}>
       <View
@@ -52,7 +67,7 @@ const Sort = () => {
       </View>
       <View style={styles.sliderLabels}>
         <Text style={styles.sliderLabel}> 0</Text>
-        <Text style={styles.sliderLabel}>20.000.000</Text>
+        <Text style={styles.sliderLabel}>100.000.000</Text>
       </View>
       <View style={styles.sliderContainer}>
         <MultiSlider
@@ -106,6 +121,8 @@ const Sort = () => {
             <TextInput
               style={[MyStyle.marginDistantSide, { marginTop: 10 }]}
               placeholder="Nhập số người"
+              value={minPeople}
+              onChangeText={setMinPeople}
             ></TextInput>
           </View>
           <View>
@@ -115,11 +132,14 @@ const Sort = () => {
             <TextInput
               style={[MyStyle.marginDistantSide, { marginTop: 10 }]}
               placeholder="Nhập số người"
+              value={maxPeople}
+              onChangeText={setMaxPeople}
             ></TextInput>
           </View>
         </View>
 
         <TouchableOpacity
+          onPress={handleSortClick}
           style={[
             SortStyle.closeButton,
             MyStyle.alignCenter,

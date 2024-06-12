@@ -22,17 +22,24 @@ import APIs, { endpoints } from "../../configs/APIs";
 import Swiper from "react-native-swiper";
 import RenderHTML from "react-native-render-html";
 import { isCloseToBottom } from "../../Utils/Utils";
+import { min } from "moment";
 
-const PostAccommodations = ({ navigation }) => {
+const PostAccommodations = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = React.useState(false);
   const [q, setQ] = React.useState("");
   const [page, setPage] = React.useState(1);
+  const minPrice = route.params?.data?.minPrice || 0;
+  const maxPrice = route.params?.data?.maxPrice || 200000;
+  const city = route.params?.data?.city || "";
+  const district = route.params?.data?.district || "";
+  const maxPeople = route.params?.data?.maxPeople || 0;
+  const currentPeople = route.params?.data?.currentPeople || 90000;
 
   const loadPostAccomodations = async () => {
     setLoading(true);
     if (page > 0) {
-      let url = `${endpoints["post_accomodations"]}?page=${page}&pending_status=APR`;
+      let url = `${endpoints["post_accomodations"]}?page=${page}&pending_status=APR&min_price=${minPrice}&max_price=${maxPrice}&city=${city}&district=${district}&max_people=${maxPeople}&current_people=${currentPeople}`;
       try {
         let res = await APIs.get(url);
         if (page === 1) {
@@ -50,6 +57,11 @@ const PostAccommodations = ({ navigation }) => {
       }
     }
   };
+
+  useEffect(() => {
+    setPage(1);
+    loadPostAccomodations();
+  }, [minPrice, maxPrice, city, district, maxPeople, currentPeople]);
 
   React.useEffect(() => {
     loadPostAccomodations();
