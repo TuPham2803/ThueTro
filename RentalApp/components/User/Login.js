@@ -6,6 +6,7 @@ import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import { useNavigation } from "@react-navigation/native";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ColorAssets } from "../../assest/ColorAssets";
 
 const SERVER_CLIENT_ID = process.env.SERVER_CLIENT_ID; //Eh65pe9lGWTeVJBzZBj4sNbgshpOlEWvnLZ0en3b
 const SERVER_CLIENT_SECRET = process.env.SERVER_CLIENT_SECRET; //mWbFHj6vwBRccXBwvOtQMLrOmuUmZiAjjTLFRCEma8zISfOr6p8zHyDnhYYMcVY85ac4AOgme4KlONf9i2VmNaSGkayLmnZo5KC6tvQ9bbjFuPc8yandkEvaSmjljzWh
@@ -77,16 +78,19 @@ const Login = () => {
 
   return (
     <View
-      style={[MyStyle.container, MyStyle.top, MyStyle.justifyContentCenter]}
+      style={[MyStyle.container, MyStyle.justifyContentCenter]}
     >
       <View style={[MyStyle.alignCenter]}>
         <Text style={MyStyle.header}>ĐĂNG NHẬP NGƯỜI DÙNG</Text>
         {fields.map((c) => (
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             secureTextEntry={c.secureTextEntry}
             value={user[c.name]}
             onChangeText={(t) => updateState(c.name, t)}
-            style={[MyStyle.searchBar, MyStyle.margin]}
+            style={[MyStyle.input, MyStyle.margin, {width: "90%"}]}
             key={c.name}
             label={c.label}
           />
@@ -96,7 +100,7 @@ const Login = () => {
             icon="account-lock-open"
             mode="contained"
             onPress={login}
-            style={MyStyle.margin}
+            style={[MyStyle.margin, MyStyle.button]}
             loading={loading}
           >
             Đăng nhập

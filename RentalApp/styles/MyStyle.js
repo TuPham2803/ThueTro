@@ -20,13 +20,13 @@ export default StyleSheet.create({
   title: {
     fontSize: 25,
     fontWeight: "bold",
-    color: "purple",
+    color: ColorAssets.content.title,
     flexShrink: 1,
   },
   header: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "purple",
+    color: ColorAssets.content.title,
   },
   row: {
     flexDirection: "row",
@@ -90,7 +90,6 @@ export default StyleSheet.create({
     height: 80,
   },
   button: {
-    width: "100%",
     alignItems: "center",
     backgroundColor: ColorAssets.button.background,
     color: ColorAssets.button.text,
@@ -100,7 +99,7 @@ export default StyleSheet.create({
     textAlign: "center",
   },
   border: {
-    borderColor: "purple",
+    borderColor: ColorAssets.content.title,
     borderWidth: 1,
     borderRadius: 5,
     padding: 10,
