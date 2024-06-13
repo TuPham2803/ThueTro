@@ -5,7 +5,7 @@ import MyStyle from "../styles/MyStyle";
 import { useEffect, useState } from "react";
 import APIs, { endpoints } from "../configs/APIs";
 import { htmlToText } from "html-to-text";
-
+import { ColorAssets } from "../assest/ColorAssets";
 const ItemPostRequest = ({ instance }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -46,13 +46,12 @@ const ItemPostRequest = ({ instance }) => {
           {instance.district && instance.city ? (
             
             <Text>
-               <Icon source="map-marker" size={20} color="purple" />{instance.district}, {instance.city}
+               <Icon source="map-marker" size={20} color={ColorAssets.content.icon} />{instance.district}, {instance.city}
             </Text>
           ) : null}
-          {/* Add minimum and maximum prices */}
           {instance.min_price && instance.max_price ? (
             <Text>
-              <Icon source="currency-usd" size={20} color="purple"/>${instance.min_price} - {instance.max_price}
+              <Icon source="currency-usd" size={20} color={ColorAssets.content.icon}/>${instance.min_price} - {instance.max_price}
             </Text>
           ) : null}
         </View>

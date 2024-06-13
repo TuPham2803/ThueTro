@@ -239,7 +239,6 @@ const MyTab = () => {
       {user === null ? (
         <>
           <Tab.Screen
-            
             name="Register"
             component={Register}
             options={{

@@ -28,7 +28,7 @@ const Profile = ({ navigation }) => {
         ) : (
           <Avatar.Icon size={120} icon="account" style={{ marginBottom: 10 }} />
         )}
-        <Title style={{ color: ColorAssets.content.title }}>
+        <Title>
           {user ? user.username : "Username"}
         </Title>
         <View style={{ width: "100%", marginBottom: 20 }}>

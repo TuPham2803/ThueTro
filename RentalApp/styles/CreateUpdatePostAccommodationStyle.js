@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions } from "react-native";
+import { ColorAssets } from "../assest/ColorAssets";
 
 
 export default StyleSheet.create({
@@ -15,7 +16,7 @@ export default StyleSheet.create({
     marginBottom: 5,
   },
   iconText: {
-    color: "purple",
+    color: ColorAssets.content.title,
     marginRight: 5,
     fontFamily: "Roboto",
     fontWeight: "bold",
@@ -42,7 +43,7 @@ export default StyleSheet.create({
     borderRadius: 5,
   },
   selectedButton: {
-    backgroundColor: "#b39ddb",
+    backgroundColor: "#38ab9e",
   },
   imageWrapper: {
     flexDirection: "row",

@@ -14,7 +14,7 @@ export const ColorAssets = {
   },
   input: {
     background: "#f5f5f6",
-    text: "",
+    text: "#fff",
     borderFocus: "#38ab9e",
     border: "#fbfbfb",
     icon: "#38ab9e",

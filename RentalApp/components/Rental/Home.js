@@ -119,37 +119,11 @@ const Home = ({ navigation }) => {
           onChangeText={setSearch}
           style={[MyStyle.searchBar, MyStyle.margin]}
         />
-
-        {/* <IconButton
-        <IconButton
-          icon="cart"
-          iconColor="purple"
-          size={20}
-          onPress={() => console.log("Pressed")}
-          style={MyStyle.icon}
-        />
-        <IconButton
-          icon="wechat"
-          iconColor="purple"
-          size={20}
-          onPress={() => console.log("Pressed")}
-          style={MyStyle.icon}
-        />
-
-        <IconButton
-          icon="account"
-          iconColor="purple"
-          size={20}
-          onPress={() => {
-            navigation.navigate(user ? "Profile" : "Login");
-          }}
-          style={MyStyle.icon}
-        /> */}
       </View>
       <View style={[MyStyle.container]}>
         <View style={[MyStyle.row]}>
           <TouchableRipple
-            onPress={postHandlePress}
+            onPress={() => navigation.navigate("PostAccommodations")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
@@ -163,7 +137,7 @@ const Home = ({ navigation }) => {
             </View>
           </TouchableRipple>
           <TouchableRipple
-            onPress={postHandlePress}
+             onPress={() => navigation.navigate("PostRequests")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
@@ -191,7 +165,7 @@ const Home = ({ navigation }) => {
             </View>
           </TouchableRipple>
         </View>
-        <View style={[MyStyle.row, {marginTop: 10}]}>
+        <View style={[MyStyle.row, { marginTop: 10 }]}>
           <TouchableRipple
             onPress={() => console.log("Pressed")}
             rippleColor="rgba(0, 0, 0, .32)"
