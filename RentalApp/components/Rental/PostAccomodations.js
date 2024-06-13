@@ -24,6 +24,7 @@ import RenderHTML from "react-native-render-html";
 import { isCloseToBottom } from "../../Utils/Utils";
 import { min } from "moment";
 
+// hien thi
 const PostAccommodations = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = React.useState(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback } from "react";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 
 import {
   View,
@@ -18,8 +18,6 @@ import Swiper from "react-native-swiper";
 import RenderHTML from "react-native-render-html";
 import { MyUserContext } from "../../configs/Contexts";
 import { Button } from "react-native-paper";
-
-
 
 const ListPostAccommodation = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
@@ -71,29 +69,29 @@ const ListPostAccommodation = ({ navigation }) => {
                     navigation.navigate("UpdatePostAccommodation", {
                       post: p,
                     })
-
                   }
                 >
                   <Item instance={p} />
 
-                  <Text style={{ fontStyle: 'italic', color: 'gray', alignSelf: 'center', marginTop: 5 }}>
-                    {p.pending_status === "PD" ? "Chưa được xét duyệt" : "Đã được xét duyệt"}
+                  <Text
+                    style={{
+                      fontStyle: "italic",
+                      color: "gray",
+                      alignSelf: "center",
+                      marginTop: 5,
+                    }}
+                  >
+                    {p.pending_status === "PD"
+                      ? "Chưa được xét duyệt"
+                      : "Đã được xét duyệt"}
                   </Text>
-
                 </TouchableOpacity>
               ))}
             </>
           )}
         </View>
-
       </ScrollView>
-
     </View>
   );
-
-
 };
 export default ListPostAccommodation;
-
-
-

@@ -57,6 +57,11 @@ const Sort = ({ navigation }) => {
     });
   };
 
+  //xai react native picker de xu ly viec hien thi thong tin city va district
+  //su dung bien toan cuc de load city va district
+  //them segmentedbuttons de chon loai tim kiem city hoac district theo khu vuc hoac ban do
+  //them chon loai phong tro -> so nguoi o toi thieu va toi da
+
   return (
     <View style={[MyStyle.top]}>
       <View
