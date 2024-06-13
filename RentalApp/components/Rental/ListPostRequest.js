@@ -10,7 +10,7 @@ import MyStyle from "../../styles/MyStyle";
 import APIs, { endpoints } from "../../configs/APIs";
 import ItemPostRequest from "../../Utils/ItemPostRequest";
 import { MyUserContext } from "../../configs/Contexts";
-
+import { ColorAssets } from "../../assest/ColorAssets";
 const ListPostRequest = ({ navigation }) => {
   const [posts, setPosts] = useState([]);
   const [q, setQ] = useState("");
@@ -36,7 +36,7 @@ const ListPostRequest = ({ navigation }) => {
       headerRight: () => (
         <IconButton
           icon="plus"
-          iconColor="purple"
+          iconColor={ColorAssets.content.text}
           size={30}
           onPress={() => navigation.navigate("CreatePostRequest")}
         />
