@@ -138,7 +138,7 @@ const CreatePostRequest = ({ navigation }) => {
                 fontSize: 16,
               }}
             >
-              Khu vực mong muốn:{" "}
+              Khu vực mong muốn:
             </Text>
           </View>
           <TextInput
@@ -159,6 +159,7 @@ const CreatePostRequest = ({ navigation }) => {
             onChangeText={setDistrict}
             style={[MyStyle.input, MyStyle.margin]}
           />
+          
           <View>
             <View
               style={{

@@ -18,6 +18,7 @@ import Swiper from "react-native-swiper";
 import RenderHTML from "react-native-render-html";
 import { MyUserContext } from "../../configs/Contexts";
 import { Button } from "react-native-paper";
+import { ColorAssets } from "../../assest/ColorAssets";
 
 
 
@@ -47,7 +48,7 @@ const ListPostAccommodation = ({ navigation }) => {
       headerRight: () => (
         <IconButton
           icon="plus"
-          iconColor="purple"
+          iconColor={ColorAssets.header.text}
           size={30}
           onPress={() => navigation.navigate("CreatePostAccommodation")}
         />
@@ -57,7 +58,7 @@ const ListPostAccommodation = ({ navigation }) => {
 
   return (
     <View style={[MyStyle.container, MyStyle.margin]}>
-      <Searchbar placeholder="Search" onChangeText={setQ} value={q} />
+      <Searchbar  style={[MyStyle.input, MyStyle.searchBar, {textAlign:'center'}]} placeholder="Search" onChangeText={setQ} value={q} />
       <ScrollView>
         <View style={[MyStyle.container, MyStyle.margin]}>
           {posts === null ? (

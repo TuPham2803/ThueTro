@@ -21,7 +21,7 @@ import styles from "../../styles/CreateUpdatePostAccommodationStyle";
 import mime from "react-native-mime-types"; // Use react-native-mime-types
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { ColorAssets } from "../../assest/ColorAssets";
 const CreatePostAccommodation = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [city, setCity] = useState("");
@@ -30,7 +30,7 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
-  const [acreage, setAcreage] = useState(0);
+  const [acreage, setAcreage] = useState("");
   const [phone, setPhone] = useState("");
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
@@ -85,7 +85,10 @@ const CreatePostAccommodation = ({ navigation }) => {
       phone === "" ||
       selectedHouseType === ""
     ) {
-      Alert.alert("Rental", "Please fill all the fields and upload at least three images!");
+      Alert.alert(
+        "Rental",
+        "Please fill all the fields and upload at least three images!"
+      );
       return;
     }
 
@@ -105,7 +108,7 @@ const CreatePostAccommodation = ({ navigation }) => {
       formData.append("max_people", max_people);
       formData.append("current_people", current_people);
     }
-    
+
     // Append images one by one to formData
     images.forEach((image, index) => {
       formData.append("images", {
@@ -147,36 +150,56 @@ const CreatePostAccommodation = ({ navigation }) => {
 
   return (
     <Provider>
-      <View style={[MyStyle.container, styles.container]}>
-        <ScrollView style={[MyStyle.wrapper, styles.wrapper]}>
+      <View style={[MyStyle.container, { padding: 10 }]}>
+        <ScrollView style={[MyStyle.wrapper]}>
           {/* Input fields for the form */}
           <View style={styles.iconTextContainer}>
-            <Icon source="home-account" size={30} color="purple" />
+            <Icon
+              source="home-account"
+              size={30}
+              color={ColorAssets.content.icon}
+            />
             <Text style={styles.iconText}>Tên bài đăng</Text>
           </View>
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             value={title}
             onChangeText={setTitle}
             style={[MyStyle.input, styles.textInput]}
           />
           {/* More input fields */}
           <View style={styles.iconTextContainer}>
-            <Icon source="map-marker" size={30} color="purple" />
+            <Icon
+              source="map-marker"
+              size={30}
+              color={ColorAssets.content.icon}
+            />
             <Text style={styles.iconText}>Địa chỉ: </Text>
           </View>
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             label="Thành phố"
             value={city}
             onChangeText={setCity}
             style={[MyStyle.input, styles.textInput]}
           />
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             label="Quận/Huyện"
             value={district}
             onChangeText={setDistrict}
             style={[MyStyle.input, styles.textInput]}
           />
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             label="Địa chỉ"
             value={address}
             onChangeText={setAddress}
@@ -184,20 +207,34 @@ const CreatePostAccommodation = ({ navigation }) => {
           />
           {/* Price */}
           <View style={styles.iconTextContainer}>
-            <Icon source="currency-usd" size={30} color="purple" />
+            <Icon
+              source="currency-usd"
+              size={30}
+              color={ColorAssets.content.icon}
+            />
             <Text style={styles.iconText}>Giá</Text>
           </View>
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             value={price}
             onChangeText={setPrice}
             style={[MyStyle.input, styles.textInput]}
           />
           {/* Description */}
           <View style={styles.iconTextContainer}>
-            <Icon source="file-document" size={30} color="purple" />
+            <Icon
+              source="file-document"
+              size={30}
+              color={ColorAssets.content.icon}
+            />
             <Text style={styles.iconText}>Mô tả: </Text>
           </View>
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             value={description}
             onChangeText={setDescription}
             style={[MyStyle.input, styles.multilineTextInput]}
@@ -206,27 +243,33 @@ const CreatePostAccommodation = ({ navigation }) => {
           />
           {/* Acreage */}
           <View style={styles.iconTextContainer}>
-            <Icon source="ruler" size={30} color="purple" />
+            <Icon source="ruler" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Diện tích</Text>
           </View>
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             value={acreage.toString()}
             onChangeText={setAcreage}
             style={[MyStyle.input, MyStyle.margin]}
           />
           {/* Phone */}
           <View style={styles.iconTextContainer}>
-            <Icon source="phone" size={30} color="purple" />
+            <Icon source="phone" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>SĐT </Text>
           </View>
           <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             value={phone}
             onChangeText={setPhone}
             style={[MyStyle.input, styles.textInput]}
           />
           {/* House Type */}
           <View style={styles.iconTextContainer}>
-            <Icon source="door" size={30} color="purple" />
+            <Icon source="door" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Loại phòng</Text>
           </View>
           <View style={styles.buttonGroup}>
@@ -239,12 +282,24 @@ const CreatePostAccommodation = ({ navigation }) => {
             >
               <View style={styles.iconButtonContent}>
                 <IconButton
+                  iconColor={
+                    selectedHouseType === "SH"
+                      ? ColorAssets.checkbox.text
+                      : "#000"
+                  }
                   icon="home-group"
                   size={30}
-                  color={selectedHouseType === "SH" ? "white" : "white"}
                 />
               </View>
-              <Text style={styles.buttonText}>Ở Ghép</Text>
+              <Text
+                style={[
+                  selectedHouseType === "SH" && {
+                    color: ColorAssets.checkbox.text,
+                  },
+                ]}
+              >
+                Ở Ghép
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -255,30 +310,56 @@ const CreatePostAccommodation = ({ navigation }) => {
             >
               <View style={styles.iconButtonContent}>
                 <IconButton
-                  icon="home"
+                  iconColor={
+                    selectedHouseType === "PR"
+                      ? ColorAssets.checkbox.text
+                      : "#000"
+                  }
+                  icon="home-group"
                   size={30}
-                  color={selectedHouseType === "PR" ? "white" : "white"}
                 />
               </View>
-              <Text style={styles.buttonText}>Ở riêng</Text>
+              <Text
+                style={[
+                  selectedHouseType === "PR" && {
+                    color: ColorAssets.checkbox.text,
+                  },
+                ]}
+              >
+                Ở riêng
+              </Text>
             </TouchableOpacity>
           </View>
           {selectedHouseType === "SH" && (
             <View>
               <View style={styles.iconTextContainer}>
-                <Icon source="account" size={30} color="purple" />
+                <Icon
+                  source="account"
+                  size={30}
+                  color={ColorAssets.content.icon}
+                />
                 <Text style={styles.iconText}>Số người tối đa</Text>
               </View>
               <TextInput
+                mode="outlined"
+                outlineColor={ColorAssets.input.border}
+                activeOutlineColor={ColorAssets.input.borderFocus}
                 value={max_people}
                 onChangeText={setMaxPeople}
                 style={[MyStyle.input, styles.textInput]}
               />
               <View style={styles.iconTextContainer}>
-                <Icon source="account-group" size={30} color="purple" />
+                <Icon
+                  source="account-group"
+                  size={30}
+                  color={ColorAssets.content.icon}
+                />
                 <Text style={styles.iconText}>Số người hiện tại</Text>
               </View>
               <TextInput
+                mode="outlined"
+                outlineColor={ColorAssets.input.border}
+                activeOutlineColor={ColorAssets.input.borderFocus}
                 value={current_people}
                 onChangeText={setCurrentPeople}
                 style={[MyStyle.input, styles.textInput]}
@@ -287,7 +368,7 @@ const CreatePostAccommodation = ({ navigation }) => {
           )}
           {/* Images */}
           <View style={styles.iconTextContainer}>
-            <Icon source="camera" size={30} color="purple" />
+            <Icon source="camera" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Hình ảnh</Text>
           </View>
           <View style={styles.imageWrapper}>
@@ -300,15 +381,28 @@ const CreatePostAccommodation = ({ navigation }) => {
                   style={styles.imageDeleteButton}
                   onPress={() => deleteImage(image.uri)}
                 >
-                  <IconButton icon="delete" size={20} color="purple" />
+                  <IconButton
+                    icon="delete"
+                    size={20}
+                    color={ColorAssets.content.icon}
+                  />
                 </TouchableOpacity>
               </View>
             ))}
             <TouchableOpacity style={styles.addButton} onPress={pickImage}>
-              <IconButton icon="plus" size={30} color="purple" />
+              <IconButton
+                icon="plus"
+                size={30}
+                color={ColorAssets.content.icon}
+              />
             </TouchableOpacity>
           </View>
-          <Button mode="contained" onPress={handleCreatePostAccommodation} loading={loading}>
+          <Button
+            mode="contained"
+            onPress={handleCreatePostAccommodation}
+            loading={loading}
+            style={MyStyle.button}
+          >
             Đăng tin
           </Button>
         </ScrollView>
