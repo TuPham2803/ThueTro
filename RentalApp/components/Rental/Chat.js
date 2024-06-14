@@ -1,14 +1,18 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  useLayoutEffect,
+} from "react";
 import {
   View,
   Text,
   FlatList,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   Keyboard,
+  Image,
 } from "react-native";
 import ChatStyle from "../../styles/ChatStyle"; // Ensure you have ChatStyle.js in your styles directory
 import db from "../../configs/firebase";
@@ -24,16 +28,46 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { MyUserContext } from "../../configs/Contexts";
-
-//lam lazy loading phan load tin nhan
-const Chat = ({ route }) => {
-  const { conversationId, friendId } = route.params;
+import { ColorAssets } from "../../assest/ColorAssets";
+const Chat = ({ route, navigation }) => {
+  const { friendDetails } = route.params;
+  const [conversationId, setConversationId] = useState(
+    route.params.conversationId
+  );
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const flatListRef = useRef(null);
   const user = useContext(MyUserContext);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Image
+            source={{ uri: friendDetails.image }}
+            style={{ width: 40, height: 40, borderRadius: 20, marginRight: 10 }}
+          />
+          <Text
+            style={{
+              color: ColorAssets.header.icon,
+              marginRight: 5,
+              fontFamily: "Roboto",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          >
+            {friendDetails.username}
+          </Text>
+        </View>
+      ),
+    });
+  }, [navigation, friendDetails]);
+
   useEffect(() => {
+    if (!conversationId) {
+      return;
+    }
+
     console.log(
       "Setting up snapshot listener for conversationId:",
       conversationId
@@ -47,13 +81,27 @@ const Chat = ({ route }) => {
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       console.log("Received new snapshot for messages");
-      const msgs = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        time: doc.data().createdAt
-          ? doc.data().createdAt.toDate().toLocaleTimeString()
-          : "",
-      }));
+      const msgs = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        let createdAt = "";
+        if (data.createdAt && data.createdAt.toDate) {
+          try {
+            createdAt = data.createdAt.toDate().toLocaleTimeString();
+          } catch (error) {
+            console.error(
+              "Error converting timestamp:",
+              error,
+              "for document:",
+              doc.id
+            );
+          }
+        }
+        return {
+          id: doc.id,
+          ...data,
+          time: createdAt,
+        };
+      });
       console.log("Messages:", msgs);
       setMessages(msgs);
 
@@ -63,8 +111,6 @@ const Chat = ({ route }) => {
         }
       }, 100);
     });
-
-    updateScrollView();
 
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -83,8 +129,33 @@ const Chat = ({ route }) => {
 
   const handleSend = async () => {
     if (newMessage.trim()) {
+      let currentConversationId = conversationId;
+      if (!currentConversationId) {
+        try {
+          const newConversation = {
+            createdAt: serverTimestamp(),
+            lastMessageId: "",
+            participantIds: [user.id, friendDetails.id],
+          };
+
+          const conversationRef = await addDoc(
+            collection(db, "conversations"),
+            newConversation
+          );
+          currentConversationId = conversationRef.id;
+          setConversationId(currentConversationId);
+          console.log(
+            "Created new conversation with id:",
+            currentConversationId
+          );
+        } catch (error) {
+          console.error("Error creating conversation: ", error);
+          return;
+        }
+      }
+
       const newMessageObj = {
-        conversationId,
+        conversationId: currentConversationId,
         content: newMessage,
         userId: user.id,
         createdAt: serverTimestamp(),
@@ -99,7 +170,7 @@ const Chat = ({ route }) => {
         setNewMessage("");
 
         // Update lastMessageId in the conversation
-        const conversationRef = doc(db, "conversations", conversationId);
+        const conversationRef = doc(db, "conversations", currentConversationId);
         await updateDoc(conversationRef, {
           lastMessageId: messageRef.id,
         });
@@ -119,7 +190,6 @@ const Chat = ({ route }) => {
           isMe ? ChatStyle.sentMessage : ChatStyle.receivedMessage,
         ]}
       >
-        <Text style={ChatStyle.sender}>{isMe ? "Me" : friendId}</Text>
         <Text style={ChatStyle.text}>{item.content}</Text>
         <Text style={ChatStyle.time}>{item.time}</Text>
       </View>
@@ -153,7 +223,7 @@ const Chat = ({ route }) => {
           style={ChatStyle.input}
           value={newMessage}
           onChangeText={setNewMessage}
-          placeholder="Type a message"
+          placeholder="Nhập tin nhắn..."
         />
         <TouchableOpacity onPress={handleSend} style={ChatStyle.sendButton}>
           <Text style={ChatStyle.sendButtonText}>Send</Text>

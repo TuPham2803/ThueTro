@@ -1,7 +1,19 @@
-import React, { useState, useCallback, useContext, useEffect, useReducer } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image, ActivityIndicator } from "react-native";
-import { IconButton } from "react-native-paper";
-import { useFocusEffect } from "@react-navigation/native";
+import React, {
+  useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+import { Button, IconButton } from "react-native-paper";
 import db from "../../configs/firebase";
 import {
   collection,
@@ -15,6 +27,7 @@ import { MyUserContext } from "../../configs/Contexts";
 import APIs, { endpoints } from "../../configs/APIs";
 import ConversationStyle from "../../styles/ConverstionStyle";
 import moment from "moment";
+import MyStyle from "../../styles/MyStyle";
 
 const handleGetUser = async (user_id) => {
   try {
@@ -27,14 +40,17 @@ const handleGetUser = async (user_id) => {
 };
 
 const Conversation = ({ navigation }) => {
-  const [state, dispatch] = useReducer((state, action) => {
-    switch (action.type) {
-      case 'SET_CONVERSATIONS':
-        return { ...state, conversations: action.payload, loading: false };
-      default:
-        return state;
-    }
-  }, { conversations: [], loading: true });
+  const [state, dispatch] = useReducer(
+    (state, action) => {
+      switch (action.type) {
+        case "SET_CONVERSATIONS":
+          return { ...state, conversations: action.payload, loading: false };
+        default:
+          return state;
+      }
+    },
+    { conversations: [], loading: true }
+  );
 
   const user = useContext(MyUserContext);
 
@@ -53,7 +69,11 @@ const Conversation = ({ navigation }) => {
 
             if (data.lastMessageId) {
               try {
-                const lastMessageDocRef = doc(db, "messages", data.lastMessageId);
+                const lastMessageDocRef = doc(
+                  db,
+                  "messages",
+                  data.lastMessageId
+                );
                 const lastMessageDoc = await getDoc(lastMessageDocRef);
                 if (lastMessageDoc.exists()) {
                   lastMessage = lastMessageDoc.data();
@@ -75,18 +95,13 @@ const Conversation = ({ navigation }) => {
             return {
               id: conversation.id,
               friendId,
-              ...data,
-              image: friendDetails.image || "",
-              username: friendDetails.username || "Unknown",
-              content: lastMessage.content || "",
-              createdAt: lastMessage.createdAt
-                ? moment(lastMessage.createdAt.toDate()).fromNow()
-                : "",
+              friendDetails,
+              lastMessage,
             };
           })
         );
 
-        dispatch({ type: 'SET_CONVERSATIONS', payload: convs });
+        dispatch({ type: "SET_CONVERSATIONS", payload: convs });
       });
 
       return () => unsubscribe();
@@ -102,26 +117,38 @@ const Conversation = ({ navigation }) => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={ConversationStyle.conversationItem}
-      onPress={() => navigation.navigate("Chat", { conversationId: item.id, friendId: item.friendId })}
+      onPress={() =>
+        navigation.navigate("Chat", {
+          conversationId: item.id,
+          friendDetails: item.friendDetails,
+        })
+      }
     >
       <Image
-        source={{ uri: item.image }}
+        source={{ uri: item.friendDetails.image }}
         style={ConversationStyle.avatar}
         resizeMode="cover"
       />
       <View style={ConversationStyle.textContainer}>
         <Text style={ConversationStyle.name}>
-          {item.username || "Unknown"}
+          {item.friendDetails.username || "Unknown"}
         </Text>
         <Text style={ConversationStyle.message}>
-          {item.content}
+          {item.lastMessage.content}
         </Text>
-        <Text style={ConversationStyle.time}>{item.createdAt}</Text>
+        <Text style={ConversationStyle.time}>
+          {moment(item.lastMessage.createdAt.toDate()).fromNow()}
+        </Text>
       </View>
       <IconButton
         icon="chevron-right"
         size={24}
-        onPress={() => navigation.navigate("Chat", { conversationId: item.id, friendId: item.friendId })}
+        onPress={() =>
+          navigation.navigate("Chat", {
+            conversationId: item.id,
+            friendId: item.friendId,
+          })
+        }
       />
     </TouchableOpacity>
   );
@@ -137,6 +164,19 @@ const Conversation = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
+      <Button
+        icon="plus"
+        mode="contained"
+        onPress={() =>
+          navigation.navigate("Chat", {
+            conversationId: null,
+            friendDetails: { username: "newUser", id: 8 },
+          })
+        }
+        style={MyStyle.button}
+      >
+        New Conversation
+      </Button>
     </View>
   );
 };

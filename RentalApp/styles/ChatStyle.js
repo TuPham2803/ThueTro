@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-
+import { ColorAssets } from '../assest/ColorAssets';
 const ChatStyle = StyleSheet.create({
     container: {
         flex: 1,
@@ -13,6 +13,7 @@ const ChatStyle = StyleSheet.create({
         marginVertical: 5,
         marginHorizontal: 10,
         borderRadius: 5,
+        minWidth: 70,
     },
     sentMessage: {
         backgroundColor: '#DCF8C6',
@@ -54,13 +55,13 @@ const ChatStyle = StyleSheet.create({
     sendButton: {
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#007BFF',
+        backgroundColor: ColorAssets.button.background,
         borderRadius: 20,
         paddingHorizontal: 20,
         paddingVertical: 10,
     },
     sendButtonText: {
-        color: '#fff',
+        color:  ColorAssets.button.text,
         fontWeight: 'bold',
     },
 });
