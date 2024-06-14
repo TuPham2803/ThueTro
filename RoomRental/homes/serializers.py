@@ -87,7 +87,7 @@ class PostRequestSerializer(ModelSerializer):
         ]
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise serializers.ValidationError(
+                raise ValidationError(
                     {field: 'This field is required and cannot be null or empty.'})
 
         return data
@@ -99,9 +99,6 @@ class AccomodationImageSerializer(ModelSerializer):
         fields = ['image']
 
 
-from rest_framework import serializers
-from .models import PostAccommodation
-from .serializers import AccomodationImageSerializer, UserSerializer
 
 class PostAccommodationSerializer(ModelSerializer):
     images = AccomodationImageSerializer(many=True, read_only=True)
@@ -169,19 +166,29 @@ class PostAccommodationSerializer(ModelSerializer):
             required_fields.remove('max_people')
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise serializers.ValidationError(
+                raise ValidationError(
                     {field: 'This field is required and cannot be null or empty.'})
         return data
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
+
+        # Handle images
         images_data = []
         images_queryset = instance.images.all() if hasattr(instance, 'images') and instance.images else None
         if images_queryset:
             for image in images_queryset:
                 images_data.append(image.image.url)
         rep['images'] = images_data
+
+        # Handle main_image
+        if hasattr(instance, 'main_image') and instance.main_image:
+            rep['main_image'] = instance.main_image.url
+        else:
+            rep['main_image'] = None  # or set a default value if needed
+
         return rep
+
 
 
 

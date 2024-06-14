@@ -124,6 +124,7 @@ const CreatePostAccommodation = ({ navigation }) => {
     formData.append("title", title);
     formData.append("city", city);
     formData.append("district", district);
+    formData.append("ward", ward);
     formData.append("address", address);
     formData.append("price", price);
     formData.append("description", description);
@@ -136,8 +137,11 @@ const CreatePostAccommodation = ({ navigation }) => {
       formData.append("max_people", max_people);
       formData.append("current_people", current_people);
     }
-
-    // Append images one by one to formData
+    formData.append("main_image", {
+      uri: mainImage.uri,
+      name: mainImage.uri.split("/").pop(),
+      type: mime.lookup(mainImage.uri) || "image/jpeg",
+    });
     images.forEach((image, index) => {
       formData.append("images", {
         uri: image.uri,

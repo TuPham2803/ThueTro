@@ -56,7 +56,7 @@ const ListPostAccommodation = ({ navigation }) => {
 
   return (
     <View style={[MyStyle.container, MyStyle.margin]}>
-      <Searchbar  style={[MyStyle.input, MyStyle.searchBar, {textAlign:'center'}]} placeholder="Search" onChangeText={setQ} value={q} />
+      {/* <Searchbar  style={[MyStyle.input, MyStyle.searchBar, {textAlign:'center'}]} placeholder="Search" onChangeText={setQ} value={q} /> */}
       <ScrollView>
         <View style={[MyStyle.container, MyStyle.margin]}>
           {posts === null ? (

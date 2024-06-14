@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./components/Rental/Home";
 import Login from "./components/User/Login";
 import Register from "./components/User/Register";
-import { useContext, useReducer } from "react";
+import { useContext, useReducer,useEffect } from "react";
 import { MyUserReducer } from "./configs/Reducer";
 import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
 import Profile from "./components/User/Profile";
@@ -26,6 +26,9 @@ import Chat from "./components/Rental/Chat";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilter";
 import { ColorAssets } from "./assest/ColorAssets";
+import APIs, { authApi, endpoints } from "./configs/APIs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -284,6 +287,33 @@ const MyTab = () => {
 
 export default function App() {
   const [user, dispatch] = useReducer(MyUserReducer, null);
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+
+        if (token) {
+          const response = await authApi(token).get(
+            endpoints["current-user"]
+          );
+          
+          if (response.ok) {
+            const data = await response.json();
+            dispatch({ type: "login", payload: data });
+          } else {
+            dispatch({ type: "logout" });
+          }
+        } else {
+          dispatch({ type: "logout" });
+        }
+      } catch (error) {
+        console.error("Error checking token:", error);
+        dispatch({ type: "logout" });
+      }
+    };
+
+    checkToken();
+  }, []);
   return (
     <NavigationContainer>
       <MyUserContext.Provider value={user}>
