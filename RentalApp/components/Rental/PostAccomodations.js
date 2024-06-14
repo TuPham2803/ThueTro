@@ -24,6 +24,7 @@ import RenderHTML from "react-native-render-html";
 import { isCloseToBottom } from "../../Utils/Utils";
 import { min } from "moment";
 
+// hien thi
 const PostAccommodations = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -85,7 +86,7 @@ const PostAccommodations = ({ route, navigation }) => {
           value={q}
         />
         <TouchableOpacity
-          onPress={() => navigation.navigate("Sort")}
+          onPress={() => navigation.navigate("Filter")}
           style={{
             width: "10%",
             backgroundColor: "pink",

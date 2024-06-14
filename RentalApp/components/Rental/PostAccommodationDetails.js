@@ -111,11 +111,11 @@ const PostAccommodationDetails = ({ route }) => {
                 {post.title}
               </Text>
               <Card.Content>
-                <Text>{post.price} đ/tháng</Text>
+                <Text>Giá tiền:{post.price} đ/tháng</Text>
                 <Text>
-                  {post.address}, Quận {post.district}, {post.city}
+                  Địa chỉ: {post.address}, Quận {post.district}, {post.city}
                 </Text>
-                <Text>{post.phone_number}</Text>
+                <Text>SĐT: {post.phone_number}</Text>
               </Card.Content>
             </Card>
 
@@ -180,6 +180,7 @@ const PostAccommodationDetails = ({ route }) => {
                     </Text>
                   </View>
                 </View>
+
                 <Text style={MyStyle.header}>Tin đối tác</Text>
                 <Text style={MyStyle.subject}>
                   {" "}
@@ -211,10 +212,11 @@ const PostAccommodationDetails = ({ route }) => {
                       value={newComment}
                     />
                     <Button
-                      style={{ color: "purple" }}
-                      title="Submit"
+                      style={[MyStyle.button, MyStyle.top]}
                       onPress={comment}
-                    />
+                    >
+                      Submit
+                    </Button>
                   </>
                 ) : null}
 

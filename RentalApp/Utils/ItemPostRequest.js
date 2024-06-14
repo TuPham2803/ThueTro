@@ -1,4 +1,4 @@
-import { ActivityIndicator, List, Text, Icon} from "react-native-paper";
+import { ActivityIndicator, List, Text, Icon } from "react-native-paper";
 import moment from "moment";
 import { View, useWindowDimensions } from "react-native";
 import MyStyle from "../styles/MyStyle";
@@ -9,6 +9,7 @@ import { ColorAssets } from "../assest/ColorAssets";
 const ItemPostRequest = ({ instance }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  console.log(instance);
 
   const loadUser = async () => {
     setLoading(true);
@@ -44,21 +45,29 @@ const ItemPostRequest = ({ instance }) => {
       description={
         <View style={{ flexDirection: "column" }}>
           {instance.district && instance.city ? (
-            
             <Text>
-               <Icon source="map-marker" size={20} color={ColorAssets.content.icon} />{instance.district}, {instance.city}
+              <Icon
+                source="map-marker"
+                size={20}
+                color={ColorAssets.content.icon}
+              />
+              {instance.district}, {instance.city}
             </Text>
           ) : null}
-          {instance.min_price && instance.max_price ? (
-            <Text>
-              <Icon source="currency-usd" size={20} color={ColorAssets.content.icon}/>${instance.min_price} - {instance.max_price}
-            </Text>
-          ) : null}
+
+          <Text>
+            <Icon
+              source="currency-usd"
+              size={20}
+              color={ColorAssets.content.icon}
+            />
+            ${instance.min_price} - {instance.max_price}
+          </Text>
         </View>
       }
       right={() => (
         <View style={[{ justifyContent: "flex-end", alignItems: "flex-end" }]}>
-           <Text>{moment(instance.created_at).fromNow()}</Text>
+          <Text>{moment(instance.created_at).fromNow()}</Text>
           <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
             <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
               <List.Icon icon="heart-outline" />
