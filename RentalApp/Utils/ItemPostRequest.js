@@ -61,7 +61,7 @@ const ItemPostRequest = ({ instance }) => {
               size={20}
               color={ColorAssets.content.icon}
             />
-            ${instance.min_price} - {instance.max_price}
+            ${instance.min_price.toLocaleString()} - {instance.max_price.toLocaleString()}
           </Text>
         </View>
       }

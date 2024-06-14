@@ -18,12 +18,13 @@ import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MyStyle from "../../styles/MyStyle";
 import { ColorAssets } from "../../assest/ColorAssets";
+import { Picker } from "@react-native-picker/picker";
 const CreatePostRequest = ({ navigation }) => {
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
-  const [acreage, setAcreage] = useState(0);
+  const [gender, setGender] = useState("");
   const [quanity, setQuanity] = useState("");
   const [selectedHouseType, setSelectedHouseType] = useState("");
   const [priceRange, setPriceRange] = useState([0, 20000000]);
@@ -38,7 +39,7 @@ const CreatePostRequest = ({ navigation }) => {
       !district ||
       !title ||
       !note ||
-      !acreage ||
+      !gender ||
       !selectedHouseType ||
       (selectedHouseType === "SH" && !quanity)
     ) {
@@ -50,7 +51,7 @@ const CreatePostRequest = ({ navigation }) => {
     formData.append("district", district);
     formData.append("title", title);
     formData.append("description", note);
-    formData.append("acreage", acreage);
+    formData.append("gender", gender);
     if (selectedHouseType === "SH") formData.append("quanity", quanity);
     formData.append("room_type", selectedHouseType);
     formData.append("min_price", priceRange[0]);
@@ -159,7 +160,7 @@ const CreatePostRequest = ({ navigation }) => {
             onChangeText={setDistrict}
             style={[MyStyle.input, MyStyle.margin]}
           />
-          
+
           <View>
             <View
               style={{
@@ -238,7 +239,11 @@ const CreatePostRequest = ({ navigation }) => {
               marginBottom: 5,
             }}
           >
-            <Icon source="ruler" size={30} color={ColorAssets.content.icon} />
+            <Icon
+              source="gender-male-female"
+              size={30}
+              color={ColorAssets.content.icon}
+            />
             <Text
               style={{
                 color: ColorAssets.content.title,
@@ -248,17 +253,25 @@ const CreatePostRequest = ({ navigation }) => {
                 fontSize: 16,
               }}
             >
-              Diện tích
+              Giới tính
             </Text>
           </View>
-          <TextInput
-            mode="outlined"
-            outlineColor={ColorAssets.input.border}
-            activeOutlineColor={ColorAssets.input.borderFocus}
-            value={acreage}
-            onChangeText={setAcreage}
-            style={[MyStyle.input, MyStyle.margin]}
-          />
+          <View style={[MyStyle.input, MyStyle.margin]}>
+            <Picker
+              selectedValue={gender}
+              onValueChange={(itemValue) => setGender(itemValue)}
+              style={styles.picker}
+              mode="dialog" // or "dialog"
+            >
+              <Picker.Item
+                label="Chọn giới tính..."
+                value=""
+                color={ColorAssets.input.placeholder}
+              />
+              <Picker.Item label="Nữ" value="1" />
+              <Picker.Item label="Nam" value="0" />
+            </Picker>
+          </View>
           <View
             style={{
               flexDirection: "row",
