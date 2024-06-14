@@ -134,10 +134,12 @@ const Conversation = ({ navigation }) => {
           {item.friendDetails.username || "Unknown"}
         </Text>
         <Text style={ConversationStyle.message}>
-          {item.lastMessage.content}
+          {item.lastMessage ? item.lastMessage.content : ""}
         </Text>
         <Text style={ConversationStyle.time}>
-          {moment(item.lastMessage.createdAt.toDate()).fromNow()}
+          {item.lastMessage && item.lastMessage.createdAt
+            ? moment(item.lastMessage.createdAt.toDate()).fromNow()
+            : ""}
         </Text>
       </View>
       <IconButton
@@ -152,6 +154,7 @@ const Conversation = ({ navigation }) => {
       />
     </TouchableOpacity>
   );
+  
 
   if (state.loading) {
     return <ActivityIndicator size="large" />;
@@ -164,7 +167,7 @@ const Conversation = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-      <Button
+      {/* <Button
         icon="plus"
         mode="contained"
         onPress={() =>
@@ -176,7 +179,7 @@ const Conversation = ({ navigation }) => {
         style={MyStyle.button}
       >
         New Conversation
-      </Button>
+      </Button> */}
     </View>
   );
 };

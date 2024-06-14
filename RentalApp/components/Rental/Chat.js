@@ -83,8 +83,9 @@ const Chat = ({ route, navigation }) => {
       console.log("Received new snapshot for messages");
       const msgs = querySnapshot.docs.map((doc) => {
         const data = doc.data();
+        console.log("Message data:", data);
         let createdAt = "";
-        if (data.createdAt && data.createdAt.toDate) {
+        if (data.createdAt) {
           try {
             createdAt = data.createdAt.toDate().toLocaleTimeString();
           } catch (error) {
