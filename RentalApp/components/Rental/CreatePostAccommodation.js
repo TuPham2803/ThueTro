@@ -20,7 +20,7 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import MyStyle from "../../styles/MyStyle";
 import styles from "../../styles/CreateUpdatePostAccommodationStyle";
-import mime from "react-native-mime-types"; // Use react-native-mime-types
+import mime from "react-native-mime-types";
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assest/ColorAssets";
@@ -36,8 +36,8 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [images, setImages] = useState([]);
   const [acreage, setAcreage] = useState("");
   const [phone, setPhone] = useState("");
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [selectedHouseType, setSelectedHouseType] = useState("");
   const [max_people, setMaxPeople] = useState("");
   const [current_people, setCurrentPeople] = useState("");
@@ -45,6 +45,7 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleHouseTypeSelection = (type) => {
     setSelectedHouseType(type);
@@ -157,6 +158,7 @@ const CreatePostAccommodation = ({ navigation }) => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission to access location was denied");
+        return;
       }
 
       let location = await Location.getCurrentPositionAsync({});
@@ -166,8 +168,37 @@ const CreatePostAccommodation = ({ navigation }) => {
   }, []);
 
   const handleMapPress = (event) => {
-    setLatitude(event.nativeEvent.coordinate.latitude);
-    setLongitude(event.nativeEvent.coordinate.longitude);
+    const { latitude, longitude } = event.nativeEvent.coordinate;
+    setLatitude(latitude);
+    setLongitude(longitude);
+  };
+
+  const moveToCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission to access location was denied");
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    setLatitude(location.coords.latitude);
+    setLongitude(location.coords.longitude);
+  };
+
+  const handleSearch = async () => {
+    try {
+      const response = await Location.geocodeAsync(searchQuery);
+      if (response && response.length > 0) {
+        const { latitude, longitude } = response[0];
+        setLatitude(latitude);
+        setLongitude(longitude);
+      } else {
+        Alert.alert("Không tìm thấy địa chỉ");
+      }
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm địa chỉ", error);
+      Alert.alert("Lỗi khi tìm kiếm địa chỉ");
+    }
   };
 
   return (
@@ -240,22 +271,63 @@ const CreatePostAccommodation = ({ navigation }) => {
             <Icon source="map" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Vị trí bản đồ</Text>
           </View>
-          {/* Map View */}
-          <MapView
-            style={{ width: "100%", height: 300 }}
-            initialRegion={{
-              latitude: latitude,
-              longitude: longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            onPress={handleMapPress}
-          >
-            <Marker coordinate={{ latitude, longitude }} />
-          </MapView>
+          {latitude && longitude ? (
+            <View style={styles.mapContainer}>
+              <MapView
+                style={{ width: "100%", height: 300 }}
+                initialRegion={{
+                  latitude: latitude,
+                  longitude: longitude,
+                  latitudeDelta: 0.0025,
+                  longitudeDelta: 0.0025,
+                }}
+                region={{
+                  latitude: latitude,
+                  longitude: longitude,
+                  latitudeDelta: 0.0025,
+                  longitudeDelta: 0.0025,
+                }}
+                onPress={handleMapPress}
+              >
+                <Marker coordinate={{ latitude, longitude }} />
+              </MapView>
+              <TouchableOpacity
+                style={styles.currentLocationButton}
+                onPress={moveToCurrentLocation}
+              >
+                <Icon
+                  source="crosshairs-gps"
+                  size={30}
+                  color={ColorAssets.content.icon}
+                />
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          <View style={MyStyle.buttonContainer}>
+            <View style={styles.searchRow}>
+              <TextInput
+                mode="outlined"
+                outlineColor={ColorAssets.input.border}
+                activeOutlineColor={ColorAssets.input.borderFocus}
+                label="Tìm kiếm địa chỉ"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={[MyStyle.input, styles.searchInput]}
+              />
+              <IconButton
+                icon="map-search-outline"
+                iconColor={ColorAssets.button.text}
+                size={28}
+                onPress={handleSearch}
+                style={styles.searchButton}
+              />
+            </View>
+          </View>
+
+          {/* More input fields and buttons */}
           <View style={styles.iconTextContainer}>
             <Icon
-              source="currency-usd"
+              source="cash-multiple"
               size={30}
               color={ColorAssets.content.icon}
             />
@@ -269,7 +341,6 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setPrice}
             style={[MyStyle.input, styles.textInput]}
           />
-          {/* Description */}
           <View style={styles.iconTextContainer}>
             <Icon
               source="file-document"
@@ -288,7 +359,6 @@ const CreatePostAccommodation = ({ navigation }) => {
             multiline={true}
             numberOfLines={4}
           />
-          {/* Acreage */}
           <View style={styles.iconTextContainer}>
             <Icon source="ruler" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Diện tích</Text>
@@ -301,7 +371,6 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setAcreage}
             style={[MyStyle.input, MyStyle.margin]}
           />
-          {/* Phone */}
           <View style={styles.iconTextContainer}>
             <Icon source="phone" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>SĐT </Text>
@@ -314,7 +383,6 @@ const CreatePostAccommodation = ({ navigation }) => {
             onChangeText={setPhone}
             style={[MyStyle.input, styles.textInput]}
           />
-          {/* House Type */}
           <View style={styles.iconTextContainer}>
             <Icon source="door" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Loại phòng</Text>
@@ -430,7 +498,7 @@ const CreatePostAccommodation = ({ navigation }) => {
                   <IconButton
                     icon="delete"
                     size={20}
-                    color={ColorAssets.content.icon}
+                    iconColor="red"
                   />
                 </TouchableOpacity>
               </View>

@@ -1,7 +1,6 @@
 import { StyleSheet, Dimensions } from "react-native";
 import { ColorAssets } from "../assest/ColorAssets";
 
-
 export default StyleSheet.create({
   container: {
     marginTop: 20,
@@ -68,7 +67,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderColor: "gray",
     borderRadius: 10,
-    overflow: "hidden", 
+    overflow: "hidden",
   },
   addButton: {
     borderWidth: 1,
@@ -81,5 +80,36 @@ export default StyleSheet.create({
   },
   submitButton: {
     backgroundColor: "purple",
+  },
+  mapContainer: {
+    position: "relative",
+    width: "100%",
+    height: 300,
+    marginBottom: 20,
+  },
+  currentLocationButton: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    backgroundColor: "white",
+    borderRadius: 50,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  searchRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  searchInput: {
+    flex: 1,
+    marginRight: 10,
+  },
+  searchButton: {
+    padding: 0,
+    backgroundColor: ColorAssets.button.background
   },
 });
