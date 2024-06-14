@@ -33,6 +33,7 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [address, setAddress] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [mainImage, setmainImage] = useState("");
   const [images, setImages] = useState([]);
   const [acreage, setAcreage] = useState("");
   const [phone, setPhone] = useState("");
@@ -43,12 +44,30 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [current_people, setCurrentPeople] = useState("");
   const [visible, setVisible] = useState(false);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [isMainImageViewVisible, setMainImageViewVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleHouseTypeSelection = (type) => {
     setSelectedHouseType(type);
+  };
+
+  const pickMainImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Rental", "Permissions Denied!");
+    } else {
+      let res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      if (!res.cancelled) {
+        setmainImage(res.assets[0]);
+      }
+    }
   };
 
   const pickImage = async () => {
@@ -75,6 +94,10 @@ const CreatePostAccommodation = ({ navigation }) => {
   const openImageViewer = (index) => {
     setCurrentImageIndex(index);
     setImageViewVisible(true);
+  };
+
+  const openMainImageViewer = () => {
+    setMainImageViewVisible(true);
   };
 
   const handleCreatePostAccommodation = async () => {
@@ -483,7 +506,38 @@ const CreatePostAccommodation = ({ navigation }) => {
           )}
           <View style={styles.iconTextContainer}>
             <Icon source="camera" size={30} color={ColorAssets.content.icon} />
-            <Text style={styles.iconText}>Hình ảnh</Text>
+            <Text style={styles.iconText}>Hình ảnh chính</Text>
+          </View>
+          <View style={styles.imageWrapper}>
+            {mainImage && mainImage.uri && (
+              <View style={styles.imageContainer}>
+                <TouchableOpacity onPress={() => openMainImageViewer()}>
+                  <Image source={{ uri: mainImage.uri }} style={styles.image} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.imageDeleteButton}
+                  onPress={() => setmainImage("")}
+                >
+                  <IconButton icon="delete" size={20} iconColor="red" />
+                </TouchableOpacity>
+              </View>
+            )}
+            {mainImage == "" && (
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={pickMainImage}
+              >
+                <IconButton
+                  icon="plus"
+                  size={30}
+                  color={ColorAssets.content.icon}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.iconTextContainer}>
+            <Icon source="camera" size={30} color={ColorAssets.content.icon} />
+            <Text style={styles.iconText}>Hình ảnh phụ</Text>
           </View>
           <View style={styles.imageWrapper}>
             {images.map((image, index) => (
@@ -495,11 +549,7 @@ const CreatePostAccommodation = ({ navigation }) => {
                   style={styles.imageDeleteButton}
                   onPress={() => deleteImage(image.uri)}
                 >
-                  <IconButton
-                    icon="delete"
-                    size={20}
-                    iconColor="red"
-                  />
+                  <IconButton icon="delete" size={20} iconColor="red" />
                 </TouchableOpacity>
               </View>
             ))}
@@ -524,6 +574,12 @@ const CreatePostAccommodation = ({ navigation }) => {
           images={images.map((image) => ({ uri: image.uri }))}
           imageIndex={currentImageIndex}
           visible={isImageViewVisible}
+          onRequestClose={() => setImageViewVisible(false)}
+        />
+        <ImageViewing
+          images={[{ uri: mainImage.uri }]}
+          imageIndex={0}
+          visible={isMainImageViewVisible}
           onRequestClose={() => setImageViewVisible(false)}
         />
       </View>
