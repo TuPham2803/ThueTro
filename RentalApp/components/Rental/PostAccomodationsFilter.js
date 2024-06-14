@@ -1,6 +1,7 @@
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import {
   FlatList,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -13,6 +14,7 @@ import {
   PaperProvider,
   Portal,
   RadioButton,
+  SegmentedButtons,
   Text,
   TextInput,
 } from "react-native-paper";
@@ -31,6 +33,7 @@ const PostAccommodationsFilter = ({ navigation }) => {
   const [modalType, setModalType] = useState(""); // 'city' hoặc 'district'
   const [minPeople, setMinPeople] = useState(999999);
   const [maxPeople, setMaxPeople] = useState(1);
+  const [areaFindingType, setAreaFindingType] = useState("");
 
   const handleCitySelect = (city) => {
     setSelectedCity(city);
@@ -56,6 +59,8 @@ const PostAccommodationsFilter = ({ navigation }) => {
       },
     });
   };
+
+  React.useEffect(() => {}, [areaFindingType]);
 
   //xai react native picker de xu ly viec hien thi thong tin city va district
   //su dung bien toan cuc de load city va district
@@ -93,28 +98,55 @@ const PostAccommodationsFilter = ({ navigation }) => {
         {priceRange[1].toLocaleString()}
       </Text>
 
-      <View style={(SortStyle.container, MyStyle.alignCenter)}>
-        <Text style={SortStyle.label}>Chọn Thành Phố/Tỉnh</Text>
-        <TouchableOpacity
-          onPress={() => {
-            setModalType("city");
-            setModalVisible(true);
-          }}
-          style={SortStyle.selectionButton}
-        >
-          <Text style={SortStyle.selectionText}>{selectedCity}</Text>
-        </TouchableOpacity>
+      <SafeAreaView style={styles.container}>
+        <SegmentedButtons
+          value={areaFindingType}
+          onValueChange={setAreaFindingType}
+          buttons={[
+            {
+              value: 1,
+              label: "Tìm kiếm theo khu vực",
+            },
+            {
+              value: 2,
+              label: "Tìm kiếm theo bản đồ",
+            },
+          ]}
+        />
+      </SafeAreaView>
 
-        <Text style={SortStyle.label}>Chọn Quận/Huyện</Text>
-        <TouchableOpacity
-          onPress={() => {
-            setModalType("district");
-            setModalVisible(true);
-          }}
-          style={SortStyle.selectionButton}
-        >
-          <Text style={SortStyle.selectionText}>{selectedDistrict}</Text>
-        </TouchableOpacity>
+      <View style={(SortStyle.container, MyStyle.alignCenter)}>
+        {areaFindingType === 1 && (
+          <>
+            <Text style={SortStyle.label}>Chọn Thành Phố/Tỉnh</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setModalType("city");
+                setModalVisible(true);
+              }}
+              style={SortStyle.selectionButton}
+            >
+              <Text style={SortStyle.selectionText}>{selectedCity}</Text>
+            </TouchableOpacity>
+
+            <Text style={SortStyle.label}>Chọn Quận/Huyện</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setModalType("district");
+                setModalVisible(true);
+              }}
+              style={SortStyle.selectionButton}
+            >
+              <Text style={SortStyle.selectionText}>{selectedDistrict}</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {areaFindingType === 2 && (
+          <>
+            <Text>Bản đồ</Text>
+          </>
+        )}
 
         <View
           style={[MyStyle.row, MyStyle.top, { justifyContent: "space-around" }]}
