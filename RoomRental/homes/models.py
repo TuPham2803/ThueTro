@@ -35,31 +35,7 @@ class PendingStatus(models.TextChoices):
     FAILED = "FL", "Failed"
 
 
-class PostAccommodation(BaseModel):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    city = models.CharField(max_length=50)
-    district = models.CharField(max_length=50)
-    address = models.CharField(max_length=100)
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
-    acreage = models.FloatField(null=True, blank=True)
-    price = models.FloatField(null=True, blank=True)
-    room_type = models.CharField(
-        max_length=2,
-        choices=RoomType.choices,
-        default=RoomType.SHARED,
-    )
-    max_people = models.IntegerField(default=1)
-    current_people = models.IntegerField(default=1)
-    phone_number = models.CharField(max_length=12)
-    description = RichTextField()
-    user_post = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts_accommodation')
-    pending_status = models.CharField(
-        max_length=3,
-        choices=PendingStatus.choices,
-        default=PendingStatus.PENDING,
-    )
+ 
 
 
 class AccommodationImage(models.Model):
@@ -76,7 +52,7 @@ class PostRequest(BaseModel):
     title = models.CharField(max_length=100, default=None)
     min_price = models.FloatField(default=None)
     max_price = models.FloatField(default=None)
-    acreage = models.FloatField(null=True, blank=True)
+    gender = models.BooleanField(default=1)#1 is female
     description = RichTextField(default=None)
     quanity = models.IntegerField(default=None, null=True)
     city = models.CharField(max_length=50, default=None)

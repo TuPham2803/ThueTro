@@ -60,12 +60,12 @@ class PostRequestSerializer(ModelSerializer):
             'title',
             'min_price',
             'max_price',
+            'gender',
+            'description',
             'quanity',
             'city',
             'district',
-            'acreage',
             'room_type',
-            'description',
             'user_post',
             'created_at',
             'updated_at',
@@ -82,13 +82,12 @@ class PostRequestSerializer(ModelSerializer):
         return super().create(validated_data)
 
     def validate(self, data):
-        # Kiểm tra các trường bắt buộc không nhận giá trị null
         required_fields = [
             'description',
         ]
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise ValidationError(
+                raise serializers.ValidationError(
                     {field: 'This field is required and cannot be null or empty.'})
 
         return data
@@ -100,6 +99,10 @@ class AccomodationImageSerializer(ModelSerializer):
         fields = ['image']
 
 
+from rest_framework import serializers
+from .models import PostAccommodation
+from .serializers import AccomodationImageSerializer, UserSerializer
+
 class PostAccommodationSerializer(ModelSerializer):
     images = AccomodationImageSerializer(many=True, read_only=True)
     owner = UserSerializer(read_only=True)
@@ -110,9 +113,11 @@ class PostAccommodationSerializer(ModelSerializer):
         fields = [
             'id',
             'owner',
+            'main_image',
             'title',
             'city',
             'district',
+            'ward',
             'address',
             'latitude',
             'longitude',
@@ -134,6 +139,7 @@ class PostAccommodationSerializer(ModelSerializer):
             'title': {'required': True},
             'city': {'required': True},
             'district': {'required': True},
+            'ward': {'required': True},
             'address': {'required': True},
             'latitude': {'required': True},
             'longitude': {'required': True},
@@ -145,6 +151,7 @@ class PostAccommodationSerializer(ModelSerializer):
             'phone_number': {'required': True},
             'description': {'required': True},
             'images': {'required': True},
+            'main_image': {'required': False, 'allow_null': True},
             'created_at': {'required': True, 'read_only': True},
             'updated_at': {'required': True},
             'active': {'required': True, 'read_only': True},
@@ -154,7 +161,7 @@ class PostAccommodationSerializer(ModelSerializer):
 
     def validate(self, data):
         required_fields = [
-            'title', 'city', 'district', 'address', 'latitude', 'longitude', 'acreage', 'price', 'room_type',
+            'title', 'city', 'district', 'ward', 'address', 'latitude', 'longitude', 'acreage', 'price', 'room_type',
             'max_people', 'current_people', 'phone_number', 'description'
         ]
         if data.get('room_type') == 'PR':
@@ -162,20 +169,20 @@ class PostAccommodationSerializer(ModelSerializer):
             required_fields.remove('max_people')
         for field in required_fields:
             if data.get(field) in [None, '']:
-                raise ValidationError(
+                raise serializers.ValidationError(
                     {field: 'This field is required and cannot be null or empty.'})
         return data
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         images_data = []
-        images_queryset = instance.images.all() if hasattr(
-            instance, 'images') and instance.images else None
+        images_queryset = instance.images.all() if hasattr(instance, 'images') and instance.images else None
         if images_queryset:
             for image in images_queryset:
                 images_data.append(image.image.url)
         rep['images'] = images_data
         return rep
+
 
 
 class CommentAccommodationSerializer(ModelSerializer):
