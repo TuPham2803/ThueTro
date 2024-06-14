@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -16,16 +16,20 @@ import {
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import ImageViewing from "react-native-image-viewing";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 import MyStyle from "../../styles/MyStyle";
 import styles from "../../styles/CreateUpdatePostAccommodationStyle";
 import mime from "react-native-mime-types"; // Use react-native-mime-types
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assest/ColorAssets";
+
 const CreatePostAccommodation = ({ navigation }) => {
   const [title, setTitle] = useState("");
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
+  const [ward, setWard] = useState("");
   const [address, setAddress] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
@@ -148,6 +152,24 @@ const CreatePostAccommodation = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLatitude(location.coords.latitude);
+      setLongitude(location.coords.longitude);
+    })();
+  }, []);
+
+  const handleMapPress = (event) => {
+    setLatitude(event.nativeEvent.coordinate.latitude);
+    setLongitude(event.nativeEvent.coordinate.longitude);
+  };
+
   return (
     <Provider>
       <View style={[MyStyle.container, { padding: 10 }]}>
@@ -200,12 +222,37 @@ const CreatePostAccommodation = ({ navigation }) => {
             mode="outlined"
             outlineColor={ColorAssets.input.border}
             activeOutlineColor={ColorAssets.input.borderFocus}
+            label="Phường/Xã"
+            value={ward}
+            onChangeText={setWard}
+            style={[MyStyle.input, styles.textInput]}
+          />
+          <TextInput
+            mode="outlined"
+            outlineColor={ColorAssets.input.border}
+            activeOutlineColor={ColorAssets.input.borderFocus}
             label="Địa chỉ"
             value={address}
             onChangeText={setAddress}
             style={[MyStyle.input, styles.textInput]}
           />
-          {/* Price */}
+          <View style={styles.iconTextContainer}>
+            <Icon source="map" size={30} color={ColorAssets.content.icon} />
+            <Text style={styles.iconText}>Vị trí bản đồ</Text>
+          </View>
+          {/* Map View */}
+          <MapView
+            style={{ width: "100%", height: 300 }}
+            initialRegion={{
+              latitude: latitude,
+              longitude: longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            onPress={handleMapPress}
+          >
+            <Marker coordinate={{ latitude, longitude }} />
+          </MapView>
           <View style={styles.iconTextContainer}>
             <Icon
               source="currency-usd"
@@ -366,7 +413,6 @@ const CreatePostAccommodation = ({ navigation }) => {
               />
             </View>
           )}
-          {/* Images */}
           <View style={styles.iconTextContainer}>
             <Icon source="camera" size={30} color={ColorAssets.content.icon} />
             <Text style={styles.iconText}>Hình ảnh</Text>

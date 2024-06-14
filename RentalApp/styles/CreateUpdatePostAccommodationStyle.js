@@ -72,7 +72,7 @@ export default StyleSheet.create({
   },
   addButton: {
     borderWidth: 1,
-    borderColor: "purple",
+    borderColor: ColorAssets.input.borderFocus,
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
