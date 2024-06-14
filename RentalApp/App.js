@@ -24,7 +24,7 @@ import EditProfile from "./components/User/EditProfile";
 import Conversation from "./components/Rental/Conversation";
 import Chat from "./components/Rental/Chat";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import Sort from "./components/Rental/Sort";
+import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilter";
 import { ColorAssets } from "./assest/ColorAssets";
 
 const Stack = createNativeStackNavigator();
@@ -78,8 +78,8 @@ const HomeStack = () => {
         options={{ title: "Chi tiết bài đăng" }}
       />
       <Stack.Screen
-        name="Sort"
-        component={Sort}
+        name="Filter"
+        component={PostAccommodationsFilter}
         options={{ title: "Lọc tìm kiếm" }}
       />
     </Stack.Navigator>

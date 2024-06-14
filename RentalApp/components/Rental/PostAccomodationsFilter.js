@@ -21,7 +21,7 @@ import React, { useState } from "react";
 import SortStyle from "../../styles/SortStyle";
 import data from "../../Utils/CitiesData";
 
-const Sort = ({ navigation }) => {
+const PostAccommodationsFilter = ({ navigation }) => {
   const [priceRange, setPriceRange] = useState([0, 100000000]);
   const [selectedCity, setSelectedCity] = useState(Object.keys(data)[0]);
   const [selectedDistrict, setSelectedDistrict] = useState(
@@ -269,4 +269,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Sort;
+export default PostAccommodationsFilter;

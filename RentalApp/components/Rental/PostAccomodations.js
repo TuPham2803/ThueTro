@@ -86,7 +86,7 @@ const PostAccommodations = ({ route, navigation }) => {
           value={q}
         />
         <TouchableOpacity
-          onPress={() => navigation.navigate("Sort")}
+          onPress={() => navigation.navigate("Filter")}
           style={{
             width: "10%",
             backgroundColor: "pink",
