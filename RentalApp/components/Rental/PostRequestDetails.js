@@ -13,10 +13,8 @@ import APIs, { endpoints } from "../../configs/APIs";
 import { htmlToText } from "html-to-text";
 import { MyUserContext } from "../../configs/Contexts";
 
-// create post request details screen where contain all the details of the post request
-// users can see the details of the post request on it
-// users can create a comment on the post request below of the post request details
-// users can see all comments of the post request
+//them room type va dien tich va thoi gian dang bai
+//them chat, them nut like
 const PostRequestDetails = ({ route }) => {
   const [post, setPost] = React.useState(null);
   const [comment, setComment] = React.useState("");
@@ -79,16 +77,22 @@ const PostRequestDetails = ({ route }) => {
                     <Text style={MyStyle.header}>Khu vực mong muốn</Text>
                     <Text style={[MyStyle.subject, MyStyle.marginDistantSide]}>
                       <List.Icon color="blue" icon="map-marker-outline" />
-                      {post.area}
+                      {post.district}, {post.city}
                     </Text>
                     <Text style={MyStyle.header}>Khoảng giá cần tìm</Text>
                     <Text style={[MyStyle.subject, MyStyle.marginDistantSide]}>
-                      <List.Icon color="green" icon="cash" />0 - 1,000,000
-                      triệu/tháng
+                      <List.Icon color="green" icon="cash" />
+                      {post.min_price} - {post.max_price} triệu/tháng
                     </Text>
                     <Text style={MyStyle.header}>Số lượng người ở</Text>
                     <Text style={[MyStyle.subject, MyStyle.marginDistantSide]}>
-                      <List.Icon color="pink" icon="account" />2 - 3 người
+                      <List.Icon color="pink" icon="account" />
+                      {post.quanity} người
+                    </Text>
+                    <Text style={MyStyle.header}>Loại phòng</Text>
+                    <Text style={[MyStyle.subject, MyStyle.marginDistantSide]}>
+                      <List.Icon color="cyan" icon="home" />
+                      {post.room_type === "SH" ? "Trọ chung" : "Trọ riêng"}
                     </Text>
                   </View>
                 </View>
