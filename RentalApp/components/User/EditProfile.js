@@ -26,39 +26,20 @@ import { useContext, useState, useEffect } from "react";
 import { ColorAssets } from "../../assest/ColorAssets";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const EditProfile = () => {
-  const [user, setUser] = React.useState(useContext(MyUserContext));
-  const [err, setErr] = React.useState(false);
+const EditProfile = ({navigation}) => {
+  const user = useContext(MyUserContext);
+  const dispatch = useContext(MyDispatchContext);
+  const [username, setUsername] = React.useState(user.username);
+  const [email, setEmail] = React.useState(user.email);
+  const [first_name, setFirstName] = React.useState(user.first_name);
+  const [last_name, setLastName] = React.useState(user.last_name);
+  const [image, setImage] = React.useState(user.image);
   const [oldPassword, setOldPassword] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-
-  const fields = [
-    {
-      label: "First name",
-      icon: "text",
-      name: "first_name",
-    },
-    {
-      label: "Last name",
-      icon: "text",
-      name: "last_name",
-    },
-    {
-      label: "Email",
-      icon: "mail",
-      name: "email",
-    },
-    {
-      label: "Username",
-      icon: "account",
-      name: "username",
-    },
-  ];
-  const nav = useNavigation();
+  const [profileLoading, setProfileLoading] = React.useState(false);
   const [passwordLoading, setPasswordLoading] = React.useState(false);
-  const [isViewerVisible, setViewerVisible] = React.useState(false); // State for image viewer
-
+  const [isViewerVisible, setViewerVisible] = React.useState(false);
   const picker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -71,19 +52,14 @@ const EditProfile = () => {
         quality: 1,
       });
       if (!res.canceled) {
-        updateSate("image", res.assets[0]);
+        setImage(res.assets[0]);
       }
     }
   };
 
-  const updateSate = (field, value) => {
-    setUser((current) => {
-      return { ...current, [field]: value };
-    });
-  };
-
   const deleteImage = () => {
-    updateSate("image", null);
+    console.log("Delete image");
+    setImage(null);
   };
 
   const handleUpdatePassword = async () => {
@@ -99,7 +75,6 @@ const EditProfile = () => {
     formData.append("old_password", oldPassword);
     formData.append("new_password", password);
     formData.append("confirm_password", confirmPassword);
-    console.log(formData);
     setPasswordLoading(true);
     try {
       const token = await AsyncStorage.getItem("token");
@@ -135,39 +110,106 @@ const EditProfile = () => {
     }
   };
 
-  return (
-    <View
-      style={[MyStyle.container, MyStyle.justifyContentCenter]}
-    >
-      <ScrollView>
-        <Text style={[MyStyle.title, MyStyle.margin]}>Cập nhật profile</Text>
-        {fields.map((c) =>
-          !c.hidden ? (
-            <TextInput
-              mode="outlined"
-              outlineColor={ColorAssets.input.border}
-              activeOutlineColor={ColorAssets.input.borderFocus}
-              secureTextEntry={c.secureTextEntry}
-              value={user[c.name]}
-              onChangeText={(t) => updateSate(c.name, t)}
-              style={[MyStyle.margin, MyStyle.input]}
-              key={c.name}
-              label={c.label}
-              right={
-                c.icon ? (
-                  <TextInput.Icon
-                    icon={c.icon}
-                    color={ColorAssets.content.icon}
-                  />
-                ) : null
-              }
-            />
-          ) : null
-        )}
+  const handleUpdateProfile = async () => {
+    if (
+      first_name === "" ||
+      last_name === "" ||
+      username === "" ||
+      email === "" ||
+      !image
+    ) {
+      Alert.alert("Rental", "Please fill all fields!");
+      return;
+    }
+    let formData = new FormData();
+    formData.append("first_name", first_name);
+    formData.append("last_name", last_name);
+    formData.append("username", username);
+    formData.append("email", email);
+    if (image.uri) {
+      formData.append("image", {
+        uri: image.uri,
+        name: image.uri.split("/").pop(),
+        type: mime.lookup(image.uri),
+      });
+    }
+    try {
+      setProfileLoading(true);
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        alert("User is not authenticated");
+        return;
+      }
+      let res = await APIs.patch(endpoints["update_profile"], formData, {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (res.status === 200) {
+        dispatch({
+          type: "login",
+          payload: res.data,
+        });
+        alert("Update profile successfully");
+        navigation.navigate("Profile");
 
-        <HelperText type="error" visible={err}>
-          Mật khẩu không khớp!
-        </HelperText>
+      } else {
+        console.error("Failed to update profile", res.data);
+        alert("Failed to update profile");
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        console.error("Bad request: ", err.response.data);
+        alert("Bad request: " + err.response.data.error);
+      } else {
+        console.error("Error while update profile", err);
+        alert("An error occurred while updating profile");
+      }
+    }finally {
+      setProfileLoading(false);
+    }
+  };
+
+  return (
+    <View style={[MyStyle.container, MyStyle.justifyContentCenter]}>
+      <ScrollView>
+        <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
+          value={first_name}
+          onChangeText={setFirstName}
+          style={[MyStyle.margin, MyStyle.input]}
+          label={"Tên"}
+        />
+        <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
+          value={last_name}
+          onChangeText={setLastName}
+          style={[MyStyle.margin, MyStyle.input]}
+          label={"Họ"}
+        />
+        <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
+          value={username}
+          onChangeText={setUsername}
+          style={[MyStyle.margin, MyStyle.input]}
+          label={"Username"}
+        />
+        <TextInput
+          mode="outlined"
+          outlineColor={ColorAssets.input.border}
+          activeOutlineColor={ColorAssets.input.borderFocus}
+          value={email}
+          onChangeText={setEmail}
+          style={[MyStyle.margin, MyStyle.input]}
+          label={"Email"}
+        />
 
         <View
           style={[
@@ -185,29 +227,26 @@ const EditProfile = () => {
             <Text>Chọn ảnh đại diện...</Text>
           </TouchableRipple>
 
-          {user.image && (
+          {image && (
             <TouchableRipple onPress={() => setViewerVisible(true)}>
               <Image
-                source={{ uri: user.image.uri ? user.image.uri : user.image }}
+                source={{ uri: image.uri ? image.uri : image }}
                 style={MyStyle.avatar}
               />
             </TouchableRipple>
           )}
 
-          {user.image && (
-            <IconButton
-            icon="delete"
-            onPress={deleteImage}
-            iconColor="red"
-            />
+          {image && (
+            <IconButton icon="delete" onPress={deleteImage} iconColor="red" />
           )}
         </View>
 
         <Button
           icon="account"
           mode="contained"
-          onPress={console.log("abc")}
           style={[MyStyle.margin, MyStyle.button]}
+          onPress={handleUpdateProfile}
+          loading={profileLoading}
         >
           Cập nhật profile
         </Button>
@@ -221,7 +260,6 @@ const EditProfile = () => {
           onChangeText={(t) => setOldPassword(t)}
           style={[MyStyle.margin, MyStyle.input]}
           label="Mật khẩu cũ"
-          right={<TextInput.Icon icon="eye" color={ColorAssets.content.icon} />}
         />
         <TextInput
           mode="outlined"
@@ -232,18 +270,16 @@ const EditProfile = () => {
           onChangeText={(t) => setPassword(t)}
           style={[MyStyle.margin, MyStyle.input]}
           label="Mật khẩu cũ"
-          right={<TextInput.Icon icon="eye" color={ColorAssets.content.icon} />}
         />
         <TextInput
           mode="outlined"
           outlineColor={ColorAssets.input.border}
           activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
-          value={confirmPassword}
+          value={hidePassword}
           onChangeText={(t) => setConfirmPassword(t)}
           style={[MyStyle.margin, MyStyle.input]}
           label="Xác nhận mật khẩu"
-          right={<TextInput.Icon icon="eye" color={ColorAssets.content.icon} />}
         />
 
         <Button

@@ -51,13 +51,6 @@ const Profile = ({ navigation }) => {
                 description={user ? user.last_name : "Last Name"}
                 titleStyle={{ color: ColorAssets.content.title }}
                 descriptionStyle={{ fontSize: 18 }}
-                // left={(props) => (
-                //   <List.Icon
-                //     {...props}
-                //     icon="account"
-                //     color={ColorAssets.content.icon}
-                //   />
-                // )}
               />
             </List.Section>
             <List.Item
@@ -91,35 +84,6 @@ const Profile = ({ navigation }) => {
       </View>
 
       <View>
-        {/* {user && user.username !== "current-user" && (
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 10,
-            }}
-          >
-            <List.Icon icon="account-multiple" />
-            <Text style={{ marginRight: 10 }}>Followers:</Text>
-            <Chip>{user.followersCount}</Chip>
-          </View>
-        )} */}
-
-        {/* <View
-          style={[
-            MyStyle.row_button,
-            MyStyle.margin,
-            MyStyle.marginDistantSide,
-          ]}
-        >
-          <Button
-            icon="heart"
-            mode="contained"
-            onPress={() => console.log("Favorite Posts Pressed")}
-          >
-            Bài đăng yêu thích
-          </Button>
-        </View> */}
         <Button
           style={[MyStyle.margin, MyStyle.button]}
           icon="account-cog"
