@@ -37,8 +37,8 @@ const CreatePostAccommodation = ({ navigation }) => {
   const [images, setImages] = useState([]);
   const [acreage, setAcreage] = useState("");
   const [phone, setPhone] = useState("");
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [selectedHouseType, setSelectedHouseType] = useState("");
   const [max_people, setMaxPeople] = useState("");
   const [current_people, setCurrentPeople] = useState("");
@@ -87,8 +87,10 @@ const CreatePostAccommodation = ({ navigation }) => {
     }
   };
 
-  const deleteImage = (uri) => {
-    setImages(images.filter((image) => image.uri !== uri));
+  const deleteImage = (index) => {
+    arr = [...images]
+    arr.splice(index, 1)
+    setImages(arr)
   };
 
   const openImageViewer = (index) => {
@@ -551,7 +553,7 @@ const CreatePostAccommodation = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.imageDeleteButton}
-                  onPress={() => deleteImage(image.uri)}
+                  onPress={() => deleteImage(index)}
                 >
                   <IconButton icon="delete" size={20} iconColor="red" />
                 </TouchableOpacity>

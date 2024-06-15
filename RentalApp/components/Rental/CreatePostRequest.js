@@ -183,7 +183,7 @@ const CreatePostRequest = ({ navigation }) => {
             <View style={styles.sliderContainer}>
               <MultiSlider
                 values={priceRange}
-                onValuesChange={(values) => setPriceRange(values)}
+                onValuesChange={setPriceRange}
                 min={0}
                 max={20000000}
                 step={500000}

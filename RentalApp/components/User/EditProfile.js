@@ -257,7 +257,7 @@ const EditProfile = ({navigation}) => {
           activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
           value={oldPassword}
-          onChangeText={(t) => setOldPassword(t)}
+          onChangeText={setOldPassword}
           style={[MyStyle.margin, MyStyle.input]}
           label="Mật khẩu cũ"
         />
@@ -267,7 +267,7 @@ const EditProfile = ({navigation}) => {
           activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
           value={password}
-          onChangeText={(t) => setPassword(t)}
+          onChangeText={setPassword}
           style={[MyStyle.margin, MyStyle.input]}
           label="Mật khẩu cũ"
         />
@@ -276,8 +276,8 @@ const EditProfile = ({navigation}) => {
           outlineColor={ColorAssets.input.border}
           activeOutlineColor={ColorAssets.input.borderFocus}
           secureTextEntry={true}
-          value={hidePassword}
-          onChangeText={(t) => setConfirmPassword(t)}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
           style={[MyStyle.margin, MyStyle.input]}
           label="Xác nhận mật khẩu"
         />
