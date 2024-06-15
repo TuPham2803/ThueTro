@@ -1,5 +1,4 @@
 from rest_framework import viewsets, permissions, status, generics
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from homes.models import PostAccommodation, LikeAccommodation, AccommodationImage, PendingStatus
@@ -10,6 +9,7 @@ import cloudinary
 from homes.sendmail import send_mail
 from threading import Thread
 from homes.pagination import SmallPagination
+from haversine import haversine, Unit
 
 
 class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
@@ -97,6 +97,24 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
             if pending_status:
                 queryset = queryset.filter(pending_status=pending_status)
 
+            coordinates = self.request.query_params.get('coordinates')
+            radius = self.request.query_params.get('radius')
+            if coordinates and radius:
+                try:
+                    lat, lon = map(float, coordinates.split(','))
+                    radius = float(radius)
+
+                    def is_within_radius(accommodation):
+                        acc_coord = (accommodation.latitude,
+                                     accommodation.longitude)
+                        distance = haversine(
+                            (lat, lon), acc_coord, unit=Unit.METERS)
+                        return distance <= radius
+                    queryset = filter(is_within_radius, queryset)
+                    queryset = list(queryset)
+                except ValueError:
+                    pass
+
         return queryset
 
     def create(self, request, *args, **kwargs):
@@ -125,7 +143,8 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         # Save the post and images to the database only if all images are uploaded successfully
         post = post_serializer.save(owner=request.user, user_post=request.user)
         for url in uploaded_image_urls:
-            AccommodationImage.objects.create(image=url, post_accommodation=post)
+            AccommodationImage.objects.create(
+                image=url, post_accommodation=post)
 
         response_data = {
             'post': post_serializer.data
