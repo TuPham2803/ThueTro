@@ -45,8 +45,8 @@ const ListPostRequest = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={[MyStyle.container, MyStyle.margin]}>
-      <Searchbar placeholder="Search" onChangeText={setQ} value={q} />
+    <View style={[MyStyle.container]}>
+      {/* <Searchbar placeholder="Search" onChangeText={setQ} value={q} /> */}
       <ScrollView>
         <View style={[MyStyle.container, MyStyle.margin]}>
           {posts.length === 0 ? (

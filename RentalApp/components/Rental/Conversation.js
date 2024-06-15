@@ -142,16 +142,6 @@ const Conversation = ({ navigation }) => {
             : ""}
         </Text>
       </View>
-      <IconButton
-        icon="chevron-right"
-        size={24}
-        onPress={() =>
-          navigation.navigate("Chat", {
-            conversationId: item.id,
-            friendId: item.friendId,
-          })
-        }
-      />
     </TouchableOpacity>
   );
   

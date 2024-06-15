@@ -191,8 +191,12 @@ const Chat = ({ route, navigation }) => {
           isMe ? ChatStyle.sentMessage : ChatStyle.receivedMessage,
         ]}
       >
-        <Text style={ChatStyle.text}>{item.content}</Text>
-        <Text style={ChatStyle.time}>{item.time}</Text>
+        <Text style={[ChatStyle.text, isMe && { color: "#fff" }]}>
+          {item.content}
+        </Text>
+        <Text style={[ChatStyle.time, isMe && { color: "#fff" }]}>
+          {item.time}
+        </Text>
       </View>
     );
   };

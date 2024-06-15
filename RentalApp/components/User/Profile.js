@@ -14,7 +14,6 @@ const Profile = ({ navigation }) => {
         MyStyle.container,
         MyStyle.center,
         MyStyle.paddingVertical,
-        MyStyle.marginDistantSide,
         { justifyContent: "space-between", paddingVertical: 20 },
       ]}
     >

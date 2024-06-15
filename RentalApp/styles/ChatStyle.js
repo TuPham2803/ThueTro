@@ -16,8 +16,9 @@ const ChatStyle = StyleSheet.create({
         minWidth: 70,
     },
     sentMessage: {
-        backgroundColor: '#DCF8C6',
+        backgroundColor: '#69C0B5',
         alignSelf: 'flex-end',
+      
     },
     receivedMessage: {
         backgroundColor: '#ECECEC',

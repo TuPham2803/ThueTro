@@ -10,7 +10,7 @@ import {
 import {
   Button,
   HelperText,
-  RadioButton,
+  IconButton,
   TextInput,
   TouchableRipple,
 } from "react-native-paper";
@@ -32,9 +32,6 @@ const EditProfile = () => {
   const [oldPassword, setOldPassword] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
-  const [showOldPassword, setShowOldPassword] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const fields = [
     {
@@ -140,7 +137,7 @@ const EditProfile = () => {
 
   return (
     <View
-      style={[MyStyle.container, MyStyle.margin, MyStyle.justifyContentCenter]}
+      style={[MyStyle.container, MyStyle.justifyContentCenter]}
     >
       <ScrollView>
         <Text style={[MyStyle.title, MyStyle.margin]}>Cập nhật profile</Text>
@@ -198,14 +195,11 @@ const EditProfile = () => {
           )}
 
           {user.image && (
-            <Button
-              icon="delete"
-              mode="contained"
-              onPress={deleteImage}
-              style={MyStyle.button}
-            >
-              Xóa ảnh
-            </Button>
+            <IconButton
+            icon="delete"
+            onPress={deleteImage}
+            iconColor="red"
+            />
           )}
         </View>
 
