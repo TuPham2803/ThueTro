@@ -26,14 +26,14 @@ import {
   serverTimestamp,
   doc,
   updateDoc,
+  getDocs, // Import getDocs for querying existing conversations
 } from "firebase/firestore";
 import { MyUserContext } from "../../configs/Contexts";
 import { ColorAssets } from "../../assest/ColorAssets";
+
 const Chat = ({ route, navigation }) => {
   const { friendDetails } = route.params;
-  const [conversationId, setConversationId] = useState(
-    route.params.conversationId
-  );
+  const [conversationId, setConversationId] = useState(route.params.conversationId);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const flatListRef = useRef(null);
@@ -64,68 +64,114 @@ const Chat = ({ route, navigation }) => {
   }, [navigation, friendDetails]);
 
   useEffect(() => {
-    if (!conversationId) {
-      return;
-    }
+    const fetchConversation = async () => {
+      if (!conversationId) {
+        console.log("No conversationId, checking for existing conversations");
 
-    console.log(
-      "Setting up snapshot listener for conversationId:",
-      conversationId
-    );
+        const participants = [user.id, friendDetails.id];
 
-    const q = query(
-      collection(db, "messages"),
-      where("conversationId", "==", conversationId),
-      orderBy("createdAt", "asc")
-    );
+        const q = query(
+          collection(db, "conversations"),
+          where("participantIds", "array-contains-any", participants)
+        );
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      console.log("Received new snapshot for messages");
-      const msgs = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        console.log("Message data:", data);
-        let createdAt = "";
-        if (data.createdAt) {
-          try {
-            createdAt = data.createdAt.toDate().toLocaleTimeString();
-          } catch (error) {
-            console.error(
-              "Error converting timestamp:",
-              error,
-              "for document:",
-              doc.id
-            );
+        const querySnapshot = await getDocs(q);
+        let existingConversationId = null;
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (
+            data.participantIds.includes(friendDetails.id) &&
+            data.participantIds.includes(user.id)
+          ) {
+            existingConversationId = doc.id;
           }
+        });
+
+        if (existingConversationId) {
+          setConversationId(existingConversationId);
+          console.log("Found existing conversation with id:", existingConversationId);
+        } else {
+          console.log("No existing conversation found, creating a new one");
+          await createNewConversation();
         }
-        return {
-          id: doc.id,
-          ...data,
-          time: createdAt,
-        };
-      });
-      console.log("Messages:", msgs);
-      setMessages(msgs);
+      }
+    };
 
-      setTimeout(() => {
-        if (flatListRef.current) {
-          flatListRef.current.scrollToEnd({ animated: true });
-        }
-      }, 100);
-    });
+    const createNewConversation = async () => {
+      const newConversation = {
+        createdAt: serverTimestamp(),
+        lastMessageId: "",
+        participantIds: [user.id, friendDetails.id],
+      };
 
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      updateScrollView
-    );
+      const conversationRef = await addDoc(collection(db, "conversations"), newConversation);
+      setConversationId(conversationRef.id);
+      console.log("Created new conversation with id:", conversationRef.id);
+    };
 
-    return () => {
+    fetchConversation();
+
+    if (conversationId) {
       console.log(
-        "Cleaning up snapshot listener for conversationId:",
+        "Setting up snapshot listener for conversationId:",
         conversationId
       );
-      unsubscribe();
-      keyboardDidShowListener.remove();
-    };
+
+      const q = query(
+        collection(db, "messages"),
+        where("conversationId", "==", conversationId),
+        orderBy("createdAt", "asc")
+      );
+
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        console.log("Received new snapshot for messages");
+        const msgs = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          console.log("Message data:", data);
+          let createdAt = "";
+          if (data.createdAt) {
+            try {
+              createdAt = data.createdAt.toDate().toLocaleTimeString();
+            } catch (error) {
+              console.error(
+                "Error converting timestamp:",
+                error,
+                "for document:",
+                doc.id
+              );
+            }
+          }
+          return {
+            id: doc.id,
+            ...data,
+            time: createdAt,
+          };
+        });
+        console.log("Messages:", msgs);
+        setMessages(msgs);
+
+        setTimeout(() => {
+          if (flatListRef.current) {
+            flatListRef.current.scrollToEnd({ animated: true });
+          }
+        }, 100);
+      });
+
+      const keyboardDidShowListener = Keyboard.addListener(
+        "keyboardDidShow",
+        updateScrollView
+      );
+
+      return () => {
+        console.log(
+          "Cleaning up snapshot listener for conversationId:",
+          conversationId
+        );
+        unsubscribe();
+        keyboardDidShowListener.remove();
+      };
+    }
   }, [conversationId]);
 
   const handleSend = async () => {
