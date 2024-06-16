@@ -26,7 +26,6 @@ import APIs, { endpoints } from "../../configs/APIs";
 import { ColorAssets } from "../../assest/ColorAssets";
 const UpdatePostAcccommodation = ({ route, navigation }) => {
   const { post } = route.params;
-  console.log(post)
   const [title, setTitle] = useState(post.title);
   const [city, setCity] = useState(post.city);
   const [district, setDistrict] = useState(post.district);
@@ -282,6 +281,18 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
     <Provider>
       <View style={[MyStyle.container, { padding: 10 }]}>
         <ScrollView style={[MyStyle.wrapper]}>
+          {post.pending_status == "FL" && (
+            <View
+              style={[
+                MyStyle.container,
+                MyStyle.row,
+                { justifyContent: "center", alignItems: "center" },
+              ]}
+            >
+              <Icon source="close-circle-outline" size={30} color="red" />
+              <Text style={{ color: "red" }}>Bài đăng bị từ chối</Text>
+            </View>
+          )}
           {/* Input fields for the form */}
           <View style={styles.iconTextContainer}>
             <Icon
@@ -298,6 +309,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={title}
             onChangeText={setTitle}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           {/* More input fields */}
           <View style={styles.iconTextContainer}>
@@ -316,6 +328,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={city}
             onChangeText={setCity}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           <TextInput
             mode="outlined"
@@ -325,6 +338,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={district}
             onChangeText={setDistrict}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           <TextInput
             mode="outlined"
@@ -334,6 +348,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={ward}
             onChangeText={setWard}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           <TextInput
             mode="outlined"
@@ -343,6 +358,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={address}
             onChangeText={setAddress}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           <View style={styles.iconTextContainer}>
             <Icon source="map" size={30} color={ColorAssets.content.icon} />
@@ -364,43 +380,48 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   latitudeDelta: 0.0025,
                   longitudeDelta: 0.0025,
                 }}
-                onPress={handleMapPress}
+                onPress={post.pending_status !== "FL" && handleMapPress}
               >
                 <Marker coordinate={{ latitude, longitude }} />
               </MapView>
-              <TouchableOpacity
-                style={styles.currentLocationButton}
-                onPress={moveToCurrentLocation}
-              >
-                <Icon
-                  source="crosshairs-gps"
-                  size={30}
-                  color={ColorAssets.content.icon}
-                />
-              </TouchableOpacity>
+              {post.pending_status !== "FL" && (
+                <TouchableOpacity
+                  style={styles.currentLocationButton}
+                  onPress={moveToCurrentLocation}
+                >
+                  <Icon
+                    source="crosshairs-gps"
+                    size={30}
+                    color={ColorAssets.content.icon}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
           ) : null}
-          <View style={MyStyle.buttonContainer}>
-            <View style={styles.searchRow}>
-              <TextInput
-                mode="outlined"
-                outlineColor={ColorAssets.input.border}
-                activeOutlineColor={ColorAssets.input.borderFocus}
-                label="Tìm kiếm địa chỉ"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                style={[MyStyle.input, styles.searchInput]}
-              />
-              <IconButton
-                icon="map-search-outline"
-                iconColor={ColorAssets.button.text}
-                size={28}
-                onPress={handleSearch}
-                style={styles.searchButton}
-                loading={searchLoading}
-              />
+          {post.pending_status !== "FL" && (
+            <View style={MyStyle.buttonContainer}>
+              <View style={styles.searchRow}>
+                <TextInput
+                  mode="outlined"
+                  outlineColor={ColorAssets.input.border}
+                  activeOutlineColor={ColorAssets.input.borderFocus}
+                  label="Tìm kiếm địa chỉ"
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  style={[MyStyle.input, styles.searchInput]}
+                  disabled={post.pending_status === "FL"}
+                />
+                <IconButton
+                  icon="map-search-outline"
+                  iconColor={ColorAssets.button.text}
+                  size={28}
+                  onPress={handleSearch}
+                  style={styles.searchButton}
+                  loading={searchLoading}
+                />
+              </View>
             </View>
-          </View>
+          )}
 
           {/* More input fields and buttons */}
           <View style={styles.iconTextContainer}>
@@ -418,6 +439,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={price}
             onChangeText={setPrice}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           <View style={styles.iconTextContainer}>
             <Icon
@@ -436,6 +458,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             style={[MyStyle.input, styles.multilineTextInput]}
             multiline={true}
             numberOfLines={4}
+            disabled={post.pending_status === "FL"}
           />
           <View style={styles.iconTextContainer}>
             <Icon source="ruler" size={30} color={ColorAssets.content.icon} />
@@ -448,6 +471,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={acreage.toString()}
             onChangeText={setAcreage}
             style={[MyStyle.input, MyStyle.margin]}
+            disabled={post.pending_status === "FL"}
           />
           <View style={styles.iconTextContainer}>
             <Icon source="phone" size={30} color={ColorAssets.content.icon} />
@@ -460,6 +484,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
             value={phone}
             onChangeText={setPhone}
             style={[MyStyle.input, styles.textInput]}
+            disabled={post.pending_status === "FL"}
           />
           <View style={styles.iconTextContainer}>
             <Icon source="door" size={30} color={ColorAssets.content.icon} />
@@ -472,6 +497,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                 selectedHouseType === "SH" && styles.selectedButton,
               ]}
               onPress={() => handleHouseTypeSelection("SH")}
+              disabled={post.pending_status === "FL"}
             >
               <View style={styles.iconButtonContent}>
                 <IconButton
@@ -482,6 +508,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   }
                   icon="home-group"
                   size={30}
+                  disabled={post.pending_status === "FL"}
                 />
               </View>
               <Text
@@ -500,6 +527,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                 selectedHouseType === "PR" && styles.selectedButton,
               ]}
               onPress={() => handleHouseTypeSelection("PR")}
+              disabled={post.pending_status === "FL"}
             >
               <View style={styles.iconButtonContent}>
                 <IconButton
@@ -510,6 +538,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   }
                   icon="home-group"
                   size={30}
+                  disabled={post.pending_status === "FL"}
                 />
               </View>
               <Text
@@ -540,6 +569,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                 value={max_people}
                 onChangeText={setMaxPeople}
                 style={[MyStyle.input, styles.textInput]}
+                disabled={post.pending_status === "FL"}
               />
               <View style={styles.iconTextContainer}>
                 <Icon
@@ -556,6 +586,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                 value={current_people}
                 onChangeText={setCurrentPeople}
                 style={[MyStyle.input, styles.textInput]}
+                disabled={post.pending_status === "FL"}
               />
             </View>
           )}
@@ -572,12 +603,19 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                     style={styles.image}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.imageDeleteButton}
-                  onPress={() => setmainImage("")}
-                >
-                  <IconButton icon="delete" size={20} iconColor="red" />
-                </TouchableOpacity>
+                {post.pending_status !== "FL" && (
+                  <TouchableOpacity
+                    style={styles.imageDeleteButton}
+                    onPress={() => setmainImage("")}
+                  >
+                    <IconButton
+                      icon="delete"
+                      size={20}
+                      iconColor="red"
+                      disabled={post.pending_status === "FL"}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             )}
             {mainImage == "" && (
@@ -589,6 +627,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   icon="plus"
                   size={30}
                   color={ColorAssets.content.icon}
+                  disabled={post.pending_status === "FL"}
                 />
               </TouchableOpacity>
             )}
@@ -606,30 +645,37 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                     style={styles.image}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.imageDeleteButton}
-                  onPress={() => deleteImage(index)}
-                >
-                  <IconButton icon="delete" size={20} iconColor="red" />
-                </TouchableOpacity>
+                {post.pending_status !== "FL" && (
+                  <TouchableOpacity
+                    style={styles.imageDeleteButton}
+                    onPress={() => deleteImage(index)}
+                  >
+                    <IconButton icon="delete" size={20} iconColor="red" />
+                  </TouchableOpacity>
+                )}
               </View>
             ))}
-            <TouchableOpacity style={styles.addButton} onPress={pickImage}>
-              <IconButton
-                icon="plus"
-                size={30}
-                color={ColorAssets.content.icon}
-              />
-            </TouchableOpacity>
+            {post.pending_status !== "FL" && (
+              <TouchableOpacity style={styles.addButton} onPress={pickImage}>
+                <IconButton
+                  icon="plus"
+                  size={30}
+                  color={ColorAssets.content.icon}
+                  disabled={post.pending_status === "FL"}
+                />
+              </TouchableOpacity>
+            )}
           </View>
-          <Button
-            mode="contained"
-            onPress={handleUpdatePostAccommodation}
-            loading={loading}
-            style={MyStyle.button}
-          >
-            Cập nhật
-          </Button>
+          {post.pending_status !== "FL" && (
+            <Button
+              mode="contained"
+              onPress={handleUpdatePostAccommodation}
+              loading={loading}
+              style={MyStyle.button}
+            >
+              Cập nhật
+            </Button>
+          )}
         </ScrollView>
         <ImageViewing
           images={images.map((image) => ({
