@@ -21,10 +21,12 @@ import ImageViewing from "react-native-image-viewing";
 import MyStyle from "../../styles/MyStyle";
 import styles from "../../styles/CreateUpdatePostAccommodationStyle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import mime from "react-native-mime-types";
 import APIs, { endpoints } from "../../configs/APIs";
 import { ColorAssets } from "../../assest/ColorAssets";
 const UpdatePostAcccommodation = ({ route, navigation }) => {
   const { post } = route.params;
+  console.log(post)
   const [title, setTitle] = useState(post.title);
   const [city, setCity] = useState(post.city);
   const [district, setDistrict] = useState(post.district);
@@ -48,9 +50,98 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const handleHouseTypeSelection = (type) => {
     setSelectedHouseType(type);
+  };
+  const handleUpdatePostAccommodation = async () => {
+    if (
+      title === "" ||
+      city === "" ||
+      district === "" ||
+      address === "" ||
+      price === "" ||
+      description === "" ||
+      images.length < 3 ||
+      acreage === 0 ||
+      phone === "" ||
+      selectedHouseType === ""
+    ) {
+      Alert.alert(
+        "Rental",
+        "Please fill all the fields and upload at least three images!"
+      );
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("city", city);
+    formData.append("district", district);
+    formData.append("ward", ward);
+    formData.append("address", address);
+    formData.append("price", price);
+    formData.append("description", description);
+    formData.append("acreage", acreage);
+    formData.append("phone_number", phone);
+    formData.append("latitude", latitude);
+    formData.append("longitude", longitude);
+    formData.append("room_type", selectedHouseType);
+    if (selectedHouseType === "SH") {
+      formData.append("max_people", max_people);
+      formData.append("current_people", current_people);
+    }
+    if (mainImage.uri) {
+      formData.append("main_image", {
+        uri: mainImage.uri,
+        name: mainImage.uri.split("/").pop(),
+        type: mime.lookup(mainImage.uri) || "image/jpeg",
+      });
+    }
+    images.forEach((image, index) => {
+      if (image.uri) {
+        formData.append("new_images", {
+          uri: image.uri,
+          name: image.uri.split("/").pop(),
+          type: mime.lookup(image.uri) || "image/jpeg",
+        });
+      } else {
+        formData.append("existing_images", image);
+      }
+    });
+
+    try {
+      setLoading(true);
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        alert("User is not authenticated");
+        return;
+      }
+
+      let res = await APIs.patch(
+        endpoints["post_accomodation_details"](post.id),
+        formData,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (res.status === 200) {
+        alert("Update post accommodation successfully");
+        navigation.navigate("ListPostAccommodation");
+      } else {
+        console.error("Failed to update post accommodation", res.data);
+        alert("Failed to update post accommodation");
+      }
+    } catch (err) {
+      console.error("Error while update post accommodation", err);
+      alert("An error occurred while update the post accommodation");
+    } finally {
+      setLoading(false);
+    }
   };
   const handleDeletePostAccommodation = async () => {
     try {
@@ -113,9 +204,9 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
   };
 
   const deleteImage = (index) => {
-    arr = [...images]
-    arr.splice(index, 1)
-    setImages(arr)
+    arr = [...images];
+    arr.splice(index, 1);
+    setImages(arr);
   };
 
   const openImageViewer = (index) => {
@@ -171,6 +262,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
 
   const handleSearch = async () => {
     try {
+      setSearchLoading(true);
       const response = await Location.geocodeAsync(searchQuery);
       if (response && response.length > 0) {
         const { latitude, longitude } = response[0];
@@ -182,6 +274,8 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
     } catch (error) {
       console.error("Lỗi khi tìm kiếm địa chỉ", error);
       Alert.alert("Lỗi khi tìm kiếm địa chỉ");
+    } finally {
+      setSearchLoading(false);
     }
   };
   return (
@@ -303,6 +397,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                 size={28}
                 onPress={handleSearch}
                 style={styles.searchButton}
+                loading={searchLoading}
               />
             </View>
           </View>
@@ -529,11 +624,11 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
           </View>
           <Button
             mode="contained"
-            onPress={console.log("Update post")}
+            onPress={handleUpdatePostAccommodation}
             loading={loading}
             style={MyStyle.button}
           >
-            Đăng tin
+            Cập nhật
           </Button>
         </ScrollView>
         <ImageViewing

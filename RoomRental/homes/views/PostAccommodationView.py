@@ -154,10 +154,56 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.serializer_class(
+
+        # Get the list of existing image URLs and new images
+        existing_images = request.data.getlist('existing_images', [])
+        new_images = request.FILES.getlist('new_images', [])
+        print(f"existing_images: {existing_images}")
+        print(f"new_images: {new_images}")
+        # Handle existing images (keep only those which are still included in the request)
+        instance_images_urls = [
+            image.image.url for image in instance.images.all()]
+        print(f"instance_images_urls: {instance_images_urls}")
+        images_to_remove = list(
+            set(instance_images_urls) - set(existing_images))
+        print(f"images_to_remove: {images_to_remove}")
+        # Remove images from Cloudinary
+        # for image_url in images_to_remove:
+        #     print(f"image_url: {image_url}")
+        #     public_id = image_url.split('/')[-1].split('.')[0]
+        #     try:
+        #         cloudinary.uploader.destroy(public_id)
+        #     except Exception as e:
+        #         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Remove the images from the database
+        for image_url in images_to_remove:
+            instance.images.filter(image__startswith=f"{image_url}.").delete()
+
+        instance_images_urls = [
+            image.image.url for image in instance.images.all()]
+        print(f"instance_images_urls after deletion: {instance_images_urls}")
+        # Upload new images
+        uploaded_image_urls = []
+        for image_file in new_images:
+            try:
+                upload_result = cloudinary.uploader.upload(image_file)
+                uploaded_image_urls.append(upload_result['secure_url'])
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        print(f"uploaded_image_urls: {uploaded_image_urls}")
+
+        # Update the instance with new data
+        serializer = self.get_serializer(
             instance, data=request.data, partial=partial)
         if serializer.is_valid():
-            serializer.save()
+            post = serializer.save()
+
+            # Update the images in the database
+            for url in uploaded_image_urls:
+                AccommodationImage.objects.create(
+                    image=url, post_accommodation=post)
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

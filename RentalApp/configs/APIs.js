@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const SERVER_HOST = process.env.SERVER_HOST;
-const SERVER_PORT = process.env.SERVER_PORT+"";
+const SERVER_PORT = process.env.SERVER_PORT;
 
 const BASE_URL = `http://${SERVER_HOST}:${SERVER_PORT}`;
 console.log(BASE_URL)

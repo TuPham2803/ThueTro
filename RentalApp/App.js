@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import Home from "./components/Rental/Home";
 import Login from "./components/User/Login";
 import Register from "./components/User/Register";
-import { useContext, useReducer,useEffect } from "react";
+import { useContext, useReducer, useEffect } from "react";
 import { MyUserReducer } from "./configs/Reducer";
 import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
 import Profile from "./components/User/Profile";
@@ -28,7 +28,6 @@ import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilte
 import { ColorAssets } from "./assest/ColorAssets";
 import APIs, { authApi, endpoints } from "./configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 const Stack = createNativeStackNavigator();
 
@@ -193,8 +192,15 @@ const MyTab = () => {
         tabBarStyle: ((route) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "";
           let style = { backgroundColor: ColorAssets.nav.background };
-
-          if (routeName === "Chat" || routeName === "CreatePostRequest") {
+          const listScreenHide = [
+            "Chat",
+            "CreatePostRequest",
+            "CreatePostAccommodation",
+            "UpdatePostAccommodation",
+            "UpdatePostRequest",
+            "EditProfile",
+          ];
+          if (listScreenHide.includes(routeName)) {
             style.display = "none";
           }
 
@@ -293,10 +299,8 @@ export default function App() {
         const token = await AsyncStorage.getItem("token");
 
         if (token) {
-          const response = await authApi(token).get(
-            endpoints["current-user"]
-          );
-          
+          const response = await authApi(token).get(endpoints["current-user"]);
+
           if (response.ok) {
             const data = await response.json();
             dispatch({ type: "login", payload: data });
