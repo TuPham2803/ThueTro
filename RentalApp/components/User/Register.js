@@ -5,74 +5,35 @@ import {
   Image,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import {
   Button,
-  HelperText,
   RadioButton,
   TextInput,
+  IconButton,
   TouchableRipple,
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import React from "react";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import MyStyle from "../../styles/MyStyle";
 import APIs, { endpoints } from "../../configs/APIs";
 import mime from "react-native-mime-types";
 import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
+import MyStyle from "../../styles/MyStyle"; // Import your style definitions
+
 const Register = () => {
-  const [user, setUser] = React.useState({});
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordConfirm, setPasswordConfirm] = React.useState("");
-  const [err, setErr] = React.useState(false);
-  const fields = [
-    {
-      label: "First name",
-      icon: "text",
-      name: "first_name",
-    },
-    {
-      label: "Last name",
-      icon: "text",
-      name: "last_name",
-    },
-    {
-      label: "Email",
-      icon: "mail",
-      name: "email",
-    },
-    {
-      label: "Username",
-      icon: "account",
-      name: "username",
-    },
-    {
-      label: "Password",
-      icon: "eye",
-      name: "password",
-      secureTextEntry: true,
-    },
-    {
-      label: "Confirm password",
-      icon: "eye",
-      name: "confirm",
-      secureTextEntry: true,
-    },
-    {
-      label: "User type",
-      icon: "account",
-      name: "user_type",
-      hidden: true,
-    },
-  ];
-  const nav = useNavigation();
-  const [loading, setLoading] = React.useState(false);
-  const [isViewerVisible, setViewerVisible] = React.useState(false); // State for image viewer
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [image, setImage] = useState(null); // Initialize image state as null
+  const [userType, setUserType] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isViewerVisible, setViewerVisible] = useState(false); // State for image viewer
+  const navigation = useNavigation();
 
   const picker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -85,179 +46,184 @@ const Register = () => {
         aspect: [1, 1],
         quality: 1,
       });
-      if (!res.canceled) {
-        updateSate("image", res.assets[0]);
+      if (!res.cancelled) {
+        setImage(res.assets[0]);
       }
     }
   };
 
-  const updateSate = (field, value) => {
-    setUser((current) => {
-      return { ...current, [field]: value };
-    });
-  };
-
   const deleteImage = () => {
-    updateSate("image", null);
+    setImage(null);
   };
 
   const register = async () => {
-    if (user["password"] !== user["confirm"]) {
-      setErr(true);
-    } else {
-      setErr(false);
+    let formData = new FormData();
+    formData.append("first_name", firstName);
+    formData.append("last_name", lastName);
+    formData.append("email", email);
+    formData.append("username", username);
+    formData.append("password", password);
+    formData.append("user_type", userType);
 
-      let form = new FormData();
-      for (let key in user) {
-        if (key !== "confirm") {
-          if (key === "image" && user.image) {
-            form.append(key, {
-              uri: user.image.uri,
-              name: user.image.uri.split("/").pop(),
-              type: mime.lookup(user.image.uri) || "image/jpeg",
-            });
-          } else {
-            form.append(key, user[key]);
-          }
-        }
-      }
+    // Check if image is selected before appending to FormData
+    if (image) {
+      formData.append("image", {
+        uri: image.uri,
+        type: mime.lookup(image.uri) || "image/jpeg",
+        name: image.uri.split("/").pop(),
+      });
+    }
 
+    try {
       setLoading(true);
+      let res = await APIs.post(endpoints["register"], formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      try {
-        let res = await APIs.post(endpoints["register"], form, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        if (res.status === 201) nav.navigate("Login");
-      } catch (ex) {
-        console.error(
-          "Register failed: ",
-          ex.response ? ex.response.data : ex.message
-        );
-      } finally {
-        setLoading(false);
+      if (res.status === 201) {
+        navigation.navigate("Login");
       }
+    } catch (ex) {
+      console.error(
+        "Register failed: ",
+        ex.response ? ex.response.data : ex.message
+      );
+      Alert.alert("Error", "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <View
-      style={[
-        MyStyle.container,
-        MyStyle.margin,
-        MyStyle.justifyContentCenter,
-        { marginTop: 0 },
-      ]}
-    >
-      <ScrollView>
-        <Text style={[MyStyle.header, { textAlign: "center" }]}>
-          ĐĂNG KÝ NGƯỜI DÙNG
-        </Text>
+    <ScrollView style={[MyStyle.container]}>
+      <Text style={[MyStyle.header, { textAlign: "center" }]}>
+        ĐĂNG KÝ NGƯỜI DÙNG
+      </Text>
 
-        {fields.map((c) =>
-          !c.hidden ? (
-            <TextInput
-              mode="outlined"
-              outlineColor={ColorAssets.input.border}
-              activeOutlineColor={ColorAssets.input.borderFocus}
-              secureTextEntry={c.secureTextEntry}
-              value={user[c.name]}
-              onChangeText={(t) => updateSate(c.name, t)}
-              style={[MyStyle.margin, MyStyle.input]}
-              key={c.name}
-              label={c.label}
-              right={
-                c.icon ? (
-                  <TextInput.Icon
-                    color={ColorAssets.input.icon}
-                    icon={c.icon}
-                  />
-                ) : null
-              }
-            />
-          ) : null
+      <TextInput
+        mode="outlined"
+        outlineColor={ColorAssets.input.border}
+        activeOutlineColor={ColorAssets.input.borderFocus}
+        value={firstName}
+        onChangeText={setFirstName}
+        style={[MyStyle.margin, MyStyle.input]}
+        label={"Tên"}
+      />
+      <TextInput
+        mode="outlined"
+        outlineColor={ColorAssets.input.border}
+        activeOutlineColor={ColorAssets.input.borderFocus}
+        value={lastName}
+        onChangeText={setLastName}
+        style={[MyStyle.margin, MyStyle.input]}
+        label={"Họ"}
+      />
+      <TextInput
+        mode="outlined"
+        outlineColor={ColorAssets.input.border}
+        activeOutlineColor={ColorAssets.input.borderFocus}
+        value={username}
+        onChangeText={setUsername}
+        style={[MyStyle.margin, MyStyle.input]}
+        label={"Tên đăng nhập"}
+      />
+      <TextInput
+        mode="outlined"
+        outlineColor={ColorAssets.input.border}
+        activeOutlineColor={ColorAssets.input.borderFocus}
+        value={email}
+        onChangeText={setEmail}
+        style={[MyStyle.margin, MyStyle.input]}
+        label={"Email"}
+      />
+      <TextInput
+        mode="outlined"
+        outlineColor={ColorAssets.input.border}
+        activeOutlineColor={ColorAssets.input.borderFocus}
+        value={password}
+        secureTextEntry={true}
+        onChangeText={setPassword}
+        style={[MyStyle.margin, MyStyle.input]}
+        label={"Mật khẩu"}
+      />
+      <TextInput
+        mode="outlined"
+        outlineColor={ColorAssets.input.border}
+        activeOutlineColor={ColorAssets.input.borderFocus}
+        value={passwordConfirm}
+        secureTextEntry={true}
+        onChangeText={setPasswordConfirm}
+        style={[MyStyle.margin, MyStyle.input]}
+        label={"Xác nhận mật khẩu"}
+      />
+
+      <View
+        style={[
+          MyStyle.container,
+          MyStyle.row,
+          MyStyle.border,
+          MyStyle.margin,
+          MyStyle.alignCenter,
+        ]}
+      >
+        <TouchableRipple
+          style={[MyStyle.margin, MyStyle.border, MyStyle.alignCenter]}
+          onPress={picker}
+        >
+          <Text>Chọn ảnh đại diện...</Text>
+        </TouchableRipple>
+
+        {image && (
+          <TouchableRipple onPress={() => setViewerVisible(true)}>
+            <Image source={{ uri: image.uri }} style={MyStyle.avatar} />
+          </TouchableRipple>
         )}
 
-        <HelperText type="error" visible={err}>
-          Mật khẩu không khớp!
-        </HelperText>
+        {image && (
+          <IconButton icon="delete" onPress={deleteImage} iconColor="red" />
+        )}
+      </View>
 
-        <View
-          style={[
-            MyStyle.container,
-            MyStyle.row,
-            MyStyle.border,
-            MyStyle.margin,
-            MyStyle.alignCenter,
-          ]}
-        >
-          <TouchableRipple
-            style={[MyStyle.margin, MyStyle.border, MyStyle.alignCenter]}
-            onPress={picker}
-          >
-            <Text>Chọn ảnh đại diện...</Text>
-          </TouchableRipple>
+      {/* Radio button group for user type */}
+      <View style={[MyStyle.margin, MyStyle.border]}>
+        <Text style={MyStyle.margin}>Loại người dùng</Text>
+        <RadioButton.Group value={userType} onValueChange={setUserType}>
+          <RadioButton.Item
+            color={ColorAssets.checkbox.selected}
+            label="Chủ trọ"
+            value="landlord"
+          />
+          <RadioButton.Item
+            color={ColorAssets.checkbox.selected}
+            label="Người thuê"
+            value="tenant"
+          />
+        </RadioButton.Group>
+      </View>
 
-          {user.image && (
-            <TouchableRipple onPress={() => setViewerVisible(true)}>
-              <Image source={{ uri: user.image.uri }} style={MyStyle.avatar} />
-            </TouchableRipple>
-          )}
+      {/* Register button */}
+      <Button
+        style={[MyStyle.button, MyStyle.margin]}
+        icon="account"
+        loading={loading}
+        mode="contained"
+        onPress={register}
+      >
+        ĐĂNG KÝ
+      </Button>
 
-          {user.image && (
-            <Button
-              icon="delete"
-              mode="contained"
-              onPress={deleteImage}
-              style={[MyStyle.button]}
-            >
-              Xóa ảnh
-            </Button>
-          )}
-        </View>
-
-        <View style={[MyStyle.margin, MyStyle.border]}>
-          <Text style={MyStyle.margin}>Loại người dùng</Text>
-          <RadioButton.Group
-            onValueChange={(value) => updateSate("user_type", value)}
-            value={user.user_type}
-          >
-            <RadioButton.Item
-              color={ColorAssets.checkbox.selected}
-              label="Landlord"
-              value="landlord"
-            />
-            <RadioButton.Item
-              color={ColorAssets.checkbox.selected}
-              label="Tenant"
-              value="tenant"
-            />
-          </RadioButton.Group>
-        </View>
-
-        <Button
-          style={[MyStyle.button]}
-          icon="account"
-          loading={loading}
-          mode="contained"
-          onPress={register}
-        >
-          ĐĂNG KÝ
-        </Button>
-      </ScrollView>
-
-      {user.image && (
+      {/* Image viewer modal */}
+      {image && (
         <ImageViewing
-          images={[{ uri: user.image.uri }]}
+          images={[{ uri: image.uri }]}
           imageIndex={0}
           visible={isViewerVisible}
           onRequestClose={() => setViewerVisible(false)}
         />
       )}
-    </View>
+    </ScrollView>
   );
 };
 
