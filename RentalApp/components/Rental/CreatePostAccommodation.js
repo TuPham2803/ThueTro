@@ -24,8 +24,8 @@ import mime from "react-native-mime-types";
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assest/ColorAssets";
-
-const CreatePostAccommodation = ({ navigation }) => {
+import { CommonActions } from "@react-navigation/native";
+const CreatePostAccommodation = ({ route, navigation }) => {
   const [title, setTitle] = useState("");
   const [city, setCity] = useState("");
   const [district, setDistrict] = useState("");
@@ -69,7 +69,6 @@ const CreatePostAccommodation = ({ navigation }) => {
       }
     }
   };
-
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -88,9 +87,9 @@ const CreatePostAccommodation = ({ navigation }) => {
   };
 
   const deleteImage = (index) => {
-    arr = [...images]
-    arr.splice(index, 1)
-    setImages(arr)
+    arr = [...images];
+    arr.splice(index, 1);
+    setImages(arr);
   };
 
   const openImageViewer = (index) => {
@@ -169,7 +168,24 @@ const CreatePostAccommodation = ({ navigation }) => {
 
       if (res.status === 201) {
         alert("Create post accommodation successfully");
-        navigation.navigate("ListPostAccommodation");
+        if (route.name == "CreatePostAccommodationHome") {
+          // clear HomeStack and navigate to PostManagerStack
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [
+                {
+                  name: "PostManagerStack",
+                  state: {
+                    routes: [{ name: "ListPostAccommodation" }],
+                  },
+                },
+              ],
+            })
+          );
+        } else {
+          navigation.navigate("ListPostAccommodation");
+        }
       } else {
         console.error("Failed to create post accommodation", res.data);
         alert("Failed to create post accommodation");

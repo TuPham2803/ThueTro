@@ -50,16 +50,6 @@ const HomeStack = () => {
         }}
       />
       <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{ title: "Login" }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={{ title: "Profile" }}
-      />
-      <Stack.Screen
         name="PostAccommodations"
         component={PostAccommodations}
         options={{ title: "Bài đăng cho thuê nhà" }}
@@ -83,6 +73,16 @@ const HomeStack = () => {
         name="Filter"
         component={PostAccommodationsFilter}
         options={{ title: "Lọc tìm kiếm" }}
+      />
+      <Stack.Screen
+        name="CreatePostAccommodationHome"
+        component={CreatePostAccommodation}
+        options={{ title: "Đăng tin cho thuê" }}
+      />
+      <Stack.Screen
+        name="CreatePostRequestHome"
+        component={CreatePostRequest}
+        options={{ title: "Đăng tin tìm phòng" }}
       />
     </Stack.Navigator>
   );

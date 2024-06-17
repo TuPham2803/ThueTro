@@ -9,7 +9,6 @@ import { ColorAssets } from "../assest/ColorAssets";
 const ItemPostRequest = ({ instance }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  console.log(instance);
 
   const loadUser = async () => {
     setLoading(true);

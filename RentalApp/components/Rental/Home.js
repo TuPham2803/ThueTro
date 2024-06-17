@@ -34,28 +34,12 @@ const Home = ({ navigation }) => {
   const [page, setPage] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
 
-  const postHandlePress = () => {
-    if (user) {
-      if (user.user_type === "landlord") {
-        navigation.navigate("PostRequests");
-      } else {
-        navigation.navigate("PostAccommodations");
-      }
-    } else {
-      navigation.navigate("PostAccommodations");
-    }
-  };
-
   const handlePress = () => {
     if (user) {
       if (user.user_type === "landlord") {
-        navigation.navigate("PostManagerStack", {
-          screen: "CreatePostAccommodation",
-        });
+        navigation.navigate("CreatePostAccommodationHome");
       } else {
-        navigation.navigate("PostManagerStack", {
-          screen: "CreatePostRequest",
-        });
+        navigation.navigate("CreatePostRequestHome");
       }
     } else {
       navigation.navigate("Login");
@@ -92,7 +76,7 @@ const Home = ({ navigation }) => {
     loadPostAccomodations();
   }, [user]);
   return (
-    <ScrollView onScroll={loadMore} style={[MyStyle.container]}>
+    <ScrollView style={[MyStyle.container]}>
       <View style={[MyStyle.wrapper]}>
         <Swiper
           style={MyStyle.wrapper}
@@ -137,7 +121,7 @@ const Home = ({ navigation }) => {
             </View>
           </TouchableRipple>
           <TouchableRipple
-             onPress={() => navigation.navigate("PostRequests")}
+            onPress={() => navigation.navigate("PostRequests")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >

@@ -5,7 +5,6 @@ import MyStyle from "../styles/MyStyle";
 import { RenderHTML } from "react-native-render-html";
 
 const Item = ({ instance }) => {
-  console.log(instance);
   return (
     instance && (
       <View style={MyStyle.post_accomodations}>
