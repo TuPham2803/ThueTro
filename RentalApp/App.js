@@ -31,8 +31,7 @@ import Chat from "./components/Rental/Chat";
 
 const Stack = createNativeStackNavigator();
 
-const HomeStack = () => {
-  const user = useContext(MyUserContext);
+const HomeTab = () => {
   return (
     <Stack.Navigator
       screenOptions={() => ({
@@ -88,7 +87,7 @@ const HomeStack = () => {
   );
 };
 
-const PostManagerStack = () => {
+const PostManagerTab = () => {
   const user = useContext(MyUserContext);
 
   return (
@@ -141,7 +140,7 @@ const PostManagerStack = () => {
   );
 };
 
-const MessageStack = () => {
+const MessageTab = () => {
   const user = useContext(MyUserContext);
   return (
     <Stack.Navigator
@@ -162,8 +161,7 @@ const MessageStack = () => {
   );
 };
 
-const ProfileStack = () => {
-  const user = useContext(MyUserContext);
+const ProfileTab = () => {
 
   return (
     <Stack.Navigator
@@ -212,17 +210,17 @@ const MyTab = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === "HomeStack") {
+          if (route.name === "HomeTab") {
             iconName = "home";
           } else if (route.name === "Register") {
             iconName = "account";
           } else if (route.name === "Login") {
             iconName = "login";
-          } else if (route.name === "PostManagerStack") {
+          } else if (route.name === "PostManagerTab") {
             iconName = "post";
-          } else if (route.name === "Message") {
+          } else if (route.name === "MessageTab") {
             iconName = "message";
-          } else if (route.name === "ProfileStack") {
+          } else if (route.name === "ProfileTab") {
             iconName = "account";
           }
 
@@ -239,8 +237,8 @@ const MyTab = () => {
       })}
     >
       <Tab.Screen
-        name="HomeStack"
-        component={HomeStack}
+        name="HomeTab"
+        component={HomeTab}
         options={{
           title: "Home",
         }}
@@ -250,37 +248,31 @@ const MyTab = () => {
           <Tab.Screen
             name="Register"
             component={Register}
-            options={{
-              title: "Đăng ký",
-            }}
           />
           <Tab.Screen
             name="Login"
             component={Login}
-            options={{
-              title: "Đăng nhập",
-            }}
           />
         </>
       ) : (
         <>
           <Tab.Screen
-            name="PostManagerStack"
-            component={PostManagerStack}
+            name="PostManagerTab"
+            component={PostManagerTab}
             options={{
               title: "Danh sách Bài đăng",
             }}
           />
           <Tab.Screen
-            name="Message"
-            component={MessageStack}
+            name="MessageTab"
+            component={MessageTab}
             options={{
               title: "Tin nhắn",
             }}
           />
           <Tab.Screen
-            name="ProfileStack"
-            component={ProfileStack}
+            name="ProfileTab"
+            component={ProfileTab}
             options={{
               title: user.username,
             }}

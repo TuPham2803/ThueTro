@@ -18,9 +18,10 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import APIs, { endpoints } from "../../configs/APIs";
 import mime from "react-native-mime-types";
-import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
+
+import ImageViewing from "react-native-image-viewing";
 import { ColorAssets } from "../../assets/ColorAssets";
-import MyStyle from "../../styles/MyStyle"; // Import your style definitions
+import MyStyle from "../../styles/MyStyle";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -29,10 +30,10 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [image, setImage] = useState(null); // Initialize image state as null
+  const [image, setImage] = useState(null);
   const [userType, setUserType] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isViewerVisible, setViewerVisible] = useState(false); // State for image viewer
+  const [isViewerVisible, setViewerVisible] = useState(false);
   const navigation = useNavigation();
 
   const picker = async () => {
