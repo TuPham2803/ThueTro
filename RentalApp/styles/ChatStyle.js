@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { ColorAssets } from '../assest/ColorAssets';
+import { ColorAssets } from '../assets/ColorAssets';
 const ChatStyle = StyleSheet.create({
     container: {
         flex: 1,

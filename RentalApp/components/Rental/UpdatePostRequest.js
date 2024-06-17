@@ -18,7 +18,7 @@ import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MyStyle from "../../styles/MyStyle";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 import { Picker } from "@react-native-picker/picker";
 const UpdatePostRequest = ({ route, navigation }) => {
   const { post } = route.params;

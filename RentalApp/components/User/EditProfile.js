@@ -23,10 +23,10 @@ import mime from "react-native-mime-types";
 import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
 import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import { useContext, useState, useEffect } from "react";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const EditProfile = ({navigation}) => {
+const EditProfile = ({ navigation }) => {
   const user = useContext(MyUserContext);
   const dispatch = useContext(MyDispatchContext);
   const [username, setUsername] = React.useState(user.username);
@@ -153,7 +153,6 @@ const EditProfile = ({navigation}) => {
         });
         alert("Update profile successfully");
         navigation.navigate("Profile");
-
       } else {
         console.error("Failed to update profile", res.data);
         alert("Failed to update profile");
@@ -166,7 +165,7 @@ const EditProfile = ({navigation}) => {
         console.error("Error while update profile", err);
         alert("An error occurred while updating profile");
       }
-    }finally {
+    } finally {
       setProfileLoading(false);
     }
   };

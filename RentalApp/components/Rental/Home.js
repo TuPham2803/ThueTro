@@ -20,8 +20,8 @@ import Swiper from "react-native-swiper";
 import APIs, { endpoints } from "../../configs/APIs";
 import Item from "../../Utils/Item";
 import { MyUserContext } from "../../configs/Contexts";
-import { ImagesAssets } from "../../assest/images/ImagesAssets";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ImagesAssets } from "../../assets/images/ImagesAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 const Home = ({ navigation }) => {
   const [search, setSearch] = React.useState("");
   const images = [

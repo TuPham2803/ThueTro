@@ -11,7 +11,7 @@ import MyStyle from "../../styles/MyStyle";
 import Item from "../../Utils/Item";
 import APIs, { endpoints } from "../../configs/APIs";
 import { MyUserContext } from "../../configs/Contexts";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 
 const ListPostAccommodation = ({ navigation }) => {
   const [posts, setPosts] = useState([]);

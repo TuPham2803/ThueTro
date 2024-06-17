@@ -23,7 +23,7 @@ import styles from "../../styles/CreateUpdatePostAccommodationStyle";
 import mime from "react-native-mime-types";
 import APIs, { endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 import { CommonActions } from "@react-navigation/native";
 const CreatePostAccommodation = ({ route, navigation }) => {
   const [title, setTitle] = useState("");

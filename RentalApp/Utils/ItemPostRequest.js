@@ -5,7 +5,7 @@ import MyStyle from "../styles/MyStyle";
 import { useEffect, useState } from "react";
 import APIs, { endpoints } from "../configs/APIs";
 import { htmlToText } from "html-to-text";
-import { ColorAssets } from "../assest/ColorAssets";
+import { ColorAssets } from "../assets/ColorAssets";
 const ItemPostRequest = ({ instance }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);

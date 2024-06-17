@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Button, List, Avatar, Title, Chip } from "react-native-paper";
 import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import MyStyle from "../../styles/MyStyle";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profile = ({ navigation }) => {

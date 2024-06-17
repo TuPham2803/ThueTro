@@ -29,7 +29,7 @@ import {
   getDocs, // Import getDocs for querying existing conversations
 } from "firebase/firestore";
 import { MyUserContext } from "../../configs/Contexts";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 
 const Chat = ({ route, navigation }) => {
   const { friendDetails } = route.params;

@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-paper";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilter";
-import { ColorAssets } from "./assest/ColorAssets";
+import { ColorAssets } from "./assets/ColorAssets";
 import APIs, { authApi, endpoints } from "./configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Home from "./components/Rental/Home";

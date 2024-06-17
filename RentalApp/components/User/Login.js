@@ -6,7 +6,7 @@ import { MyDispatchContext } from "../../configs/Contexts";
 import { useNavigation } from "@react-navigation/native";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ColorAssets } from "../../assest/ColorAssets";
+import { ColorAssets } from "../../assets/ColorAssets";
 import { SERVER_CLIENT_ID, SERVER_CLIENT_SECRET } from "@env";
 
 const Login = ({ route }) => {
@@ -82,7 +82,7 @@ const Login = ({ route }) => {
           mode="outlined"
           outlineColor={ColorAssets.input.border}
           activeOutlineColor={ColorAssets.input.borderFocus}
-          secureTextEntry
+          secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
           style={[MyStyle.input, MyStyle.margin, { width: "90%" }]}
