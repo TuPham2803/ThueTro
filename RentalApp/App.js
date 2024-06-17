@@ -1,19 +1,24 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import Home from "./components/Rental/Home";
-import Login from "./components/User/Login";
-import Register from "./components/User/Register";
 import { useContext, useReducer, useEffect } from "react";
 import { MyUserReducer } from "./configs/Reducer";
 import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Icon } from "react-native-paper";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilter";
+import { ColorAssets } from "./assest/ColorAssets";
+import APIs, { authApi, endpoints } from "./configs/APIs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Home from "./components/Rental/Home";
+import Login from "./components/User/Login";
+import Register from "./components/User/Register";
 import Profile from "./components/User/Profile";
-import React from "react";
 import CreatePostAccommodation from "./components/Rental/CreatePostAccommodation";
 import CreatePostRequest from "./components/Rental/CreatePostRequest";
 import PostAccommodations from "./components/Rental/PostAccomodations";
 import PostAccommodationDetails from "./components/Rental/PostAccommodationDetails";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "react-native-paper";
 import ListPostAccommodation from "./components/Rental/ListPostAccommodation";
 import ListPostRequest from "./components/Rental/ListPostRequest";
 import UpdatePostAccommodation from "./components/Rental/UpdatePostAccommodation";
@@ -23,11 +28,6 @@ import PostRequestDetails from "./components/Rental/PostRequestDetails";
 import EditProfile from "./components/User/EditProfile";
 import Conversation from "./components/Rental/Conversation";
 import Chat from "./components/Rental/Chat";
-import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilter";
-import { ColorAssets } from "./assest/ColorAssets";
-import APIs, { authApi, endpoints } from "./configs/APIs";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 
@@ -100,7 +100,7 @@ const PostManagerStack = () => {
         navigationBarColor: ColorAssets.nav.background,
       })}
     >
-      {user.user_type == "landlord" ? (
+      {user && user.user_type === "landlord" ? (
         <>
           <Stack.Screen
             name="ListPostAccommodation"
@@ -140,6 +140,7 @@ const PostManagerStack = () => {
     </Stack.Navigator>
   );
 };
+
 const MessageStack = () => {
   const user = useContext(MyUserContext);
   return (
@@ -203,7 +204,6 @@ const MyTab = () => {
           if (listScreenHide.includes(routeName)) {
             style.display = "none";
           }
-
           return style;
         })(route),
         tabBarLabelStyle: ({ focused }) => ({
@@ -297,12 +297,10 @@ export default function App() {
     const checkToken = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-
         if (token) {
           const response = await authApi(token).get(endpoints["current-user"]);
-
-          if (response.ok) {
-            const data = await response.json();
+          if (response.status === 200) {
+            const data = response.data;
             dispatch({ type: "login", payload: data });
           } else {
             dispatch({ type: "logout" });
@@ -315,9 +313,9 @@ export default function App() {
         dispatch({ type: "logout" });
       }
     };
-
     checkToken();
   }, []);
+
   return (
     <NavigationContainer>
       <MyUserContext.Provider value={user}>

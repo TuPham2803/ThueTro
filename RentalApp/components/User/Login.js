@@ -40,14 +40,13 @@ const Login = ({ route }) => {
       if (["landlord", "tenant"].indexOf(userResponse.data.user_type) === -1) {
         throw new Error("User type is not landlord or tenant");
       }
-      const loginUser = (userData) => ({
+
+      dispatch({
         type: "login",
-        payload: userData,
+        payload: userResponse.data,
       });
 
-      dispatch(loginUser(userResponse.data));
-
-      if ( route.params?.next == "CreatePost") {
+      if (route.params?.next == "CreatePost") {
         navigation.navigate(
           userResponse.data.user_type == "landlord"
             ? "CreatePostAccommodationHome"

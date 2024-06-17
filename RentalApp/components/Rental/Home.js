@@ -53,30 +53,30 @@ const Home = ({ navigation }) => {
       setPage(page + 1);
     }
   };
-  const loadPostAccomodations = async () => {
-    if (page > 0) {
-      let url = `${endpoints["post_accomodations"]}?pending_status=APR?page=${page}`;
-      try {
-        setLoading(true);
-        let res = await APIs.get(url);
-        if (page === 1) {
-          setAccomodation(res.data.results);
-        } else if (page > 1) {
-          setAccomodation((current) => {
-            return [...current, ...res.data.results];
-          });
-        }
-        if (res.data.next === null) setPage(0);
-      } catch (ex) {
-        console.error(ex);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
+  // const loadPostAccomodations = async () => {
+  //   if (page > 0) {
+  //     let url = `${endpoints["post_accomodations"]}?pending_status=APR?page=${page}`;
+  //     try {
+  //       setLoading(true);
+  //       let res = await APIs.get(url);
+  //       if (page === 1) {
+  //         setAccomodation(res.data.results);
+  //       } else if (page > 1) {
+  //         setAccomodation((current) => {
+  //           return [...current, ...res.data.results];
+  //         });
+  //       }
+  //       if (res.data.next === null) setPage(0);
+  //     } catch (ex) {
+  //       console.error(ex);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   React.useEffect(() => {
-    loadPostAccomodations();
+    // loadPostAccomodations();
   }, [user]);
   return (
     <ScrollView style={[MyStyle.container]}>

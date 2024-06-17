@@ -24,6 +24,11 @@ import ImageViewing from "react-native-image-viewing"; // Import ImageViewing
 import { ColorAssets } from "../../assest/ColorAssets";
 const Register = () => {
   const [user, setUser] = React.useState({});
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [passwordConfirm, setPasswordConfirm] = React.useState("");
   const [err, setErr] = React.useState(false);
   const fields = [
     {

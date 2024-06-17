@@ -1,9 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import { Button, List, Avatar, Title, Chip } from "react-native-paper";
 import { MyDispatchContext, MyUserContext } from "../../configs/Contexts";
 import MyStyle from "../../styles/MyStyle";
 import { ColorAssets } from "../../assest/ColorAssets";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Profile = ({ navigation }) => {
   const user = useContext(MyUserContext);
   const dispatch = useContext(MyDispatchContext);
@@ -27,9 +29,7 @@ const Profile = ({ navigation }) => {
         ) : (
           <Avatar.Icon size={120} icon="account" style={{ marginBottom: 10 }} />
         )}
-        <Title>
-          {user ? user.username : "Username"}
-        </Title>
+        <Title>{user ? user.username : "Username"}</Title>
         <View style={{ width: "100%", marginBottom: 20 }}>
           <List.Section>
             <List.Section style={MyStyle.row}>
@@ -98,7 +98,8 @@ const Profile = ({ navigation }) => {
           style={[MyStyle.margin, MyStyle.button]}
           icon="logout"
           mode="contained"
-          onPress={() => {
+          onPress={async () => {
+            await AsyncStorage.removeItem("token");
             dispatch({ type: "logout" });
             navigation.navigate("Home");
           }}
