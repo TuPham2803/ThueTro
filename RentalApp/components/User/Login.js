@@ -47,7 +47,7 @@ const Login = ({ route }) => {
 
       dispatch(loginUser(userResponse.data));
 
-      if (route.params.next == "CreatePost") {
+      if ( route.params?.next == "CreatePost") {
         navigation.navigate(
           userResponse.data.user_type == "landlord"
             ? "CreatePostAccommodationHome"

@@ -10,10 +10,7 @@ import {
 import MyStyle from "../../styles/MyStyle";
 import Item from "../../Utils/Item";
 import APIs, { endpoints } from "../../configs/APIs";
-import Swiper from "react-native-swiper";
-import RenderHTML from "react-native-render-html";
 import { MyUserContext } from "../../configs/Contexts";
-import { Button } from "react-native-paper";
 import { ColorAssets } from "../../assest/ColorAssets";
 
 const ListPostAccommodation = ({ navigation }) => {
@@ -23,7 +20,7 @@ const ListPostAccommodation = ({ navigation }) => {
   const loadPostAccomodations = async () => {
     try {
       let res = await APIs.get(
-        `${endpoints["post_accomodations"]}?user_post=${user.id}`
+        `${endpoints["post_accommodations"]}?user_post=${user.id}`
       );
       setPosts(res.data.results);
     } catch (ex) {
@@ -52,48 +49,48 @@ const ListPostAccommodation = ({ navigation }) => {
   return (
     <View style={[MyStyle.container]}>
       {/* <Searchbar  style={[MyStyle.input, MyStyle.searchBar, {textAlign:'center'}]} placeholder="Search" onChangeText={setQ} value={q} /> */}
-      <ScrollView>
-        <SegmentedButtons
-          style={[{ margin: 10 }]}
-          value={review}
-          onValueChange={setReview}
-          buttons={[
-            {
-              value: "PD",
-              icon: "clock-outline",
-              label: "Xét duyệt",
-              checkedColor: ColorAssets.input.text,
-              style: [
-                review === "PD" && {
-                  backgroundColor: ColorAssets.button.background,
-                },
-              ],
-            },
-            {
-              value: "APR",
-              label: "Đồng ý",
-              icon: "check-circle-outline",
-              checkedColor: ColorAssets.input.text,
-              style: [
-                review === "APR" && {
-                  backgroundColor: ColorAssets.button.background,
-                },
-              ],
-            },
-            {
-              value: "FL",
-              label: "Từ chối",
-              icon: "close-circle-outline",
-              checkedColor: ColorAssets.input.text,
+      <SegmentedButtons
+        style={[{ margin: 10 }]}
+        value={review}
+        onValueChange={setReview}
+        buttons={[
+          {
+            value: "PD",
+            icon: "clock-outline",
+            label: "Xét duyệt",
+            checkedColor: ColorAssets.input.text,
+            style: [
+              review === "PD" && {
+                backgroundColor: ColorAssets.button.background,
+              },
+            ],
+          },
+          {
+            value: "APR",
+            label: "Đồng ý",
+            icon: "check-circle-outline",
+            checkedColor: ColorAssets.input.text,
+            style: [
+              review === "APR" && {
+                backgroundColor: ColorAssets.button.background,
+              },
+            ],
+          },
+          {
+            value: "FL",
+            label: "Từ chối",
+            icon: "close-circle-outline",
+            checkedColor: ColorAssets.input.text,
 
-              style: [
-                review === "FL" && {
-                  backgroundColor: ColorAssets.button.background,
-                },
-              ],
-            },
-          ]}
-        />
+            style: [
+              review === "FL" && {
+                backgroundColor: ColorAssets.button.background,
+              },
+            ],
+          },
+        ]}
+      />
+      <ScrollView>
         <View style={[MyStyle.container, MyStyle.margin]}>
           {posts === null ? (
             <ActivityIndicator />

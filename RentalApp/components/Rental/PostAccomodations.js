@@ -40,7 +40,7 @@ const PostAccommodations = ({ route, navigation }) => {
   const loadPostAccomodations = async () => {
     setLoading(true);
     if (page > 0) {
-      let url = `${endpoints["post_accomodations"]}?page=${page}&pending_status=APR&min_price=${minPrice}&max_price=${maxPrice}&city=${city}&district=${district}&max_people=${maxPeople}&current_people=${currentPeople}`;
+      let url = `${endpoints["post_accommodations"]}?page=${page}&pending_status=APR&min_price=${minPrice}&max_price=${maxPrice}&city=${city}&district=${district}&max_people=${maxPeople}&current_people=${currentPeople}`;
       try {
         let res = await APIs.get(url);
         if (page === 1) {

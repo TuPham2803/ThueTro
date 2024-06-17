@@ -31,7 +31,7 @@ const PostAccommodationDetails = ({ route }) => {
 
   const loadPost = async () => {
     try {
-      let res = await APIs.get(endpoints["post_accomodation_details"](postId));
+      let res = await APIs.get(endpoints["post_accommodation_details"](postId));
       setPost(res.data);
     } catch (ex) {
       console.error(ex);

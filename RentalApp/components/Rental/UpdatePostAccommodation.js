@@ -119,7 +119,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
       }
 
       let res = await APIs.patch(
-        endpoints["post_accomodation_details"](post.id),
+        endpoints["post_accommodation_details"](post.id),
         formData,
         {
           headers: {
