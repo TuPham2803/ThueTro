@@ -28,6 +28,7 @@ export const authApi = (token) => {
     baseURL: BASE_URL,
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
     },
   });
 };

@@ -42,7 +42,10 @@ const Home = ({ navigation }) => {
         navigation.navigate("CreatePostRequestHome");
       }
     } else {
-      navigation.navigate("Login");
+      navigation.navigate("Login", {
+        screen: "Login",
+        next: "CreatePost",
+      });
     }
   };
   const loadMore = ({ nativeEvent }) => {
