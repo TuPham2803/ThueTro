@@ -103,7 +103,7 @@ const Home = ({ navigation }) => {
           rippleColor={ColorAssets.content.icon}
           placeholder="Search"
           value={search}
-          onChangeText={setSearch}
+          onPress={() => navigation.navigate("PostAccommodations")}
           style={[MyStyle.searchBar, MyStyle.margin]}
         />
       </View>
@@ -116,11 +116,11 @@ const Home = ({ navigation }) => {
           >
             <View style={[MyStyle.alignCenter]}>
               <IconButton
-                icon="map-marker"
+                icon="home"
                 iconColor={ColorAssets.content.icon}
                 size={20}
               />
-              <Text>Tìm kiếm theo vị trí</Text>
+              <Text>Tin cho thuê</Text>
             </View>
           </TouchableRipple>
           <TouchableRipple
@@ -130,15 +130,15 @@ const Home = ({ navigation }) => {
           >
             <View style={[MyStyle.alignCenter]}>
               <IconButton
-                icon="cash"
+                icon="map-search"
                 iconColor={ColorAssets.content.icon}
                 size={20}
               />
-              <Text>Tìm kiếm theo giá</Text>
+              <Text>Tin tìm trọ</Text>
             </View>
           </TouchableRipple>
           <TouchableRipple
-            onPress={() => console.log("Pressed")}
+            onPress={() => navigation.navigate("PostAccommodations")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
@@ -148,13 +148,13 @@ const Home = ({ navigation }) => {
                 iconColor={ColorAssets.content.icon}
                 size={20}
               />
-              <Text>Bạn ở chungggg</Text>
+              <Text>Trọ ở ghép</Text>
             </View>
           </TouchableRipple>
         </View>
         <View style={[MyStyle.row, { marginTop: 10 }]}>
           <TouchableRipple
-            onPress={() => console.log("Pressed")}
+            onPress={() => navigation.navigate("PostAccommodations")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
@@ -164,21 +164,21 @@ const Home = ({ navigation }) => {
                 iconColor={ColorAssets.content.icon}
                 size={20}
               />
-              <Text>Phòng riêng</Text>
+              <Text>Trọ ở riêng</Text>
             </View>
           </TouchableRipple>
           <TouchableRipple
-            onPress={() => console.log("Pressed")}
+            onPress={() => navigation.navigate("PostAccommodations")}
             rippleColor="rgba(0, 0, 0, .32)"
             style={[MyStyle.iconFeature, MyStyle.margin]}
           >
             <View style={[MyStyle.alignCenter]}>
               <IconButton
-                icon="home"
+                icon="map-marker"
                 iconColor={ColorAssets.content.icon}
                 size={20}
               />
-              <Text>Nhà nhanh</Text>
+              <Text>Trọ theo vị trí</Text>
             </View>
           </TouchableRipple>
           <TouchableRipple
@@ -211,27 +211,27 @@ const Home = ({ navigation }) => {
           {
             image: ImagesAssets.quan1,
             caption: "Quận 1",
-            screen: "Test",
+            screen: "PostAccommodations",
           },
           {
             image: ImagesAssets.quan12,
             caption: "Quận 12",
-            screen: "Test",
+            screen: "PostAccommodations",
           },
           {
             image: ImagesAssets.quangovap,
             caption: "Quận Gò Vấp",
-            screen: "Test",
+            screen: "PostAccommodations",
           },
           {
             image: ImagesAssets.quantanbinh,
             caption: "Quận Tân Bình",
-            screen: "Test",
+            screen: "PostAccommodations",
           },
           {
             image: ImagesAssets.quantanphu,
             caption: "Quận Tân Phú",
-            screen: "Test",
+            screen: "PostAccommodations",
           },
         ].map((item, index) => (
           <Card key={index} style={[MyStyle.card]}>

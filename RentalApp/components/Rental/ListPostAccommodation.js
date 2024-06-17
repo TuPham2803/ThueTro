@@ -48,7 +48,6 @@ const ListPostAccommodation = ({ navigation }) => {
 
   return (
     <View style={[MyStyle.container]}>
-      {/* <Searchbar  style={[MyStyle.input, MyStyle.searchBar, {textAlign:'center'}]} placeholder="Search" onChangeText={setQ} value={q} /> */}
       <SegmentedButtons
         style={[{ margin: 10 }]}
         value={review}
