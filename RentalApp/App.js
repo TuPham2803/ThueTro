@@ -104,7 +104,17 @@ const PostManagerTab = () => {
           <Stack.Screen
             name="ListPostAccommodation"
             component={ListPostAccommodation}
-            options={{ title: "Danh sách bài đăng" }}
+            options={{
+              title: "Danh sách bài đăng",
+              headerRight: () => (
+                <IconButton
+                  icon="plus"
+                  iconColor={ColorAssets.header.text}
+                  size={30}
+                  onPress={() => navigation.navigate("CreatePostAccommodation")}
+                />
+              ),
+            }}
           />
           <Stack.Screen
             name="UpdatePostAccommodation"
@@ -114,7 +124,9 @@ const PostManagerTab = () => {
           <Stack.Screen
             name="CreatePostAccommodation"
             component={CreatePostAccommodation}
-            options={{ title: "Đăng tin cho thuê" }}
+            options={{
+              title: "Đăng tin cho thuê",
+            }}
           />
         </>
       ) : (
@@ -162,7 +174,6 @@ const MessageTab = () => {
 };
 
 const ProfileTab = () => {
-
   return (
     <Stack.Navigator
       screenOptions={() => ({
@@ -245,14 +256,8 @@ const MyTab = () => {
       />
       {user === null ? (
         <>
-          <Tab.Screen
-            name="Register"
-            component={Register}
-          />
-          <Tab.Screen
-            name="Login"
-            component={Login}
-          />
+          <Tab.Screen name="Register" component={Register} />
+          <Tab.Screen name="Login" component={Login} />
         </>
       ) : (
         <>

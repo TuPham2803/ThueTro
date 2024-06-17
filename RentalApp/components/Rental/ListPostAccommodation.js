@@ -33,18 +33,19 @@ const ListPostAccommodation = ({ navigation }) => {
     }, [])
   );
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon="plus"
-          iconColor={ColorAssets.header.text}
-          size={30}
-          onPress={() => navigation.navigate("CreatePostAccommodation")}
-        />
-      ),
-    });
-  }, [navigation]);
+
+  // React.useEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <IconButton
+  //         icon="plus"
+  //         iconColor={ColorAssets.header.text}
+  //         size={30}
+  //         onPress={() => navigation.navigate("CreatePostAccommodation")}
+  //       />
+  //     ),
+  //   });
+  // }, [navigation]);
 
   return (
     <View style={[MyStyle.container]}>
@@ -107,15 +108,6 @@ const ListPostAccommodation = ({ navigation }) => {
                       }
                     >
                       <Item instance={p} />
-
-                      <Text
-                        style={{
-                          fontStyle: "italic",
-                          color: "gray",
-                          alignSelf: "center",
-                          marginTop: 5,
-                        }}
-                      ></Text>
                     </TouchableOpacity>
                   )
               )}

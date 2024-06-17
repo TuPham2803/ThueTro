@@ -66,14 +66,11 @@ const Register = () => {
     formData.append("password", password);
     formData.append("user_type", userType);
 
-    // Check if image is selected before appending to FormData
-    if (image) {
-      formData.append("image", {
-        uri: image.uri,
-        type: mime.lookup(image.uri) || "image/jpeg",
-        name: image.uri.split("/").pop(),
-      });
-    }
+    formData.append("image", {
+      uri: image.uri,
+      type: mime.lookup(image.uri) || "image/jpeg",
+      name: image.uri.split("/").pop(),
+    });
 
     try {
       setLoading(true);
