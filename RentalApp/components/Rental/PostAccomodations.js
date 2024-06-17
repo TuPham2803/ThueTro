@@ -1,54 +1,184 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
-  Text,
-  FlatList,
   ScrollView,
-  RefreshControl,
   TouchableOpacity,
-  Image,
-} from "react-native";
-import {
-  Chip,
-  Card,
-  Searchbar,
   ActivityIndicator,
+  Modal,
+  StyleSheet,
+  TextInput,
   Button,
-  Icon,
-} from "react-native-paper";
+} from "react-native";
+import { Searchbar, IconButton, Text } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
 import Item from "../../Utils/Item";
 import APIs, { endpoints } from "../../configs/APIs";
-import Swiper from "react-native-swiper";
-import RenderHTML from "react-native-render-html";
 import { isCloseToBottom } from "../../Utils/Utils";
-import { min } from "moment";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
+import { Picker } from "@react-native-picker/picker";
+import data from "../../Utils/CitiesData";
 
-// hien thi
+const formatCurrency = (value) => {
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
+  const [minPrice, setMinPrice] = useState(
+    initialFilters.minPrice?.toString() || ""
+  );
+  const [maxPrice, setMaxPrice] = useState(
+    initialFilters.maxPrice?.toString() || ""
+  );
+  const [selectedCity, setSelectedCity] = useState("Chọn thành phố");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [maxPeople, setMaxPeople] = useState(
+    initialFilters.maxPeople?.toString() || ""
+  );
+  const [currentPeople, setCurrentPeople] = useState(
+    initialFilters.currentPeople?.toString() || ""
+  );
+
+  const handleCityChange = (city) => {
+    setSelectedCity(city);
+    setSelectedDistrict(null); // Reset district selection when city changes
+    console.log("Selected city:", city);
+  };
+
+  const handleDistrictChange = (district) => {
+    setSelectedDistrict(district);
+    console.log("Selected district:", district);
+  };
+
+  const handleApply = () => {
+    const filters = {
+      minPrice: parseFloat(minPrice) || undefined,
+      maxPrice: parseFloat(maxPrice) || undefined,
+      city: selectedCity || undefined,
+      district: selectedDistrict || undefined,
+      maxPeople: parseInt(maxPeople) || undefined,
+      currentPeople: parseInt(currentPeople) || undefined,
+    };
+    applyFilter(filters);
+    onClose();
+  };
+
+  return (
+    <Modal
+      visible={isVisible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalContainer}>
+        <Text>Price Range:</Text>
+        <View style={styles.sliderContainer}>
+          <MultiSlider
+            values={[minPrice, maxPrice]}
+            min={0}
+            max={20000000}
+            step={500000}
+            onValuesChange={(values) => {
+              setMinPrice(values[0]);
+              setMaxPrice(values[1]);
+            }}
+          />
+        </View>
+        <View style={styles.priceLabels}>
+          <Text>{`Giá thấp nhất: ${formatCurrency(minPrice)} đ`}</Text>
+          <Text>{`Giá cao nhất: ${formatCurrency(maxPrice)} đ`}</Text>
+        </View>
+        <Text style={styles.heading}>Chọn thành phố và quận/huyện</Text>
+        <Picker
+          selectedValue={selectedCity}
+          onValueChange={(itemValue) => handleCityChange(itemValue)}
+        >
+          {Object.keys(data).map((city) => (
+            <Picker.Item key={city} label={city} value={city} />
+          ))}
+        </Picker>
+        {selectedCity &&
+          selectedCity !== "Chọn thành phố" &&
+          data[selectedCity] && (
+            <Picker
+              selectedValue={selectedDistrict}
+              onValueChange={(itemValue) => handleDistrictChange(itemValue)}
+            >
+              {data[selectedCity].map((district) => (
+                <Picker.Item key={district} label={district} value={district} />
+              ))}
+            </Picker>
+          )}
+        {selectedCity && selectedDistrict && (
+          <View style={styles.result}>
+            <Text>
+              Bạn đã chọn: {selectedCity} - {selectedDistrict}
+            </Text>
+          </View>
+        )}
+        <Text>Max People:</Text>
+        <TextInput
+          style={styles.input}
+          value={maxPeople}
+          onChangeText={setMaxPeople}
+          keyboardType="numeric"
+        />
+        <Text>Current People:</Text>
+        <TextInput
+          style={styles.input}
+          value={currentPeople}
+          onChangeText={setCurrentPeople}
+          keyboardType="numeric"
+        />
+        <View style={styles.buttonContainer}>
+          <Button title="Apply Filters" onPress={handleApply} />
+          <Button title="Close" onPress={onClose} color="red" />
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
 const PostAccommodations = ({ route, navigation }) => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = React.useState(false);
-  const [q, setQ] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const minPrice = route.params?.data?.minPrice || 0;
-  const maxPrice = route.params?.data?.maxPrice || 200000;
-  const city = route.params?.data?.city || "";
-  const district = route.params?.data?.district || "";
-  const maxPeople = route.params?.data?.maxPeople || 0;
-  const currentPeople = route.params?.data?.currentPeople || 90000;
+  const [loading, setLoading] = useState(false);
+  const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
+  const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [filters, setFilters] = useState({
+    minPrice: route?.params?.data?.minPrice || 0,
+    maxPrice: route?.params?.data?.maxPrice || 200000,
+    city: route?.params?.data?.city || "",
+    district: route?.params?.data?.district || "",
+    maxPeople: route?.params?.data?.maxPeople || 0,
+    currentPeople: route?.params?.data?.currentPeople || 90000,
+  });
 
-  const loadPostAccomodations = async () => {
+  const loadPostAccommodations = async (reset = false) => {
     setLoading(true);
     if (page > 0) {
-      let url = `${endpoints["post_accommodations"]}?page=${page}&pending_status=APR&min_price=${minPrice}&max_price=${maxPrice}&city=${city}&district=${district}&max_people=${maxPeople}&current_people=${currentPeople}`;
+      const pageToLoad = reset ? 1 : page;
+      const queryParams = new URLSearchParams({
+        page: pageToLoad.toString(),
+        pending_status: "APR",
+        ...(filters.minPrice && { min_price: filters.minPrice }),
+        ...(filters.maxPrice && { max_price: filters.maxPrice }),
+        ...(filters.city && { city: filters.city }),
+        ...(filters.district && { district: filters.district }),
+        ...(filters.maxPeople && { max_people: filters.maxPeople }),
+        ...(filters.currentPeople && { current_people: filters.currentPeople }),
+        ...(q && { q }),
+      });
+
+      let url = `${endpoints["post_accommodations"]}?${queryParams.toString()}`;
+
       try {
         let res = await APIs.get(url);
-        if (page === 1) {
+        if (reset) {
           setPosts(res.data.results);
+          setPage(1);
         } else if (page > 1) {
-          setPosts((current) => {
-            return [...current, ...res.data.results];
-          });
+          setPosts((current) => [...current, ...res.data.results]);
         }
         if (res.data.next === null) setPage(0);
       } catch (ex) {
@@ -60,18 +190,25 @@ const PostAccommodations = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    setPage(1);
-    loadPostAccomodations();
-  }, [minPrice, maxPrice, city, district, maxPeople, currentPeople]);
+    setPage(1); // Reset the page to 1
+  }, [filters]);
 
-  React.useEffect(() => {
-    loadPostAccomodations();
+  useEffect(() => {
+    if (page === 1) {
+      loadPostAccommodations(true); // Reset the API call
+    } else {
+      loadPostAccommodations();
+    }
   }, [page]);
 
   const loadMore = ({ nativeEvent }) => {
-    if (loading === false && isCloseToBottom(nativeEvent)) {
-      setPage(page + 1);
+    if (!loading && isCloseToBottom(nativeEvent)) {
+      setPage((prevPage) => prevPage + 1);
     }
+  };
+
+  const handleFilterApply = (newFilters) => {
+    setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
   };
 
   return (
@@ -86,7 +223,7 @@ const PostAccommodations = ({ route, navigation }) => {
           value={q}
         />
         <TouchableOpacity
-          onPress={() => navigation.navigate("Filter")}
+          onPress={() => setFilterModalVisible(true)}
           style={{
             width: "10%",
             backgroundColor: "pink",
@@ -95,8 +232,8 @@ const PostAccommodations = ({ route, navigation }) => {
             borderRadius: 10,
           }}
         >
-          <Icon
-            source="sort"
+          <IconButton
+            icon="sort"
             size={20}
             style={{
               position: "absolute",
@@ -110,32 +247,66 @@ const PostAccommodations = ({ route, navigation }) => {
 
       <ScrollView onScroll={loadMore}>
         <View style={[MyStyle.container, MyStyle.margin]}>
-          {posts === null ? (
+          {loading && page === 1 ? (
             <ActivityIndicator />
           ) : (
-            <>
-              {posts.map((p) =>
-                p ? (
-                  <TouchableOpacity
-                    style={[MyStyle.top, MyStyle.post_accomodations]}
-                    key={p.id}
-                    onPress={() =>
-                      navigation.navigate("PostAccommodationDetails", {
-                        postId: p.id,
-                      })
-                    }
-                  >
-                    <Item instance={p} />
-                  </TouchableOpacity>
-                ) : null
-              )}
-            </>
+            posts.map((p) => (
+              <TouchableOpacity
+                style={[MyStyle.top, MyStyle.post_accomodations]}
+                key={p.id}
+                onPress={() =>
+                  navigation.navigate("PostAccommodationDetails", {
+                    postId: p.id,
+                  })
+                }
+              >
+                <Item instance={p} />
+              </TouchableOpacity>
+            ))
           )}
         </View>
         {loading && page > 1 && <ActivityIndicator />}
       </ScrollView>
+
+      <FilterModal
+        isVisible={isFilterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+        applyFilter={handleFilterApply}
+        initialFilters={filters}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    marginVertical: 50,
+    flex: 1,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginVertical: 5,
+  },
+  priceLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  sliderContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 20,
+  },
+});
 
 export default PostAccommodations;
