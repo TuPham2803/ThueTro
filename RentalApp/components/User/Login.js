@@ -105,15 +105,14 @@ const Login = ({ route }) => {
         error.response ? error.response.data : error.message
       );
       if (error.response && error.response.data.error === "invalid_grant") {
-        setLoginError("Thông tin đăng nhập không chính xác. Vui lòng thử lại.");
+        setLoginError("Thông tin đăng nhập không chính xác.");
       } else {
         setLoginError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
       }
-      Dialog.show({
+      Toast.show({
         type: ALERT_TYPE.DANGER,
         title: "Lỗi",
         textBody: loginError,
-        button: "Đóng",
       });
     } finally {
       setLoading(false);

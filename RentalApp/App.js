@@ -259,8 +259,20 @@ const MyTab = () => {
       />
       {user === null ? (
         <>
-          <Tab.Screen name="Register" component={Register} />
-          <Tab.Screen name="Login" component={Login} />
+          <Tab.Screen
+            name="Register"
+            component={Register}
+            options={{
+              title: "Đăng ký",
+            }}
+          />
+          <Tab.Screen
+            name="Login"
+            component={Login}
+            options={{
+              title: "Đăng nhập",
+            }}
+          />
         </>
       ) : (
         <>
