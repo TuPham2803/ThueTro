@@ -24,14 +24,13 @@ const formatCurrency = (value) => {
 
 const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
   const [minPrice, setMinPrice] = useState(
-    initialFilters.minPrice?.toString() || ""
+    initialFilters.minPrice?.toString() || 0
   );
   const [maxPrice, setMaxPrice] = useState(
-    initialFilters.maxPrice?.toString() || ""
+    initialFilters.maxPrice?.toString() || 20000000
   );
   const [selectedCity, setSelectedCity] = useState("Chọn thành phố");
   const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [submitted, setSubmitted] = useState(false);
   const [maxPeople, setMaxPeople] = useState(
     initialFilters.maxPeople?.toString() || ""
   );
@@ -42,12 +41,10 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
   const handleCityChange = (city) => {
     setSelectedCity(city);
     setSelectedDistrict(null); // Reset district selection when city changes
-    console.log("Selected city:", city);
   };
 
   const handleDistrictChange = (district) => {
     setSelectedDistrict(district);
-    console.log("Selected district:", district);
   };
 
   const resetSelection = () => {
@@ -66,6 +63,15 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
     };
     applyFilter(filters);
     onClose();
+  };
+
+  const handleReset = () => {
+    setMinPrice(0);
+    setMaxPrice(20000000);
+    setSelectedCity(null);
+    setSelectedDistrict(null);
+    setMaxPeople("");
+    setCurrentPeople("");
   };
 
   return (
@@ -98,6 +104,7 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
           selectedValue={selectedCity}
           onValueChange={(itemValue) => handleCityChange(itemValue)}
         >
+          <Picker.Item label="Chọn thành phố" value={null} />
           {Object.keys(data).map((city) => (
             <Picker.Item key={city} label={city} value={city} />
           ))}
@@ -140,6 +147,7 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
         />
         <View style={styles.buttonContainer}>
           <Button title="Apply Filters" onPress={handleApply} />
+          <Button title="Reset Filters" onPress={handleReset} color="orange" />
           <Button title="Close" onPress={onClose} color="red" />
         </View>
       </View>

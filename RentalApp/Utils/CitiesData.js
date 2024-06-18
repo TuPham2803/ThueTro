@@ -1,5 +1,4 @@
 const data = {
-  "Chọn thành phố": ["Chọn quận/huyện"],
   "An Giang": [
     "Long Xuyen",
     "Chau Doc",
