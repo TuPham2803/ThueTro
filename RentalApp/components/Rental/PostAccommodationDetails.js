@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { Button, Card, Icon, List, TextInput } from "react-native-paper";
+import { Button, Card, List, TextInput } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
 import APIs, { endpoints } from "../../configs/APIs";
 import RenderHTML from "react-native-render-html";
@@ -19,8 +19,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PostAccommodationDetails = ({ route }) => {
   const [post, setPost] = React.useState(null);
-  const [comments, setComments] = React.useState(null);
-  const [newComment, setNewComment] = React.useState(null);
+  const [comments, setComments] = React.useState([]);
+  const [newComment, setNewComment] = React.useState("");
   const postId = route.params?.postId;
   const ENUM_OBJECT = {
     PR: "Nguyên căn",
@@ -52,7 +52,7 @@ const PostAccommodationDetails = ({ route }) => {
   }, [postId]);
 
   const loadMoreInfo = ({ nativeEvent }) => {
-    if (!comments && isCloseToBottom(nativeEvent)) {
+    if (comments.length === 0 && isCloseToBottom(nativeEvent)) {
       loadComments();
     }
   };
@@ -91,7 +91,7 @@ const PostAccommodationDetails = ({ route }) => {
           <ScrollView onScroll={loadMoreInfo}>
             <View style={[MyStyle.top, MyStyle.wrapper]}>
               <Swiper style={MyStyle.wrapper} showsButtons={false}>
-                {post.images.map((image, index) => (
+                {post.images?.map((image, index) => (
                   <View style={MyStyle.slide} key={index}>
                     <Image
                       source={{ uri: image }}
@@ -111,7 +111,7 @@ const PostAccommodationDetails = ({ route }) => {
                 {post.title}
               </Text>
               <Card.Content>
-                <Text>Giá tiền:{post.price} đ/tháng</Text>
+                <Text>Giá tiền: {post.price} đ/tháng</Text>
                 <Text>
                   Địa chỉ: {post.address}, Quận {post.district}, {post.city}
                 </Text>

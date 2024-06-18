@@ -50,6 +50,11 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
     console.log("Selected district:", district);
   };
 
+  const resetSelection = () => {
+    setSelectedCity(null);
+    setSelectedDistrict(null);
+  };
+
   const handleApply = () => {
     const filters = {
       minPrice: parseFloat(minPrice) || undefined,
@@ -115,6 +120,9 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
               Bạn đã chọn: {selectedCity} - {selectedDistrict}
             </Text>
           </View>
+        )}
+        {selectedCity && (
+          <Button title="Bỏ chọn thành phố" onPress={resetSelection} />
         )}
         <Text>Max People:</Text>
         <TextInput
