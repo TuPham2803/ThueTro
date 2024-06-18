@@ -169,7 +169,6 @@ const CreatePostAccommodation = ({ route, navigation }) => {
       if (res.status === 201) {
         alert("Create post accommodation successfully");
         if (route.name == "CreatePostAccommodationHome") {
-          // clear HomeTab and navigate to PostManagerTab
           navigation.dispatch(
             CommonActions.reset({
               index: 0,

@@ -259,7 +259,7 @@ const CreatePostRequest = ({ navigation }) => {
           <View style={[MyStyle.input, MyStyle.margin]}>
             <Picker
               selectedValue={gender}
-              onValueChange={(itemValue) => setGender(itemValue)}
+              onValueChange={setGender}
               style={styles.picker}
               mode="dialog" // or "dialog"
             >

@@ -690,6 +690,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
           imageIndex={0}
           visible={isMainImageViewVisible}
           onRequestClose={() => setMainImageViewVisible(false)}
+          
         />
       </View>
     </Provider>

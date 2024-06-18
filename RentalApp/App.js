@@ -2,10 +2,11 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { useContext, useReducer, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { MyUserReducer } from "./configs/Reducer";
 import { MyDispatchContext, MyUserContext } from "./configs/Contexts";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Icon } from "react-native-paper";
+import { Icon, IconButton } from "react-native-paper";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import PostAccommodationsFilter from "./components/Rental/PostAccomodationsFilter";
 import { ColorAssets } from "./assets/ColorAssets";
@@ -89,7 +90,7 @@ const HomeTab = () => {
 
 const PostManagerTab = () => {
   const user = useContext(MyUserContext);
-
+  const navigation = useNavigation();
   return (
     <Stack.Navigator
       screenOptions={() => ({
@@ -205,7 +206,9 @@ const MyTab = () => {
           const listScreenHide = [
             "Chat",
             "CreatePostRequest",
+            "CreatePostRequestHome",
             "CreatePostAccommodation",
+            "CreatePostAccommodationHome",
             "UpdatePostAccommodation",
             "UpdatePostRequest",
             "EditProfile",
