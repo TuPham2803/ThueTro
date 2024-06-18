@@ -25,7 +25,6 @@ const Login = ({ route }) => {
   const [passwordError, setPasswordError] = useState({
     error: false,
   });
-  const [loginError, setLoginError] = useState(""); // New state variable for login error message
   const navigation = useNavigation();
   const dispatch = useContext(MyDispatchContext);
 
@@ -61,7 +60,6 @@ const Login = ({ route }) => {
 
     try {
       setLoading(true);
-      setLoginError(""); // Reset login error message
 
       const formData = new FormData();
       formData.append("username", username);
@@ -104,15 +102,15 @@ const Login = ({ route }) => {
         "Login failed: ",
         error.response ? error.response.data : error.message
       );
+      errorMessage = "Đã xảy ra lỗi. Vui lòng thử lại sau.";
+
       if (error.response && error.response.data.error === "invalid_grant") {
-        setLoginError("Thông tin đăng nhập không chính xác.");
-      } else {
-        setLoginError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+        errorMessage = "Thông tin đăng nhập không chính xác.";
       }
       Toast.show({
         type: ALERT_TYPE.DANGER,
         title: "Lỗi",
-        textBody: loginError,
+        textBody: errorMessage,
       });
     } finally {
       setLoading(false);
