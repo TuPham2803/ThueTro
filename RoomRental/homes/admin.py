@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from .models import User, PostAccommodation, AccommodationImage, InteractionAccommodation, Follow, PostRequest, \
-    CommentAccommodation
+from .models import User, PostAccommodation, AccommodationImage,  Follow, PostRequest, \
+    CommentAccommodation, CommentRequest, LikeRequest, LikeAccommodation
 import cloudinary
 from django.contrib import admin
 from django.utils.html import mark_safe
@@ -70,4 +70,6 @@ admin_site.register(PostAccommodation, MyAccommodationAdmin)
 admin_site.register(PostRequest)
 admin_site.register(Follow)
 admin_site.register(CommentAccommodation)
-# Register your models here.
+admin_site.register(CommentRequest)
+admin_site.register(LikeAccommodation)
+admin_site.register(LikeRequest)

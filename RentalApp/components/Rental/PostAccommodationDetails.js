@@ -160,148 +160,146 @@ const PostAccommodationDetails = ({ route }) => {
               visible={isImageViewVisible}
               onRequestClose={() => setImageViewVisible(false)}
             />
-            <Card style={MyStyle.top}>
-              <Text
-                style={[MyStyle.title, MyStyle.marginDistantSide]}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {post.title}
-              </Text>
-              <Card.Content>
-                <Text>Giá tiền: {post.price} đ/tháng</Text>
-                <Text>
-                  Địa chỉ: {post.address}, Quận {post.district}, {post.city}
-                </Text>
-                <Text>SĐT: {post.phone_number}</Text>
-              </Card.Content>
-            </Card>
-
-            <Card style={MyStyle.top}>
-              <Card.Content>
-                <View
-                  style={[
-                    MyStyle.container,
-                    MyStyle.row,
-                    MyStyle.marginDistantSide,
-                    { justifyContent: "space-between" },
-                  ]}
-                >
+            <View style={{ paddingHorizontal: 10 }}>
+              <Card style={MyStyle.top}>
+                <Card.Content>
                   <View
                     style={[
-                      MyStyle.margin,
-                      MyStyle.alignCenter,
                       MyStyle.container,
+                      MyStyle.row,
+                      MyStyle.marginDistantSide,
+                      { justifyContent: "space-between" },
                     ]}
                   >
-                    <List.Icon color="purple" icon="map" />
-                    <Text>Diện tích</Text>
-                    <Text style={{ fontWeight: "bold" }}>{post.acreage}</Text>
-                  </View>
-                  <View
-                    style={[
-                      MyStyle.margin,
-                      MyStyle.alignCenter,
-                      MyStyle.container,
-                    ]}
-                  >
-                    <List.Icon color="purple" icon="account" />
-                    <Text>Số người đang ở</Text>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {post.current_people}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      MyStyle.margin,
-                      MyStyle.alignCenter,
-                      MyStyle.container,
-                    ]}
-                  >
-                    <List.Icon color="purple" icon="account-multiple" />
-                    <Text>Số người tối đa</Text>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {post.max_people}
-                    </Text>
-                  </View>
-                  <View
-                    style={[
-                      MyStyle.margin,
-                      MyStyle.alignCenter,
-                      MyStyle.container,
-                    ]}
-                  >
-                    <List.Icon color="purple" icon="home" />
-                    <Text>Loại nhà trọ</Text>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {ENUM_OBJECT[post.room_type]}
-                    </Text>
-                  </View>
-                </View>
-
-                <Text style={MyStyle.header}>Tin đối tác</Text>
-                <Text style={MyStyle.subject}>
-                  {" "}
-                  Các tin đăng của chủ nhà đối tác với ứng dụng được hiển thị
-                  nổi bật, uy tín hơn với các chủ nhà thường để giúp bạn an tâm
-                  hơn khi thuê phòng với trải nghiệm trên ứng dụng
-                </Text>
-              </Card.Content>
-            </Card>
-
-            <Card style={MyStyle.top}>
-              <Card.Content>
-                <Text style={MyStyle.header}>Mô tả</Text>
-                <RenderHTML
-                  contentWidth={windowWidth}
-                  originWhitelist={["*"]}
-                  source={{ html: post.description }}
-                />
-              </Card.Content>
-            </Card>
-
-            <Card style={MyStyle.top}>
-              <Card.Content>
-                {user !== null ? (
-                  <>
-                    <TextInput
-                      style={MyStyle.input}
-                      placeholder="Add a comment..."
-                      onChangeText={(text) => setNewComment(text)}
-                      value={newComment}
-                    />
-                    <Button
-                      style={[MyStyle.button, MyStyle.top]}
-                      onPress={comment}
+                    <View
+                      style={[
+                        MyStyle.margin,
+                        MyStyle.alignCenter,
+                        MyStyle.container,
+                      ]}
                     >
-                      Submit
-                    </Button>
-                  </>
-                ) : null}
-
-                {comments === null ? (
-                  <ActivityIndicator />
-                ) : (
-                  <>
-                    <Text style={MyStyle.header}>Bình luận</Text>
-                    {comments.map((c) => (
-                      <List.Item
-                        key={c.id}
-                        style={MyStyle.margin}
-                        title={c.content}
-                        description={moment(c.created_date).fromNow()}
-                        left={() => (
-                          <Image
-                            style={MyStyle.avatar}
-                            source={{ uri: c.user.image }}
-                          />
-                        )}
+                      <List.Icon color={ColorAssets.content.icon} icon="map" />
+                      <Text>Diện tích</Text>
+                      <Text style={{ fontWeight: "bold" }}>{post.acreage}</Text>
+                    </View>
+                    <View
+                      style={[
+                        MyStyle.margin,
+                        MyStyle.alignCenter,
+                        MyStyle.container,
+                      ]}
+                    >
+                      <List.Icon
+                        color={ColorAssets.content.icon}
+                        icon="account"
                       />
-                    ))}
-                  </>
-                )}
-              </Card.Content>
-            </Card>
+                      <Text>Số người đang ở</Text>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {post.current_people}
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        MyStyle.margin,
+                        MyStyle.alignCenter,
+                        MyStyle.container,
+                      ]}
+                    >
+                      <List.Icon
+                        color={ColorAssets.content.icon}
+                        icon="account-multiple"
+                      />
+                      <Text>Số người tối đa</Text>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {post.max_people}
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        MyStyle.margin,
+                        MyStyle.alignCenter,
+                        MyStyle.container,
+                      ]}
+                    >
+                      <List.Icon color={ColorAssets.content.icon} icon="home" />
+                      <Text>Loại nhà trọ</Text>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {ENUM_OBJECT[post.room_type]}
+                      </Text>
+                    </View>
+                  </View>
+                </Card.Content>
+              </Card>
+              <Card style={MyStyle.top}>
+                <Card.Title
+                  title={post.title}
+                  titleStyle={[MyStyle.title, MyStyle.marginDistantSide]}
+                  subtitle={`${post.price} đ/tháng`}
+                  subtitleStyle={MyStyle.subtitle} // Optional: Add a subtitle style
+                  titleNumberOfLines={1}
+                  titleEllipsizeMode="tail"
+                />
+                <Card.Content>
+                  <Text>Giá tiền: {post.price} đ/tháng</Text>
+                  <Text>
+                    Địa chỉ: {post.address}, Quận {post.district}, {post.city}
+                  </Text>
+                  <Text>SĐT: {post.phone_number}</Text>
+                </Card.Content>
+              </Card>
+              <Card style={MyStyle.top}>
+                <Card.Content>
+                  <Text style={MyStyle.header}>Mô tả</Text>
+                  <RenderHTML
+                    contentWidth={windowWidth}
+                    originWhitelist={["*"]}
+                    source={{ html: post.description }}
+                  />
+                </Card.Content>
+              </Card>
+              <Card style={MyStyle.top}>
+                <Card.Content>
+                  {user !== null ? (
+                    <>
+                      <TextInput
+                        style={MyStyle.input}
+                        placeholder="Add a comment..."
+                        onChangeText={(text) => setNewComment(text)}
+                        value={newComment}
+                      />
+                      <Button
+                        style={[MyStyle.button, MyStyle.top]}
+                        onPress={comment}
+                      >
+                        Submit
+                      </Button>
+                    </>
+                  ) : null}
+
+                  {comments === null ? (
+                    <ActivityIndicator />
+                  ) : (
+                    <>
+                      <Text style={MyStyle.header}>Bình luận</Text>
+                      {comments.map((c) => (
+                        <List.Item
+                          key={c.id}
+                          style={MyStyle.margin}
+                          title={c.content}
+                          description={moment(c.created_date).fromNow()}
+                          left={() => (
+                            <Image
+                              style={MyStyle.avatar}
+                              source={{ uri: c.user.image }}
+                            />
+                          )}
+                        />
+                      ))}
+                    </>
+                  )}
+                </Card.Content>
+              </Card>
+            </View>
           </ScrollView>
         </>
       )}
