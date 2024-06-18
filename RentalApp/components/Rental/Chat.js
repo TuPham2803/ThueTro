@@ -33,7 +33,9 @@ import { ColorAssets } from "../../assets/ColorAssets";
 
 const Chat = ({ route, navigation }) => {
   const { friendDetails } = route.params;
-  const [conversationId, setConversationId] = useState(route.params.conversationId);
+  const [conversationId, setConversationId] = useState(
+    route.params.conversationId
+  );
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const flatListRef = useRef(null);
@@ -90,24 +92,15 @@ const Chat = ({ route, navigation }) => {
 
         if (existingConversationId) {
           setConversationId(existingConversationId);
-          console.log("Found existing conversation with id:", existingConversationId);
+          console.log(
+            "Found existing conversation with id:",
+            existingConversationId
+          );
         } else {
           console.log("No existing conversation found, creating a new one");
-          await createNewConversation();
+          // await createNewConversation();
         }
       }
-    };
-
-    const createNewConversation = async () => {
-      const newConversation = {
-        createdAt: serverTimestamp(),
-        lastMessageId: "",
-        participantIds: [user.id, friendDetails.id],
-      };
-
-      const conversationRef = await addDoc(collection(db, "conversations"), newConversation);
-      setConversationId(conversationRef.id);
-      console.log("Created new conversation with id:", conversationRef.id);
     };
 
     fetchConversation();
@@ -177,6 +170,8 @@ const Chat = ({ route, navigation }) => {
   const handleSend = async () => {
     if (newMessage.trim()) {
       let currentConversationId = conversationId;
+
+      // Check if there is no current conversation ID, then create a new conversation
       if (!currentConversationId) {
         try {
           const newConversation = {
@@ -201,6 +196,7 @@ const Chat = ({ route, navigation }) => {
         }
       }
 
+      // Now send the message
       const newMessageObj = {
         conversationId: currentConversationId,
         content: newMessage,
