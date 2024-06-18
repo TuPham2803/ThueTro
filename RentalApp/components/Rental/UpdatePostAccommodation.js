@@ -678,19 +678,19 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
           )}
         </ScrollView>
         <ImageViewing
+          images={[{ uri: mainImage.uri ? mainImage.uri : mainImage }]}
+          imageIndex={0}
+          visible={isMainImageViewVisible}
+          onRequestClose={() => setMainImageViewVisible(false)}
+          
+        />
+        <ImageViewing
           images={images.map((image) => ({
             uri: image.uri ? image.uri : image,
           }))}
           imageIndex={currentImageIndex}
           visible={isImageViewVisible}
           onRequestClose={() => setImageViewVisible(false)}
-        />
-        <ImageViewing
-          images={[{ uri: mainImage.uri ? mainImage.uri : mainImage }]}
-          imageIndex={0}
-          visible={isMainImageViewVisible}
-          onRequestClose={() => setMainImageViewVisible(false)}
-          
         />
       </View>
     </Provider>

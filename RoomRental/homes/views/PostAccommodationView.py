@@ -158,15 +158,11 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         # Get the list of existing image URLs and new images
         existing_images = request.data.getlist('existing_images', [])
         new_images = request.FILES.getlist('new_images', [])
-        print(f"existing_images: {existing_images}")
-        print(f"new_images: {new_images}")
         # Handle existing images (keep only those which are still included in the request)
         instance_images_urls = [
             image.image.url for image in instance.images.all()]
-        print(f"instance_images_urls: {instance_images_urls}")
         images_to_remove = list(
             set(instance_images_urls) - set(existing_images))
-        print(f"images_to_remove: {images_to_remove}")
         # Remove images from Cloudinary
         # for image_url in images_to_remove:
         #     print(f"image_url: {image_url}")
@@ -180,9 +176,6 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         for image_url in images_to_remove:
             instance.images.filter(image__startswith=f"{image_url}.").delete()
 
-        instance_images_urls = [
-            image.image.url for image in instance.images.all()]
-        print(f"instance_images_urls after deletion: {instance_images_urls}")
         # Upload new images
         uploaded_image_urls = []
         for image_file in new_images:
@@ -191,7 +184,6 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
                 uploaded_image_urls.append(upload_result['secure_url'])
             except Exception as e:
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        print(f"uploaded_image_urls: {uploaded_image_urls}")
 
         # Update the instance with new data
         serializer = self.get_serializer(

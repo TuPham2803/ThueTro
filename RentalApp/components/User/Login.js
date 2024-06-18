@@ -7,6 +7,12 @@ import { useNavigation } from "@react-navigation/native";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 import { SERVER_CLIENT_ID, SERVER_CLIENT_SECRET } from "@env";
 
 const Login = ({ route }) => {
@@ -94,7 +100,7 @@ const Login = ({ route }) => {
         navigation.navigate("Home");
       }
     } catch (error) {
-      console.error(
+      console.log(
         "Login failed: ",
         error.response ? error.response.data : error.message
       );
@@ -103,68 +109,71 @@ const Login = ({ route }) => {
       } else {
         setLoginError("Đã xảy ra lỗi. Vui lòng thử lại sau.");
       }
+      Dialog.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Lỗi",
+        textBody: loginError,
+        button: "Đóng",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={[MyStyle.container, MyStyle.justifyContentCenter]}>
-      <View style={MyStyle.alignCenter}>
-        <Text style={MyStyle.header}>ĐĂNG NHẬP NGƯỜI DÙNG</Text>
-        <View style={{ width: "90%", marginTop: 10 }}>
-          <TextInput
-            mode="outlined"
-            outlineColor={ColorAssets.input.border}
-            activeOutlineColor={ColorAssets.input.borderFocus}
-            value={username}
-            onChangeText={setUsername}
-            style={MyStyle.input}
-            label="Tên đăng nhập"
-            error={usernameError.error}
-          />
-          {usernameError.error && (
-            <HelperText type="error" visible={usernameError.error}>
-              {usernameError.message}
-            </HelperText>
-          )}
-        </View>
-        <View style={{ width: "90%", marginTop: 10 }}>
-          <TextInput
-            mode="outlined"
-            outlineColor={ColorAssets.input.border}
-            activeOutlineColor={ColorAssets.input.borderFocus}
-            secureTextEntry={true}
-            value={password}
-            onChangeText={setPassword}
-            style={MyStyle.input}
-            label="Mật khẩu"
-            error={passwordError.error}
-          />
-          {passwordError.error && (
-            <HelperText type="error" visible={passwordError.error}>
-              {passwordError.message}
-            </HelperText>
-          )}
-        </View>
-        {loginError !== "" && (
-          <HelperText type="error" visible={loginError !== ""}>
-            {loginError}
-          </HelperText>
-        )}
-        <View style={[MyStyle.row, MyStyle.margin]}>
-          <Button
-            icon="account-lock-open"
-            mode="contained"
-            onPress={login}
-            style={[MyStyle.margin, MyStyle.button]}
-            loading={loading}
-          >
-            Đăng nhập
-          </Button>
+    <AlertNotificationRoot>
+      <View style={[MyStyle.container, MyStyle.justifyContentCenter]}>
+        <View style={MyStyle.alignCenter}>
+          <Text style={MyStyle.header}>ĐĂNG NHẬP NGƯỜI DÙNG</Text>
+          <View style={{ width: "90%", marginTop: 10 }}>
+            <TextInput
+              mode="outlined"
+              outlineColor={ColorAssets.input.border}
+              activeOutlineColor={ColorAssets.input.borderFocus}
+              value={username}
+              onChangeText={setUsername}
+              style={MyStyle.input}
+              label="Tên đăng nhập"
+              error={usernameError.error}
+            />
+            {usernameError.error && (
+              <HelperText type="error" visible={usernameError.error}>
+                {usernameError.message}
+              </HelperText>
+            )}
+          </View>
+          <View style={{ width: "90%", marginTop: 10 }}>
+            <TextInput
+              mode="outlined"
+              outlineColor={ColorAssets.input.border}
+              activeOutlineColor={ColorAssets.input.borderFocus}
+              secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
+              style={MyStyle.input}
+              label="Mật khẩu"
+              error={passwordError.error}
+            />
+            {passwordError.error && (
+              <HelperText type="error" visible={passwordError.error}>
+                {passwordError.message}
+              </HelperText>
+            )}
+          </View>
+          <View style={[MyStyle.row, MyStyle.margin]}>
+            <Button
+              icon="account-lock-open"
+              mode="contained"
+              onPress={login}
+              style={[MyStyle.margin, MyStyle.button]}
+              loading={loading}
+            >
+              Đăng nhập
+            </Button>
+          </View>
         </View>
       </View>
-    </View>
+    </AlertNotificationRoot>
   );
 };
 
