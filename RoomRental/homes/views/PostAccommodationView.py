@@ -156,34 +156,34 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         instance = self.get_object()
 
         # Get the list of existing image URLs and new images
-        existing_images = request.data.getlist('existing_images', [])
-        new_images = request.FILES.getlist('new_images', [])
-        # Handle existing images (keep only those which are still included in the request)
-        instance_images_urls = [
-            image.image.url for image in instance.images.all()]
-        images_to_remove = list(
-            set(instance_images_urls) - set(existing_images))
-        # Remove images from Cloudinary
+        # existing_images = request.data.getlist('existing_images', [])
+        # new_images = request.FILES.getlist('new_images', [])
+        # # Handle existing images (keep only those which are still included in the request)
+        # instance_images_urls = [
+        #     image.image.url for image in instance.images.all()]
+        # images_to_remove = list(
+        #     set(instance_images_urls) - set(existing_images))
+        # # Remove images from Cloudinary
+        # # for image_url in images_to_remove:
+        # #     print(f"image_url: {image_url}")
+        # #     public_id = image_url.split('/')[-1].split('.')[0]
+        # #     try:
+        # #         cloudinary.uploader.destroy(public_id)
+        # #     except Exception as e:
+        # #         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # # Remove the images from the database
         # for image_url in images_to_remove:
-        #     print(f"image_url: {image_url}")
-        #     public_id = image_url.split('/')[-1].split('.')[0]
+        #     instance.images.filter(image__startswith=f"{image_url}.").delete()
+
+        # # Upload new images
+        uploaded_image_urls = []
+        # for image_file in new_images:
         #     try:
-        #         cloudinary.uploader.destroy(public_id)
+        #         upload_result = cloudinary.uploader.upload(image_file)
+        #         uploaded_image_urls.append(upload_result['secure_url'])
         #     except Exception as e:
         #         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        # Remove the images from the database
-        for image_url in images_to_remove:
-            instance.images.filter(image__startswith=f"{image_url}.").delete()
-
-        # Upload new images
-        uploaded_image_urls = []
-        for image_file in new_images:
-            try:
-                upload_result = cloudinary.uploader.upload(image_file)
-                uploaded_image_urls.append(upload_result['secure_url'])
-            except Exception as e:
-                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # Update the instance with new data
         serializer = self.get_serializer(

@@ -63,7 +63,6 @@ const UpdatePostRequest = ({ route, navigation }) => {
     formData.append("room_type", selectedHouseType);
     formData.append("min_price", priceRange[0]);
     formData.append("max_price", priceRange[1]);
-    console.log("formData", formData);
     try {
       const token = await AsyncStorage.getItem("token");
       if (!token) {

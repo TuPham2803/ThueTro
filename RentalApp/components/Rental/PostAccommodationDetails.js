@@ -22,7 +22,6 @@ import ImageViewing from "react-native-image-viewing";
 
 const PostAccommodationDetails = ({ route }) => {
   const { post } = route.params;
-  console.log(post.user_post);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [selectIndex, setSelectIndex] = useState(0);

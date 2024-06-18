@@ -87,6 +87,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
     formData.append("room_type", selectedHouseType);
+    formData.append("pending_status", "PD");
     if (selectedHouseType === "SH") {
       formData.append("max_people", max_people);
       formData.append("current_people", current_people);
@@ -682,7 +683,6 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
           imageIndex={0}
           visible={isMainImageViewVisible}
           onRequestClose={() => setMainImageViewVisible(false)}
-          
         />
         <ImageViewing
           images={images.map((image) => ({

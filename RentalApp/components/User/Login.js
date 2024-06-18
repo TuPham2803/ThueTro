@@ -49,7 +49,6 @@ const Login = ({ route }) => {
     } else {
       setPasswordError({ error: false });
     }
-    console.log(isValid);
     return isValid;
   };
 

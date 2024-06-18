@@ -157,7 +157,7 @@ const Conversation = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-      <Button
+      {/* <Button
         icon="plus"
         mode="contained"
         onPress={() =>
@@ -169,7 +169,7 @@ const Conversation = ({ navigation }) => {
         style={MyStyle.button}
       >
         New Conversation
-      </Button>
+      </Button> */}
     </View>
   );
 };

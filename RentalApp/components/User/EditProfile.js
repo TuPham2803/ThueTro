@@ -58,7 +58,6 @@ const EditProfile = ({ navigation }) => {
   };
 
   const deleteImage = () => {
-    console.log("Delete image");
     setImage(null);
   };
 
