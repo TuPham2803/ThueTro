@@ -35,6 +35,7 @@ const PostAccommodationDetails = ({ route, navigation }) => {
     SH: "Ở ghép",
   };
   const swiperRef = useRef(null); // Ref for SwiperFlatList
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadComments();
@@ -58,11 +59,14 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   }, [liked]);
 
   const loadComments = async () => {
+    setLoading(true);
     try {
       let res = await APIs.get(endpoints.comments(post.id));
       setComments(res.data);
     } catch (ex) {
       console.error(ex);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,7 +115,7 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   const handleLike = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const red = await authApi(token).post(endpoints["like"](post.id));
+      const res = await authApi(token).post(endpoints["like"](post.id));
       setLiked(!liked);
       if (!liked) {
         alert("Liked!");

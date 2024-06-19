@@ -57,8 +57,8 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         except PostAccommodation.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        liked = LikeAccommodation.objects.filter(user=user, post_accommodation=post).exists()
-        return Response({"liked": liked}, status=status.HTTP_200_OK)
+        liked = LikeAccommodation.objects.filter(user=user, post_accommodation=post)
+        return Response({"liked": liked.active}, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], url_path='review', detail=True)
     def review(self, request, pk):
