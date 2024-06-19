@@ -43,21 +43,21 @@ const ItemPostRequest = ({ instance }) => {
           </Text>
         </View>
       }
-      right={() => (
-        <View style={[{ justifyContent: "flex-end", alignItems: "flex-end" }]}>
-          <Text>{moment(instance.created_at).fromNow()}</Text>
-          <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
-            <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
-              <List.Icon icon="heart-outline" />
-              <Text>12</Text>
-            </View>
-            <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
-              <List.Icon icon="comment-outline" />
-              <Text>12</Text>
-            </View>
-          </View>
-        </View>
-      )}
+      // right={() => (
+      //   <View style={[{ justifyContent: "flex-end", alignItems: "flex-end" }]}>
+      //     <Text>{moment(instance.created_at).fromNow()}</Text>
+      //     <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
+      //       <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
+      //         <List.Icon icon="heart-outline" />
+      //         <Text>12</Text>
+      //       </View>
+      //       <View style={[MyStyle.marginDistantSide, MyStyle.row]}>
+      //         <List.Icon icon="comment-outline" />
+      //         <Text>12</Text>
+      //       </View>
+      //     </View>
+      //   </View>
+      // )}
     />
   );
 };
