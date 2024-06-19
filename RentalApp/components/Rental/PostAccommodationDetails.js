@@ -22,6 +22,7 @@ import ImageViewing from "react-native-image-viewing";
 
 const PostAccommodationDetails = ({ route, navigation }) => {
   const { post } = route.params;
+  console.log(post.user_post);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [selectIndex, setSelectIndex] = useState(0);
@@ -30,8 +31,8 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   const windowWidth = useWindowDimensions().width;
   const user = useContext(MyUserContext);
   const ENUM_OBJECT = {
-    PR: "Nguyên căn",
-    SH: "Phòng trọ",
+    PR: "Ở riêng",
+    SH: "Ở ghép",
   };
   const swiperRef = useRef(null); // Ref for SwiperFlatList
 
@@ -72,6 +73,9 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   };
 
   const comment = async () => {
+    if (newComment.length === 0) {
+      return;
+    }
     try {
       const token = await AsyncStorage.getItem("token");
 
@@ -177,7 +181,7 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                     MyStyle.horizontalImageContainer,
                     { justifyContent: "center" },
                   ]}
-                  onPress={() => scrollToIndex(index)} // Call scrollToIndex on press
+                  onPress={() => scrollToIndex(index)}
                 >
                   <Image
                     source={{ uri: image }}
@@ -203,73 +207,98 @@ const PostAccommodationDetails = ({ route, navigation }) => {
               visible={isImageViewVisible}
               onRequestClose={() => setImageViewVisible(false)}
             />
-            <View style={{ paddingHorizontal: 10 }}>
-              <Card style={MyStyle.top}>
+            <View style={{ paddingHorizontal: 15 }}>
+              <Card
+                style={[
+                  MyStyle.top,
+                  { backgroundColor: ColorAssets.input.background },
+                ]}
+              >
                 <Card.Content>
                   <View
                     style={[
                       MyStyle.container,
-                      MyStyle.row,
                       MyStyle.marginDistantSide,
-                      { justifyContent: "space-between" },
+                      { backgroundColor: ColorAssets.input.background },
                     ]}
                   >
                     <View
-                      style={[
-                        MyStyle.margin,
-                        MyStyle.alignCenter,
-                        MyStyle.container,
-                      ]}
+                      style={[MyStyle.row, { justifyContent: "space-between" }]}
                     >
-                      <List.Icon color={ColorAssets.content.icon} icon="map" />
-                      <Text>Diện tích</Text>
-                      <Text style={{ fontWeight: "bold" }}>{post.acreage}</Text>
+                      <View
+                        style={[
+                          MyStyle.margin,
+                          MyStyle.alignCenter,
+                          { flex: 1 },
+                        ]}
+                      >
+                        <List.Icon
+                          color={ColorAssets.content.icon}
+                          icon="map"
+                        />
+                        <Text>Diện tích</Text>
+                        <Text style={{ fontWeight: "bold" }}>
+                          {post.acreage} m²
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          MyStyle.margin,
+                          MyStyle.alignCenter,
+                          { flex: 1 },
+                        ]}
+                      >
+                        <List.Icon
+                          color={ColorAssets.content.icon}
+                          icon="home"
+                        />
+                        <Text>Loại nhà trọ</Text>
+                        <Text style={{ fontWeight: "bold" }}>
+                          {ENUM_OBJECT[post.room_type]}
+                        </Text>
+                      </View>
                     </View>
-                    <View
-                      style={[
-                        MyStyle.margin,
-                        MyStyle.alignCenter,
-                        MyStyle.container,
-                      ]}
-                    >
-                      <List.Icon
-                        color={ColorAssets.content.icon}
-                        icon="account"
-                      />
-                      <Text>Số người đang ở</Text>
-                      <Text style={{ fontWeight: "bold" }}>
-                        {post.current_people}
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        MyStyle.margin,
-                        MyStyle.alignCenter,
-                        MyStyle.container,
-                      ]}
-                    >
-                      <List.Icon
-                        color={ColorAssets.content.icon}
-                        icon="account-multiple"
-                      />
-                      <Text>Số người tối đa</Text>
-                      <Text style={{ fontWeight: "bold" }}>
-                        {post.max_people}
-                      </Text>
-                    </View>
-                    <View
-                      style={[
-                        MyStyle.margin,
-                        MyStyle.alignCenter,
-                        MyStyle.container,
-                      ]}
-                    >
-                      <List.Icon color={ColorAssets.content.icon} icon="home" />
-                      <Text>Loại nhà trọ</Text>
-                      <Text style={{ fontWeight: "bold" }}>
-                        {ENUM_OBJECT[post.room_type]}
-                      </Text>
-                    </View>
+                    {post.room_type === "SH" && (
+                      <View
+                        style={[
+                          MyStyle.row,
+                          { justifyContent: "space-between" },
+                        ]}
+                      >
+                        <View
+                          style={[
+                            MyStyle.margin,
+                            MyStyle.alignCenter,
+                            { flex: 1 },
+                          ]}
+                        >
+                          <List.Icon
+                            color={ColorAssets.content.icon}
+                            icon="account-multiple"
+                          />
+                          <Text>Số người tối đa</Text>
+                          <Text style={{ fontWeight: "bold" }}>
+                            {post.max_people}
+                          </Text>
+                        </View>
+                        <View
+                          style={[
+                            MyStyle.margin,
+                            MyStyle.alignCenter,
+                            { flex: 1 },
+                          ]}
+                        >
+                          <List.Icon
+                            color={ColorAssets.content.icon}
+                            icon="account"
+                          />
+                          <Text>Số người đang ở</Text>
+                          <Text style={{ fontWeight: "bold" }}>
+                            {post.current_people}
+                          </Text>
+                        </View>
+                      </View>
+                    )}
                   </View>
                 </Card.Content>
               </Card>
@@ -290,7 +319,13 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                   <Text>SĐT: {post.phone_number}</Text>
                 </Card.Content>
               </Card>
-              <Card style={MyStyle.top}>
+
+              <Card
+                style={[
+                  MyStyle.top,
+                  { backgroundColor: ColorAssets.input.background },
+                ]}
+              >
                 <Card.Content>
                   <Text style={MyStyle.header}>Mô tả</Text>
                   <RenderHTML
@@ -300,22 +335,77 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                   />
                 </Card.Content>
               </Card>
-              <Card style={MyStyle.top}>
+              <Card
+                style={[
+                  MyStyle.top,
+                  { backgroundColor: ColorAssets.input.background },
+                ]}
+              >
+                <Card.Content>
+                  <View style={MyStyle.row}>
+                    <Image
+                      source={{ uri: post.user_post.image }}
+                      style={MyStyle.avatar}
+                    />
+                    <View style={{ flex: 1, marginLeft: 10 }}>
+                      <Text style={MyStyle.username}>
+                        {post.user_post.username}
+                      </Text>
+                      <View style={[MyStyle.row]}>
+                        <Button
+                          mode="contained"
+                          onPress={() => console.log("Follow")}
+                          style={[MyStyle.button, { marginRight: 10 }]}
+                        >
+                          Follow
+                        </Button>
+                        <Button
+                          mode="contained"
+                          onPress={() => console.log("Chat")}
+                          style={MyStyle.button}
+                        >
+                          Chat
+                        </Button>
+                      </View>
+                    </View>
+                  </View>
+                </Card.Content>
+              </Card>
+              <Card
+                style={[
+                  MyStyle.top,
+                  { backgroundColor: ColorAssets.input.background },
+                ]}
+              >
                 <Card.Content>
                   {user !== null ? (
                     <>
-                      <TextInput
-                        style={MyStyle.input}
-                        placeholder="Add a comment..."
-                        onChangeText={(text) => setNewComment(text)}
-                        value={newComment}
-                      />
-                      <Button
-                        style={[MyStyle.button, MyStyle.top]}
-                        onPress={comment}
-                      >
-                        Submit
-                      </Button>
+                      <Text style={MyStyle.header}>Bình luận</Text>
+                      <View style={MyStyle.row}>
+                        <TextInput
+                          mode="outlined"
+                          outlineColor={ColorAssets.input.border}
+                          activeOutlineColor={ColorAssets.input.borderFocus}
+                          label="Add a comment..."
+                          value={newComment}
+                          onChangeText={setNewComment}
+                          style={[
+                            {
+                              flex: 1,
+                            },
+                          ]}
+                          disabled={post.pending_status === "FL"}
+                        />
+                        <IconButton
+                          icon="send"
+                          iconColor={ColorAssets.button.text}
+                          size={28}
+                          onPress={comment}
+                          style={[
+                            { backgroundColor: ColorAssets.button.background },
+                          ]}
+                        />
+                      </View>
                     </>
                   ) : null}
 
@@ -323,7 +413,6 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                     <ActivityIndicator />
                   ) : (
                     <>
-                      <Text style={MyStyle.header}>Bình luận</Text>
                       {comments.map((c) => (
                         <List.Item
                           key={c.id}

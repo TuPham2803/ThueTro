@@ -413,7 +413,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   disabled={post.pending_status === "FL"}
                 />
                 <IconButton
-                  icon="map-search-outline"
+                  icon="map-se arch-outline"
                   iconColor={ColorAssets.button.text}
                   size={28}
                   onPress={handleSearch}

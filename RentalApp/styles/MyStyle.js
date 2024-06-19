@@ -141,4 +141,10 @@ export default StyleSheet.create({
     marginTop: 10,
     borderRadius: 10,
   },
+  username: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: ColorAssets.content.title,
+    marginBottom: 5,
+  },
 });
