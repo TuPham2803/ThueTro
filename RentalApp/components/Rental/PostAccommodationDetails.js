@@ -17,12 +17,17 @@ import { formatCurrency, isCloseToBottom } from "../../Utils/Utils";
 import moment from "moment";
 import { MyUserContext } from "../../configs/Contexts";
 import { useNavigation } from "@react-navigation/native";
-
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
 import ImageViewing from "react-native-image-viewing";
 
-const PostAccommodationDetails = ({ route, navigation }) => {
+const PostAccommodationDetails = ({ route }) => {
   const { post } = route.params;
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -55,7 +60,7 @@ const PostAccommodationDetails = ({ route, navigation }) => {
       headerRight: () => (
         <IconButton
           icon={liked ? "heart" : "heart-outline"}
-          color="red"
+          iconColor="lightpink"
           size={24}
           onPress={handleLike}
         />
@@ -120,12 +125,20 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   const handleLike = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const res = await authApi(token).post(endpoints["like"](post.id));
+      await authApi(token).post(endpoints["like"](post.id));
       setLiked(!liked);
       if (!liked) {
-        alert("Liked!");
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Liked",
+          textBody: "Đã like",
+        });
       } else {
-        alert("Unliked!");
+        Toast.show({
+          type: ALERT_TYPE.SUCCESS,
+          title: "Unliked",
+          textBody: "Đã bỏ like",
+        });
       }
     } catch (ex) {
       console.error(ex);
@@ -139,135 +152,99 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   };
 
   return (
-    <View style={[MyStyle.container]}>
-      {post === null ? (
-        <ActivityIndicator />
-      ) : (
-        <>
-          <ScrollView onScroll={loadMoreInfo}>
-            <View style={[MyStyle.wrapper]}>
-              <SwiperFlatList
-                ref={swiperRef} // Assign ref to SwiperFlatList
-                autoplay={false}
-                autoplayLoop={false}
-                index={0} // Initial index
-                showPagination
-                paginationStyleItem={{
-                  width: 10,
-                  height: 10,
-                  marginHorizontal: 5,
-                }}
-                onChangeIndex={({ index }) => setSelectIndex(index)}
-                data={[post.main_image, ...post.images]}
-                renderItem={({ item }) => (
+    <AlertNotificationRoot>
+      <View style={[MyStyle.container]}>
+        {post === null ? (
+          <ActivityIndicator />
+        ) : (
+          <>
+            <ScrollView onScroll={loadMoreInfo}>
+              <View style={[MyStyle.wrapper]}>
+                <SwiperFlatList
+                  ref={swiperRef} // Assign ref to SwiperFlatList
+                  autoplay={false}
+                  autoplayLoop={false}
+                  index={0} // Initial index
+                  showPagination
+                  paginationStyleItem={{
+                    width: 10,
+                    height: 10,
+                    marginHorizontal: 5,
+                  }}
+                  onChangeIndex={({ index }) => setSelectIndex(index)}
+                  data={[post.main_image, ...post.images]}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={MyStyle.slide}
+                      onPress={() => {
+                        setImageViewVisible(true);
+                      }}
+                    >
+                      <Image
+                        source={{ uri: item }}
+                        style={MyStyle.image}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+
+              {/* Horizontal list of images */}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={MyStyle.horizontalScroll}
+                style={[MyStyle.marginDistantSide]}
+              >
+                {[post.main_image, ...post.images].map((image, index) => (
                   <TouchableOpacity
-                    style={MyStyle.slide}
-                    onPress={() => {
-                      setImageViewVisible(true);
-                    }}
+                    key={index}
+                    style={[
+                      MyStyle.horizontalImageContainer,
+                      { justifyContent: "center" },
+                    ]}
+                    onPress={() => scrollToIndex(index)}
                   >
                     <Image
-                      source={{ uri: item }}
-                      style={MyStyle.image}
+                      source={{ uri: image }}
+                      style={[
+                        MyStyle.horizontalImage,
+                        index == selectIndex && {
+                          borderColor: ColorAssets.input.borderFocus,
+                          borderWidth: 4,
+                          width: 135,
+                          height: 135,
+                        },
+                      ]}
                       resizeMode="cover"
                     />
                   </TouchableOpacity>
-                )}
+                ))}
+              </ScrollView>
+              <ImageViewing
+                images={[post.main_image, ...post.images].map((image) => ({
+                  uri: image,
+                }))}
+                imageIndex={selectIndex}
+                visible={isImageViewVisible}
+                onRequestClose={() => setImageViewVisible(false)}
               />
-            </View>
-
-            {/* Horizontal list of images */}
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={MyStyle.horizontalScroll}
-              style={[MyStyle.marginDistantSide]}
-            >
-              {[post.main_image, ...post.images].map((image, index) => (
-                <TouchableOpacity
-                  key={index}
+              <View style={{ paddingHorizontal: 15 }}>
+                <Card
                   style={[
-                    MyStyle.horizontalImageContainer,
-                    { justifyContent: "center" },
+                    MyStyle.top,
+                    { backgroundColor: ColorAssets.input.background },
                   ]}
-                  onPress={() => scrollToIndex(index)}
                 >
-                  <Image
-                    source={{ uri: image }}
-                    style={[
-                      MyStyle.horizontalImage,
-                      index == selectIndex && {
-                        borderColor: ColorAssets.input.borderFocus,
-                        borderWidth: 4,
-                        width: 135,
-                        height: 135,
-                      },
-                    ]}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-            <ImageViewing
-              images={[post.main_image, ...post.images].map((image) => ({
-                uri: image,
-              }))}
-              imageIndex={selectIndex}
-              visible={isImageViewVisible}
-              onRequestClose={() => setImageViewVisible(false)}
-            />
-            <View style={{ paddingHorizontal: 15 }}>
-              <Card
-                style={[
-                  MyStyle.top,
-                  { backgroundColor: ColorAssets.input.background },
-                ]}
-              >
-                <Card.Content>
-                  <View
-                    style={[
-                      MyStyle.container,
-                      MyStyle.marginDistantSide,
-                      { backgroundColor: ColorAssets.input.background },
-                    ]}
-                  >
+                  <Card.Content>
                     <View
-                      style={[MyStyle.row, { justifyContent: "space-between" }]}
+                      style={[
+                        MyStyle.container,
+                        MyStyle.marginDistantSide,
+                        { backgroundColor: ColorAssets.input.background },
+                      ]}
                     >
-                      <View
-                        style={[
-                          MyStyle.margin,
-                          MyStyle.alignCenter,
-                          { flex: 1 },
-                        ]}
-                      >
-                        <List.Icon
-                          color={ColorAssets.content.icon}
-                          icon="map"
-                        />
-                        <Text>Diện tích</Text>
-                        <Text style={{ fontWeight: "bold" }}>
-                          {post.acreage} m²
-                        </Text>
-                      </View>
-                      <View
-                        style={[
-                          MyStyle.margin,
-                          MyStyle.alignCenter,
-                          { flex: 1 },
-                        ]}
-                      >
-                        <List.Icon
-                          color={ColorAssets.content.icon}
-                          icon="home"
-                        />
-                        <Text>Loại nhà trọ</Text>
-                        <Text style={{ fontWeight: "bold" }}>
-                          {ENUM_OBJECT[post.room_type]}
-                        </Text>
-                      </View>
-                    </View>
-                    {post.room_type === "SH" && (
                       <View
                         style={[
                           MyStyle.row,
@@ -283,11 +260,11 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                         >
                           <List.Icon
                             color={ColorAssets.content.icon}
-                            icon="account-multiple"
+                            icon="map"
                           />
-                          <Text>Số người tối đa</Text>
+                          <Text>Diện tích</Text>
                           <Text style={{ fontWeight: "bold" }}>
-                            {post.max_people}
+                            {post.acreage} m²
                           </Text>
                         </View>
                         <View
@@ -299,159 +276,202 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                         >
                           <List.Icon
                             color={ColorAssets.content.icon}
-                            icon="account"
+                            icon="home"
                           />
-                          <Text>Số người đang ở</Text>
+                          <Text>Loại nhà trọ</Text>
                           <Text style={{ fontWeight: "bold" }}>
-                            {post.current_people}
+                            {ENUM_OBJECT[post.room_type]}
                           </Text>
                         </View>
                       </View>
-                    )}
-                  </View>
-                </Card.Content>
-              </Card>
-              <Card style={MyStyle.top}>
-                <Card.Title
-                  title={post.title}
-                  titleStyle={[MyStyle.title, MyStyle.marginDistantSide]}
-                  subtitle={`${formatCurrency(post.price)} đ/tháng`}
-                  subtitleStyle={MyStyle.subtitle} // Optional: Add a subtitle style
-                  titleNumberOfLines={1}
-                  titleEllipsizeMode="tail"
-                />
-                <Card.Content>
-                  <Text>Giá tiền: {formatCurrency(post.price)} đ/tháng</Text>
-                  <Text>
-                    Địa chỉ: {post.address}, Quận {post.district}, {post.city}
-                  </Text>
-                  <Text>SĐT: {post.phone_number}</Text>
-                </Card.Content>
-              </Card>
-
-              <Card
-                style={[
-                  MyStyle.top,
-                  { backgroundColor: ColorAssets.input.background },
-                ]}
-              >
-                <Card.Content>
-                  <Text style={MyStyle.header}>Mô tả</Text>
-                  <RenderHTML
-                    contentWidth={windowWidth}
-                    originWhitelist={["*"]}
-                    source={{ html: post.description }}
-                  />
-                </Card.Content>
-              </Card>
-              <Card
-                style={[
-                  MyStyle.top,
-                  { backgroundColor: ColorAssets.input.background },
-                ]}
-              >
-                <Card.Content>
-                  <View style={MyStyle.row}>
-                    <Image
-                      source={{ uri: post.user_post.image }}
-                      style={MyStyle.avatar}
-                    />
-                    <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={MyStyle.username}>
-                        {post.user_post.username}
-                      </Text>
-                      {post.user_post.id != user.id && (
-                        <View style={[MyStyle.row]}>
-                          <Button
-                            mode="contained"
-                            onPress={() => console.log("Follow")}
-                            style={[MyStyle.button, { marginRight: 10 }]}
+                      {post.room_type === "SH" && (
+                        <View
+                          style={[
+                            MyStyle.row,
+                            { justifyContent: "space-between" },
+                          ]}
+                        >
+                          <View
+                            style={[
+                              MyStyle.margin,
+                              MyStyle.alignCenter,
+                              { flex: 1 },
+                            ]}
                           >
-                            Follow
-                          </Button>
-                          <Button
-                            mode="contained"
-                            style={MyStyle.button}
-                            onPress={() =>
-                              navigation.navigate("ChatHome", {
-                                conversationId: null,
-                                friendDetails: post.user_post,
-                              })
-                            }
+                            <List.Icon
+                              color={ColorAssets.content.icon}
+                              icon="account-multiple"
+                            />
+                            <Text>Số người tối đa</Text>
+                            <Text style={{ fontWeight: "bold" }}>
+                              {post.max_people}
+                            </Text>
+                          </View>
+                          <View
+                            style={[
+                              MyStyle.margin,
+                              MyStyle.alignCenter,
+                              { flex: 1 },
+                            ]}
                           >
-                            Chat
-                          </Button>
+                            <List.Icon
+                              color={ColorAssets.content.icon}
+                              icon="account"
+                            />
+                            <Text>Số người đang ở</Text>
+                            <Text style={{ fontWeight: "bold" }}>
+                              {post.current_people}
+                            </Text>
+                          </View>
                         </View>
                       )}
                     </View>
-                  </View>
-                </Card.Content>
-              </Card>
-              <Card
-                style={[
-                  MyStyle.top,
-                  { backgroundColor: ColorAssets.input.background },
-                ]}
-              >
-                <Card.Content>
-                  {user !== null ? (
-                    <>
-                      <Text style={MyStyle.header}>Bình luận</Text>
-                      <View style={MyStyle.row}>
-                        <TextInput
-                          mode="outlined"
-                          outlineColor={ColorAssets.input.border}
-                          activeOutlineColor={ColorAssets.input.borderFocus}
-                          label="Add a comment..."
-                          value={newComment}
-                          onChangeText={setNewComment}
-                          style={[
-                            {
-                              flex: 1,
-                            },
-                          ]}
-                          disabled={post.pending_status === "FL"}
-                        />
-                        <IconButton
-                          icon="send"
-                          iconColor={ColorAssets.button.text}
-                          size={28}
-                          onPress={comment}
-                          style={[
-                            { backgroundColor: ColorAssets.button.background },
-                          ]}
-                        />
-                      </View>
-                    </>
-                  ) : null}
+                  </Card.Content>
+                </Card>
+                <Card style={MyStyle.top}>
+                  <Card.Title
+                    title={post.title}
+                    titleStyle={[MyStyle.title, MyStyle.marginDistantSide]}
+                    subtitle={`${formatCurrency(post.price)} đ/tháng`}
+                    subtitleStyle={MyStyle.subtitle} // Optional: Add a subtitle style
+                    titleNumberOfLines={1}
+                    titleEllipsizeMode="tail"
+                  />
+                  <Card.Content>
+                    <Text>Giá tiền: {formatCurrency(post.price)} đ/tháng</Text>
+                    <Text>
+                      Địa chỉ: {post.address}, Quận {post.district}, {post.city}
+                    </Text>
+                    <Text>SĐT: {post.phone_number}</Text>
+                  </Card.Content>
+                </Card>
 
-                  {comments === null ? (
-                    <ActivityIndicator />
-                  ) : (
-                    <>
-                      {comments.map((c) => (
-                        <List.Item
-                          key={c.id}
-                          style={MyStyle.margin}
-                          title={c.content}
-                          description={moment(c.created_date).fromNow()}
-                          left={() => (
-                            <Image
-                              style={MyStyle.avatar}
-                              source={{ uri: c.user.image }}
-                            />
-                          )}
-                        />
-                      ))}
-                    </>
-                  )}
-                </Card.Content>
-              </Card>
-            </View>
-          </ScrollView>
-        </>
-      )}
-    </View>
+                <Card
+                  style={[
+                    MyStyle.top,
+                    { backgroundColor: ColorAssets.input.background },
+                  ]}
+                >
+                  <Card.Content>
+                    <Text style={MyStyle.header}>Mô tả</Text>
+                    <RenderHTML
+                      contentWidth={windowWidth}
+                      originWhitelist={["*"]}
+                      source={{ html: post.description }}
+                    />
+                  </Card.Content>
+                </Card>
+                <Card
+                  style={[
+                    MyStyle.top,
+                    { backgroundColor: ColorAssets.input.background },
+                  ]}
+                >
+                  <Card.Content>
+                    <View style={MyStyle.row}>
+                      <Image
+                        source={{ uri: post.user_post.image }}
+                        style={MyStyle.avatar}
+                      />
+                      <View style={{ flex: 1, marginLeft: 10 }}>
+                        <Text style={MyStyle.username}>
+                          {post.user_post.username}
+                        </Text>
+                        {post.user_post.id != user.id && (
+                          <View style={[MyStyle.row]}>
+                            <Button
+                              mode="contained"
+                              onPress={() => console.log("Follow")}
+                              style={[MyStyle.button, { marginRight: 10 }]}
+                            >
+                              Follow
+                            </Button>
+                            <Button
+                              mode="contained"
+                              style={MyStyle.button}
+                              onPress={() =>
+                                navigation.navigate("ChatHome", {
+                                  conversationId: null,
+                                  friendDetails: post.user_post,
+                                })
+                              }
+                            >
+                              Chat
+                            </Button>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  </Card.Content>
+                </Card>
+                <Card
+                  style={[
+                    MyStyle.top,
+                    { backgroundColor: ColorAssets.input.background },
+                  ]}
+                >
+                  <Card.Content>
+                    {user !== null ? (
+                      <>
+                        <Text style={MyStyle.header}>Bình luận</Text>
+                        <View style={MyStyle.row}>
+                          <TextInput
+                            mode="outlined"
+                            outlineColor={ColorAssets.input.border}
+                            activeOutlineColor={ColorAssets.input.borderFocus}
+                            label="Add a comment..."
+                            value={newComment}
+                            onChangeText={setNewComment}
+                            style={[
+                              {
+                                flex: 1,
+                              },
+                            ]}
+                            disabled={post.pending_status === "FL"}
+                          />
+                          <IconButton
+                            icon="send"
+                            iconColor={ColorAssets.button.text}
+                            size={28}
+                            onPress={comment}
+                            style={[
+                              {
+                                backgroundColor: ColorAssets.button.background,
+                              },
+                            ]}
+                          />
+                        </View>
+                      </>
+                    ) : null}
+
+                    {comments === null ? (
+                      <ActivityIndicator />
+                    ) : (
+                      <>
+                        {comments.map((c) => (
+                          <List.Item
+                            key={c.id}
+                            style={MyStyle.margin}
+                            title={c.content}
+                            description={moment(c.created_date).fromNow()}
+                            left={() => (
+                              <Image
+                                style={MyStyle.avatar}
+                                source={{ uri: c.user.image }}
+                              />
+                            )}
+                          />
+                        ))}
+                      </>
+                    )}
+                  </Card.Content>
+                </Card>
+              </View>
+            </ScrollView>
+          </>
+        )}
+      </View>
+    </AlertNotificationRoot>
   );
 };
 
