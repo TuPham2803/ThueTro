@@ -30,20 +30,20 @@ const Item = ({ instance }) => {
               <Text>{moment(instance.created_at).fromNow()}</Text>
             </View>
           }
-          right={() => (
-            <View style={{ justifyContent: "flex-end" }}>
-              <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
-                <View style={[MyStyle.row, MyStyle.marginDistantSide]}>
-                  <List.Icon icon="heart-outline" />
-                  <Text>12</Text>
-                </View>
-                <View style={MyStyle.row}>
-                  <List.Icon icon="comment-outline" />
-                  <Text>12</Text>
-                </View>
-              </View>
-            </View>
-          )}
+          // right={() => (
+          //   <View style={{ justifyContent: "flex-end" }}>
+          //     <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
+          //       <View style={[MyStyle.row, MyStyle.marginDistantSide]}>
+          //         <List.Icon icon="heart-outline" />
+          //         <Text>12</Text>
+          //       </View>
+          //       <View style={MyStyle.row}>
+          //         <List.Icon icon="comment-outline" />
+          //         <Text>12</Text>
+          //       </View>
+          //     </View>
+          //   </View>
+          // )}
         />
       </View>
     )

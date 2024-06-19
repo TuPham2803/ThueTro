@@ -152,7 +152,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
         return;
       }
       let res = await APIs.delete(
-        endpoints["post_accomodation_details"](post.id),
+        endpoints["post_accommodation_details"](post.id),
         {
           headers: {
             Authorization: "Bearer " + token,
