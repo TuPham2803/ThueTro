@@ -3,3 +3,4 @@ from .PostRequestView import PostRequestViewSet
 from .UserView import UserViewSet
 from .CommentAccommodationView import CommentAccommodationViewSet
 from .CommentRequestView import CommentRequestViewSet
+from .FollowView import FollowViewSet
