@@ -49,6 +49,17 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         return Response(serializers.LikeAccommodationSerializer(li).data,
                         status=status.HTTP_201_CREATED)
 
+    @action(methods=['get'], url_path='check_liked', detail=True)
+    def check_like_status(self, request, pk):
+        user = request.user
+        try:
+            post = PostAccommodation.objects.get(id=pk)
+        except PostAccommodation.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        liked = LikeAccommodation.objects.filter(user=user, post_accommodation=post).exists()
+        return Response({"liked": liked}, status=status.HTTP_200_OK)
+
     @action(methods=['POST'], url_path='review', detail=True)
     def review(self, request, pk):
         post = self.get_object()

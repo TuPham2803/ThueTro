@@ -10,10 +10,10 @@ import {
 } from "react-native";
 import { Button, Card, List, TextInput, IconButton } from "react-native-paper";
 import MyStyle from "../../styles/MyStyle";
-import APIs, { endpoints } from "../../configs/APIs";
+import APIs, { endpoints, authApi } from "../../configs/APIs";
 import RenderHTML from "react-native-render-html";
 import SwiperFlatList from "react-native-swiper-flatlist";
-import { isCloseToBottom } from "../../Utils/Utils";
+import { formatCurrency, isCloseToBottom } from "../../Utils/Utils";
 import moment from "moment";
 import { MyUserContext } from "../../configs/Contexts";
 import { useNavigation } from "@react-navigation/native";
@@ -22,11 +22,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
 import ImageViewing from "react-native-image-viewing";
 
-const PostAccommodationDetails = ({ route }) => {
+const PostAccommodationDetails = ({ route, navigation }) => {
   const { post } = route.params;
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [selectIndex, setSelectIndex] = useState(0);
+  const [liked, setLiked] = useState(false);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const windowWidth = useWindowDimensions().width;
   const user = useContext(MyUserContext);
@@ -43,6 +44,23 @@ const PostAccommodationDetails = ({ route }) => {
   useEffect(() => {
     loadComments();
   }, []);
+
+  useEffect(() => {
+    checkLiked();
+  }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <IconButton
+          icon={liked ? "heart" : "heart-outline"}
+          color="red"
+          size={24}
+          onPress={handleLike}
+        />
+      ),
+    });
+  }, [liked]);
 
   const loadComments = async () => {
     try {
@@ -82,6 +100,32 @@ const PostAccommodationDetails = ({ route }) => {
       setNewComment("");
     } catch (ex) {
       console.error(ex);
+    }
+  };
+
+  const checkLiked = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const res = await authApi(token).get(endpoints["check_liked"](post.id));
+      setLiked(res.data.liked);
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const red = await authApi(token).post(endpoints["like"](post.id));
+      setLiked(!liked);
+      if (!liked) {
+        alert("Liked!");
+      } else {
+        alert("Unliked!");
+      }
+    } catch (ex) {
+      console.error(ex);
+      alert("Failed to like post.");
     }
   };
 
@@ -263,16 +307,17 @@ const PostAccommodationDetails = ({ route }) => {
                   </View>
                 </Card.Content>
               </Card>
-              <Card
-                style={[
-                  MyStyle.top,
-                  { backgroundColor: ColorAssets.input.background },
-                ]}
-              >
+              <Card style={MyStyle.top}>
+                <Card.Title
+                  title={post.title}
+                  titleStyle={[MyStyle.title, MyStyle.marginDistantSide]}
+                  subtitle={`${formatCurrency(post.price)} đ/tháng`}
+                  subtitleStyle={MyStyle.subtitle} // Optional: Add a subtitle style
+                  titleNumberOfLines={1}
+                  titleEllipsizeMode="tail"
+                />
                 <Card.Content>
-                  <Text style={MyStyle.header}>{post.title}</Text>
-
-                  <Text>Giá tiền: {post.price} đ/tháng</Text>
+                  <Text>Giá tiền: {formatCurrency(post.price)} đ/tháng</Text>
                   <Text>
                     Địa chỉ: {post.address}, Quận {post.district}, {post.city}
                   </Text>

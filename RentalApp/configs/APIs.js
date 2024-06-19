@@ -9,7 +9,8 @@ console.log(BASE_URL);
 
 export const endpoints = {
   post_accommodations: "/post_accommodations/",
-  post_accommodation_details: (postAccommodationId) => `/post_accommodations/${postAccommodationId}/`,
+  post_accommodation_details: (postAccommodationId) =>
+    `/post_accommodations/${postAccommodationId}/`,
   post_requests: "/post_requests/",
   post_request_details: (postRequestId) => `/post_requests/${postRequestId}/`,
   user: "/user/",
@@ -20,6 +21,8 @@ export const endpoints = {
   comments: (postId) => `/post_accommodations/${postId}/comments/`,
   update_profile: "/user/current-user/",
   update_password: "/user/update-password/",
+  like: (postId) => `/post_accommodations/${postId}/like/`,
+  check_liked: (postId) => `/post_accommodations/${postId}/check_liked/`,
 };
 
 export const authApi = (token) => {

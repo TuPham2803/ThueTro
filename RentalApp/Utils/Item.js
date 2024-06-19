@@ -33,7 +33,7 @@ const Item = ({ instance }) => {
           right={() => (
             <View style={{ justifyContent: "flex-end" }}>
               <View style={[MyStyle.row, MyStyle.margin, MyStyle.alignCenter]}>
-                <View style={MyStyle.row}>
+                <View style={[MyStyle.row, MyStyle.marginDistantSide]}>
                   <List.Icon icon="heart-outline" />
                   <Text>12</Text>
                 </View>
