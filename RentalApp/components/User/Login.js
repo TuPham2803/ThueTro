@@ -63,8 +63,11 @@ const Login = ({ route }) => {
       const formData = new FormData();
       formData.append("username", username);
       formData.append("password", password);
-      formData.append("client_id", SERVER_CLIENT_ID);
-      formData.append("client_secret", SERVER_CLIENT_SECRET);
+      formData.append("client_id", "zvQusM9TN6uYKseb7Mi4p3vwvXO31lEhG0acoZcE");
+      formData.append(
+        "client_secret",
+        "N0kSzcvS7aDSuH8kftrMI18LWz7pbsP9sRDafR9XepNzbQ0REJL7lUa9IiAX0kKlJbCo5llXVLiYA98yxNz3Q0meulrES3nG1Hsvq0SksPHVmpRKZKeLJIIIcJjS7V2F"
+      );
       formData.append("grant_type", "password");
 
       const res = await APIs.post(endpoints["login"], formData, {
