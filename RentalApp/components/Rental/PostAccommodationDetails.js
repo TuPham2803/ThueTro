@@ -22,7 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
 import ImageViewing from "react-native-image-viewing";
 
-const PostAccommodationDetails = ({ route, navigation }) => {
+const PostAccommodationDetails = ({ route }) => {
   const { post } = route.params;
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -32,14 +32,11 @@ const PostAccommodationDetails = ({ route, navigation }) => {
   const windowWidth = useWindowDimensions().width;
   const user = useContext(MyUserContext);
   const navigation = useNavigation();
-
-  console.log(user.id);
-  console.log(post.user_post.id);
   const ENUM_OBJECT = {
     PR: "Ở riêng",
     SH: "Ở ghép",
   };
-  const swiperRef = useRef(null); // Ref for SwiperFlatList
+  const swiperRef = useRef(null);
 
   useEffect(() => {
     loadComments();
@@ -356,7 +353,7 @@ const PostAccommodationDetails = ({ route, navigation }) => {
                       <Text style={MyStyle.username}>
                         {post.user_post.username}
                       </Text>
-                      {post.user_post.id != user.id && (
+                      {user && post.user_post.id != user.id && (
                         <View style={[MyStyle.row]}>
                           <Button
                             mode="contained"
