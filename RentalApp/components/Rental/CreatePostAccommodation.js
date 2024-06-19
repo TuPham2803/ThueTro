@@ -160,7 +160,7 @@ const CreatePostAccommodation = ({ route, navigation }) => {
       }
 
       let res = await authApi(token).post(
-        endpoints["post_accomodations"],
+        endpoints["post_accommodations"],
         formData,
         {
           headers: {

@@ -26,6 +26,7 @@ import APIs, { endpoints } from "../../configs/APIs";
 import { ColorAssets } from "../../assets/ColorAssets";
 const UpdatePostAcccommodation = ({ route, navigation }) => {
   const { post } = route.params;
+  console.log(post.mainImage);
   const [title, setTitle] = useState(post.title);
   const [city, setCity] = useState(post.city);
   const [district, setDistrict] = useState(post.district);
@@ -92,7 +93,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
       formData.append("max_people", max_people);
       formData.append("current_people", current_people);
     }
-    if (mainImage.uri) {
+    if (mainImage?.uri) {
       formData.append("main_image", {
         uri: mainImage.uri,
         name: mainImage.uri.split("/").pop(),
@@ -100,11 +101,11 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
       });
     }
     images.forEach((image, index) => {
-      if (image.uri) {
+      if (image?.uri) {
         formData.append("new_images", {
-          uri: image.uri,
-          name: image.uri.split("/").pop(),
-          type: mime.lookup(image.uri) || "image/jpeg",
+          uri: image?.uri,
+          name: image?.uri.split("/").pop(),
+          type: mime.lookup(image?.uri) || "image/jpeg",
         });
       } else {
         formData.append("existing_images", image);
@@ -413,7 +414,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                   disabled={post.pending_status === "FL"}
                 />
                 <IconButton
-                  icon="map-se arch-outline"
+                  icon="map-search-outline"
                   iconColor={ColorAssets.button.text}
                   size={28}
                   onPress={handleSearch}
@@ -600,7 +601,9 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
               <View style={styles.imageContainer}>
                 <TouchableOpacity onPress={() => openMainImageViewer()}>
                   <Image
-                    source={{ uri: mainImage.uri ? mainImage.uri : mainImage }}
+                    source={{
+                      uri: mainImage?.uri ? mainImage?.uri : mainImage,
+                    }}
                     style={styles.image}
                   />
                 </TouchableOpacity>
@@ -619,7 +622,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
                 )}
               </View>
             )}
-            {mainImage == "" && (
+            {!mainImage && (
               <TouchableOpacity
                 style={styles.addButton}
                 onPress={pickMainImage}
@@ -642,7 +645,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
               <View key={index} style={styles.imageContainer}>
                 <TouchableOpacity onPress={() => openImageViewer(index)}>
                   <Image
-                    source={{ uri: image.uri ? image.uri : image }}
+                    source={{ uri: image?.uri ? image?.uri : image }}
                     style={styles.image}
                   />
                 </TouchableOpacity>
@@ -679,14 +682,14 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
           )}
         </ScrollView>
         <ImageViewing
-          images={[{ uri: mainImage.uri ? mainImage.uri : mainImage }]}
+          images={[{ uri: mainImage?.uri ? mainImage?.uri : mainImage }]}
           imageIndex={0}
           visible={isMainImageViewVisible}
           onRequestClose={() => setMainImageViewVisible(false)}
         />
         <ImageViewing
           images={images.map((image) => ({
-            uri: image.uri ? image.uri : image,
+            uri: image?.uri ? image?.uri : image,
           }))}
           imageIndex={currentImageIndex}
           visible={isImageViewVisible}
