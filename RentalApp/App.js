@@ -84,6 +84,7 @@ const HomeTab = () => {
         component={CreatePostRequest}
         options={{ title: "Đăng tin tìm phòng" }}
       />
+      <Stack.Screen name="ChatHome" component={Chat} />
     </Stack.Navigator>
   );
 };
@@ -205,6 +206,7 @@ const MyTab = () => {
           let style = { backgroundColor: ColorAssets.nav.background };
           const listScreenHide = [
             "Chat",
+            "ChatHome",
             "CreatePostRequest",
             "CreatePostRequestHome",
             "CreatePostAccommodation",

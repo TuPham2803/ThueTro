@@ -157,19 +157,6 @@ const Conversation = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-      {/* <Button
-        icon="plus"
-        mode="contained"
-        onPress={() =>
-          navigation.navigate("Chat", {
-            conversationId: null,
-            friendDetails: { username: "newUser", id: 7 },
-          })
-        }
-        style={MyStyle.button}
-      >
-        New Conversation
-      </Button> */}
     </View>
   );
 };
