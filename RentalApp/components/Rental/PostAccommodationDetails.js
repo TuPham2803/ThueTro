@@ -34,6 +34,7 @@ const PostAccommodationDetails = ({ route }) => {
   const [selectIndex, setSelectIndex] = useState(0);
   const [liked, setLiked] = useState(false);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(false);
   const windowWidth = useWindowDimensions().width;
   const user = useContext(MyUserContext);
   const navigation = useNavigation();
@@ -53,7 +54,11 @@ const PostAccommodationDetails = ({ route }) => {
       checkLiked();
     }
   }, []);
-
+  useEffect(() => {
+    if (user) {
+      checkFollow();
+    }
+  }, []);
   useEffect(() => {
     if (user) {
       navigation.setOptions({
@@ -122,7 +127,24 @@ const PostAccommodationDetails = ({ route }) => {
       console.error(ex);
     }
   };
-
+  const checkFollow = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const formData = new FormData();
+      formData.append("follower_id", user.id);
+      formData.append("owner_id", post.user_post.id);
+      const res = await authApi(token).get(
+        "/follows/?follower_id=" + user.id + "&owner_id=" + post.user_post.id
+      );
+      if (res.data.count == 0) {
+        setIsFollowed(false);
+      } else {
+        setIsFollowed(res.data.results[0].active);
+      }
+    } catch (ex) {
+      console.error(ex);
+    }
+  };
   const handleLike = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
