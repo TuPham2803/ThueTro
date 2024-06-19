@@ -108,6 +108,10 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
             if pending_status:
                 queryset = queryset.filter(pending_status=pending_status)
 
+            room_type = self.request.query_params.get('room_type')
+            if room_type:
+                queryset = queryset.filter(room_type=room_type)
+
             coordinates = self.request.query_params.get('coordinates')
             radius = self.request.query_params.get('radius')
             if coordinates and radius:

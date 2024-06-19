@@ -110,6 +110,6 @@ export default StyleSheet.create({
   },
   searchButton: {
     padding: 0,
-    backgroundColor: ColorAssets.button.background
+    backgroundColor: ColorAssets.button.background,
   },
 });
