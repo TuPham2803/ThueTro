@@ -70,6 +70,7 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
     setSelectedDistrict(null);
     setMaxPeople("");
     setCurrentPeople("");
+    handleApply();
   };
 
   return (

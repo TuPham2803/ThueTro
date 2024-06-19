@@ -21,7 +21,7 @@ import * as Location from "expo-location";
 import MyStyle from "../../styles/MyStyle";
 import styles from "../../styles/CreateUpdatePostAccommodationStyle";
 import mime from "react-native-mime-types";
-import APIs, { endpoints } from "../../configs/APIs";
+import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
 import { CommonActions } from "@react-navigation/native";
@@ -159,12 +159,15 @@ const CreatePostAccommodation = ({ route, navigation }) => {
         return;
       }
 
-      let res = await APIs.post(endpoints["post_accomodations"], formData, {
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      let res = await authApi(token).post(
+        endpoints["post_accomodations"],
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (res.status === 201) {
         alert("Create post accommodation successfully");
