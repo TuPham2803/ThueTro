@@ -3,6 +3,7 @@ import moment from "moment";
 import { Image, View, useWindowDimensions } from "react-native";
 import MyStyle from "../styles/MyStyle";
 import { RenderHTML } from "react-native-render-html";
+import { formatCurrency } from "./Utils";
 
 const Item = ({ instance }) => {
   return (
@@ -13,14 +14,16 @@ const Item = ({ instance }) => {
           source={{ uri: instance.main_image }}
           resizeMode="stretch"
         />
-        
+
         <List.Item
           title={
-            <View style={[MyStyle.marginDistantSide, { flexDirection: "column" }]}>
+            <View
+              style={[MyStyle.marginDistantSide, { flexDirection: "column" }]}
+            >
               <Text style={[MyStyle.header, { color: "black" }]}>
                 {instance.title}
               </Text>
-              <Text>{instance.price} đ/Tháng</Text>
+              <Text>{formatCurrency(instance.price)}đ/Tháng</Text>
               <Text>
                 {instance.district}, {instance.city}
               </Text>
