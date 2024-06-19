@@ -405,7 +405,7 @@ const PostAccommodations = ({ route, navigation }) => {
     } else {
       loadPostAccommodations();
     }
-  }, [page]);
+  }, [page, q]);
 
   const loadMore = ({ nativeEvent }) => {
     if (!loading && isCloseToBottom(nativeEvent)) {
@@ -417,6 +417,11 @@ const PostAccommodations = ({ route, navigation }) => {
     setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
   };
 
+  const search = (value, callback) => {
+    setPage(1);
+    callback(value);
+  };
+
   return (
     <View style={[MyStyle.container, MyStyle.margin]}>
       <View
@@ -425,7 +430,7 @@ const PostAccommodations = ({ route, navigation }) => {
         <Searchbar
           style={{ width: "90%" }}
           placeholder="Search"
-          onChangeText={setQ}
+          onChangeText={(t) => search(t, setQ)}
           value={q}
         />
         <TouchableOpacity

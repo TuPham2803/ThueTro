@@ -77,6 +77,7 @@ class PostAccommodationViewSet(viewsets.ViewSet, generics.ListCreateAPIView, gen
         queryset = self.queryset
 
         if self.action.__eq__('list'):
+
             user_post = self.request.query_params.get('user_post')
             if user_post:
                 queryset = queryset.filter(user_post__exact=user_post)
