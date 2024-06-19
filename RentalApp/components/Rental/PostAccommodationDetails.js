@@ -16,19 +16,24 @@ import SwiperFlatList from "react-native-swiper-flatlist";
 import { isCloseToBottom } from "../../Utils/Utils";
 import moment from "moment";
 import { MyUserContext } from "../../configs/Contexts";
+import { useNavigation } from "@react-navigation/native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
 import ImageViewing from "react-native-image-viewing";
 
 const PostAccommodationDetails = ({ route }) => {
   const { post } = route.params;
-  console.log(post.user_post);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [selectIndex, setSelectIndex] = useState(0);
   const [isImageViewVisible, setImageViewVisible] = useState(false);
   const windowWidth = useWindowDimensions().width;
   const user = useContext(MyUserContext);
+  const navigation = useNavigation();
+
+  console.log(user.id);
+  console.log(post.user_post.id);
   const ENUM_OBJECT = {
     PR: "Ở riêng",
     SH: "Ở ghép",
@@ -306,22 +311,29 @@ const PostAccommodationDetails = ({ route }) => {
                       <Text style={MyStyle.username}>
                         {post.user_post.username}
                       </Text>
-                      <View style={[MyStyle.row]}>
-                        <Button
-                          mode="contained"
-                          onPress={() => console.log("Follow")}
-                          style={[MyStyle.button, { marginRight: 10 }]}
-                        >
-                          Follow
-                        </Button>
-                        <Button
-                          mode="contained"
-                          onPress={() => console.log("Chat")}
-                          style={MyStyle.button}
-                        >
-                          Chat
-                        </Button>
-                      </View>
+                      {post.user_post.id != user.id && (
+                        <View style={[MyStyle.row]}>
+                          <Button
+                            mode="contained"
+                            onPress={() => console.log("Follow")}
+                            style={[MyStyle.button, { marginRight: 10 }]}
+                          >
+                            Follow
+                          </Button>
+                          <Button
+                            mode="contained"
+                            style={MyStyle.button}
+                            onPress={() =>
+                              navigation.navigate("ChatHome", {
+                                conversationId: null,
+                                friendDetails: post.user_post,
+                              })
+                            }
+                          >
+                            Chat
+                          </Button>
+                        </View>
+                      )}
                     </View>
                   </View>
                 </Card.Content>
