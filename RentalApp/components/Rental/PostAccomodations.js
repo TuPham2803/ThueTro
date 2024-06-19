@@ -17,10 +17,8 @@ import { isCloseToBottom } from "../../Utils/Utils";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { Picker } from "@react-native-picker/picker";
 import data from "../../Utils/CitiesData";
-
-const formatCurrency = (value) => {
-  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+import { ColorAssets } from "../../assets/ColorAssets";
+import { formatCurrency } from "../../Utils/Utils";
 
 const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
   const [minPrice, setMinPrice] = useState(
@@ -29,13 +27,13 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
   const [maxPrice, setMaxPrice] = useState(
     initialFilters.maxPrice?.toString() || 20000000
   );
-  const [selectedCity, setSelectedCity] = useState("Chọn thành phố");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [maxPeople, setMaxPeople] = useState(
-    initialFilters.maxPeople?.toString() || ""
+    initialFilters.maxPeople?.toString() || null
   );
   const [currentPeople, setCurrentPeople] = useState(
-    initialFilters.currentPeople?.toString() || ""
+    initialFilters.currentPeople?.toString() || null
   );
 
   const handleCityChange = (city) => {
@@ -81,10 +79,24 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
+      <View style={[styles.modalContainer]}>
+        <Text
+          style={[
+            MyStyle.heading,
+            { color: "green", fontSize: 20, alignSelf: "center" },
+          ]}
+        >
+          Lọc tìm kiếm
+        </Text>
         <Text>Price Range:</Text>
         <View style={styles.sliderContainer}>
           <MultiSlider
+            selectedStyle={{ backgroundColor: ColorAssets.range.selected }}
+            unselectedStyle={{
+              backgroundColor: ColorAssets.range.unselected,
+            }}
+            containerStyle={styles.slider}
+            markerStyle={styles.thumbStyle}
             values={[minPrice, maxPrice]}
             min={0}
             max={20000000}
@@ -99,7 +111,9 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
           <Text>{`Giá thấp nhất: ${formatCurrency(minPrice)} đ`}</Text>
           <Text>{`Giá cao nhất: ${formatCurrency(maxPrice)} đ`}</Text>
         </View>
-        <Text style={styles.heading}>Chọn thành phố và quận/huyện</Text>
+        <Text style={[styles.heading, { color: ColorAssets.content.text }]}>
+          Chọn thành phố và quận/huyện
+        </Text>
         <Picker
           selectedValue={selectedCity}
           onValueChange={(itemValue) => handleCityChange(itemValue)}
@@ -129,7 +143,11 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
           </View>
         )}
         {selectedCity && (
-          <Button title="Bỏ chọn thành phố" onPress={resetSelection} />
+          <Button
+            title="Bỏ chọn thành phố"
+            onPress={resetSelection}
+            color="red"
+          />
         )}
         <Text>Max People:</Text>
         <TextInput
@@ -146,9 +164,9 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
           keyboardType="numeric"
         />
         <View style={styles.buttonContainer}>
-          <Button title="Apply Filters" onPress={handleApply} />
-          <Button title="Reset Filters" onPress={handleReset} color="orange" />
-          <Button title="Close" onPress={onClose} color="red" />
+          <Button title="Lọc tìm kiếm" onPress={handleApply} />
+          <Button title="Trở về mặc định" onPress={handleReset} />
+          <Button title="Đóng" onPress={onClose} />
         </View>
       </View>
     </Modal>
@@ -162,12 +180,12 @@ const PostAccommodations = ({ route, navigation }) => {
   const [page, setPage] = useState(1);
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const [filters, setFilters] = useState({
-    minPrice: route?.params?.data?.minPrice || 0,
-    maxPrice: route?.params?.data?.maxPrice || 200000,
-    city: route?.params?.data?.city || "",
-    district: route?.params?.data?.district || "",
-    maxPeople: route?.params?.data?.maxPeople || 0,
-    currentPeople: route?.params?.data?.currentPeople || 90000,
+    minPrice: route?.params?.data?.minPrice || null,
+    maxPrice: route?.params?.data?.maxPrice || null,
+    city: route?.params?.data?.city || null,
+    district: route?.params?.data?.district || null,
+    maxPeople: route?.params?.data?.maxPeople || null,
+    currentPeople: route?.params?.data?.currentPeople || null,
   });
 
   const loadPostAccommodations = async (reset = false) => {
@@ -299,13 +317,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    marginHorizontal: 20,
-    marginVertical: 50,
     flex: 1,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: ColorAssets.input.border,
+    backgroundColor: ColorAssets.input.background,
     padding: 10,
     marginVertical: 5,
   },
@@ -318,7 +335,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  slider: {
+    width: "100%",
+    height: 40,
+  },
+  thumbStyle: {
+    height: 20,
+    width: 20,
+  },
   buttonContainer: {
+    color: ColorAssets.button.text,
     flexDirection: "row",
     justifyContent: "space-around",
     marginTop: 20,
