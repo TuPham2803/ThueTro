@@ -163,7 +163,7 @@ const Conversation = ({ navigation }) => {
         onPress={() =>
           navigation.navigate("Chat", {
             conversationId: null,
-            friendDetails: { username: "newUser", id: 8 },
+            friendDetails: { username: "newUser", id: 7 },
           })
         }
         style={MyStyle.button}

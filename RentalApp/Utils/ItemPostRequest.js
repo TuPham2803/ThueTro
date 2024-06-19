@@ -7,28 +7,7 @@ import APIs, { endpoints } from "../configs/APIs";
 import { htmlToText } from "html-to-text";
 import { ColorAssets } from "../assets/ColorAssets";
 const ItemPostRequest = ({ instance }) => {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const loadUser = async () => {
-    setLoading(true);
-    try {
-      let res = await APIs.get(endpoints["user-details"](instance.user_post));
-      setUser(res.data);
-    } catch (ex) {
-      console.error(ex);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadUser();
-  }, []);
-
-  if (loading) {
-    return <ActivityIndicator />;
-  }
 
   return (
     <List.Item

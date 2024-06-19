@@ -152,9 +152,9 @@ class PostAccommodationSerializer(ModelSerializer):
             'created_at': {'required': True, 'read_only': True},
             'updated_at': {'required': True},
             'active': {'required': True, 'read_only': True},
-            'pending_status': {'required': True, 'read_only': True},
+            'pending_status': {'required': True},
         }
-        read_only_fields = ['created_at', 'updated_at', 'active', 'pending_status']
+        read_only_fields = ['created_at', 'updated_at', 'active']
 
     def validate(self, data):
         required_fields = [

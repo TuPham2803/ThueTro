@@ -112,19 +112,12 @@ class InteractionRequest(Interaction):
         abstract = True
 
 
-class Comment(Interaction):
+class CommentAccommodation(InteractionAccommodation):
     content = models.CharField(max_length=255)
 
-    class Meta:
-        abstract = True
 
-
-class CommentAccommodation(Comment, InteractionAccommodation):
-    pass
-
-
-class CommentRequest(Comment, InteractionRequest):
-    pass
+class CommentRequest(InteractionRequest):
+     content = models.CharField(max_length=255)
 
 
 class Follow(BaseModel):

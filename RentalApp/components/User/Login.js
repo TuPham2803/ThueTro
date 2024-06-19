@@ -1,24 +1,65 @@
 import { Text, View } from "react-native";
 import MyStyle from "../../styles/MyStyle";
-import { Button, TextInput } from "react-native-paper";
-import React, { useContext } from "react";
+import { Button, TextInput, HelperText } from "react-native-paper";
+import React, { useContext, useState } from "react";
 import { MyDispatchContext } from "../../configs/Contexts";
 import { useNavigation } from "@react-navigation/native";
 import APIs, { authApi, endpoints } from "../../configs/APIs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ColorAssets } from "../../assets/ColorAssets";
+import {
+  ALERT_TYPE,
+  Dialog,
+  AlertNotificationRoot,
+  Toast,
+} from "react-native-alert-notification";
 import { SERVER_CLIENT_ID, SERVER_CLIENT_SECRET } from "@env";
 
 const Login = ({ route }) => {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [usernameError, setUsernameError] = useState({
+    error: false,
+  });
+  const [passwordError, setPasswordError] = useState({
+    error: false,
+  });
   const navigation = useNavigation();
   const dispatch = useContext(MyDispatchContext);
 
+  const validate = () => {
+    let isValid = true;
+    if (username.trim() === "") {
+      setUsernameError({
+        error: true,
+        message: "Tên đăng nhập không được để trống",
+      });
+      isValid = false;
+    } else {
+      setUsernameError({ error: false });
+    }
+
+    if (password.trim() === "") {
+      setPasswordError({
+        error: true,
+        message: "Mật khẩu không được để trống",
+      });
+      isValid = false;
+    } else {
+      setPasswordError({ error: false });
+    }
+    return isValid;
+  };
+
   const login = async () => {
-    setLoading(true);
+    if (!validate()) {
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const formData = new FormData();
       formData.append("username", username);
       formData.append("password", password);
@@ -56,51 +97,79 @@ const Login = ({ route }) => {
         navigation.navigate("Home");
       }
     } catch (error) {
-      console.error(
+      console.log(
         "Login failed: ",
         error.response ? error.response.data : error.message
       );
+      errorMessage = "Đã xảy ra lỗi. Vui lòng thử lại sau.";
+
+      if (error.response && error.response.data.error === "invalid_grant") {
+        errorMessage = "Thông tin đăng nhập không chính xác.";
+      }
+      Toast.show({
+        type: ALERT_TYPE.DANGER,
+        title: "Lỗi",
+        textBody: errorMessage,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={[MyStyle.container, MyStyle.justifyContentCenter]}>
-      <View style={MyStyle.alignCenter}>
-        <Text style={MyStyle.header}>ĐĂNG NHẬP NGƯỜI DÙNG</Text>
-        <TextInput
-          mode="outlined"
-          outlineColor={ColorAssets.input.border}
-          activeOutlineColor={ColorAssets.input.borderFocus}
-          value={username}
-          onChangeText={setUsername}
-          style={[MyStyle.input, MyStyle.margin, { width: "90%" }]}
-          label="Tên đăng nhập"
-        />
-        <TextInput
-          mode="outlined"
-          outlineColor={ColorAssets.input.border}
-          activeOutlineColor={ColorAssets.input.borderFocus}
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
-          style={[MyStyle.input, MyStyle.margin, { width: "90%" }]}
-          label="Mật khẩu"
-        />
-        <View style={[MyStyle.row, MyStyle.margin]}>
-          <Button
-            icon="account-lock-open"
-            mode="contained"
-            onPress={login}
-            style={[MyStyle.margin, MyStyle.button]}
-            loading={loading}
-          >
-            Đăng nhập
-          </Button>
+    <AlertNotificationRoot>
+      <View style={[MyStyle.container, MyStyle.justifyContentCenter]}>
+        <View style={MyStyle.alignCenter}>
+          <Text style={MyStyle.header}>ĐĂNG NHẬP NGƯỜI DÙNG</Text>
+          <View style={{ width: "90%", marginTop: 10 }}>
+            <TextInput
+              mode="outlined"
+              outlineColor={ColorAssets.input.border}
+              activeOutlineColor={ColorAssets.input.borderFocus}
+              value={username}
+              onChangeText={setUsername}
+              style={MyStyle.input}
+              label="Tên đăng nhập"
+              error={usernameError.error}
+            />
+            {usernameError.error && (
+              <HelperText type="error" visible={usernameError.error}>
+                {usernameError.message}
+              </HelperText>
+            )}
+          </View>
+          <View style={{ width: "90%", marginTop: 10 }}>
+            <TextInput
+              mode="outlined"
+              outlineColor={ColorAssets.input.border}
+              activeOutlineColor={ColorAssets.input.borderFocus}
+              secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
+              style={MyStyle.input}
+              label="Mật khẩu"
+              error={passwordError.error}
+            />
+            {passwordError.error && (
+              <HelperText type="error" visible={passwordError.error}>
+                {passwordError.message}
+              </HelperText>
+            )}
+          </View>
+          <View style={[MyStyle.row, MyStyle.margin]}>
+            <Button
+              icon="account-lock-open"
+              mode="contained"
+              onPress={login}
+              style={[MyStyle.margin, MyStyle.button]}
+              loading={loading}
+            >
+              Đăng nhập
+            </Button>
+          </View>
         </View>
       </View>
-    </View>
+    </AlertNotificationRoot>
   );
 };
 

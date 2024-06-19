@@ -164,12 +164,13 @@ document.addEventListener("DOMContentLoaded", async function() {
     const reviewResultSection = document.getElementById("review-result-section");
     const approveButton = document.getElementById("approve-review");
     const denyButton = document.getElementById("deny-review");
-
+    const endpoint = "http://192.168.198.215:8000"
+    const pageSize = 2
     let currentPage = 1;
     let totalPages = 1;
 
     async function fetchPosts(page = 1) {
-        const url = `http://127.0.0.1:8000/post_accommodations?pending_status=PD&page_size=1&page=${page}`;
+        const url = `${endpoint}/post_accommodations?pending_status=PD&page_size=${pageSize}&page=${page}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -230,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     async function fetchPostDetails(id) {
-        const url = `http://127.0.0.1:8000/post_accommodations/${id}`;
+        const url = `${endpoint}/post_accommodations/${id}`;
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -339,7 +340,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     async function loadPosts() {
         const data = await fetchPosts(currentPage);
         populateTable(data.results);
-        totalPages = Math.ceil(data.count / 1); // Assuming page size of 1 for example purposes
+        totalPages = Math.ceil(data.count / pageSize); // Assuming page size of 1 for example purposes
 
         previousPage.classList.toggle("disabled", currentPage === 1);
         nextPage.classList.toggle("disabled", currentPage === totalPages);
@@ -366,7 +367,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const postID = approveButton.getAttribute("data-post-id")
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/post_accommodations/${postID}/review/`, {
+            const response = await fetch(`${endpoint}/post_accommodations/${postID}/review/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -395,7 +396,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     denyButton.addEventListener("click", async () => {
         const postID = denyButton.getAttribute("data-post-id")
         try {
-            const response = await fetch(`http://127.0.0.1:8000/post_accommodations/${postID}/review/`, {
+            const response = await fetch(`${endpoint}/post_accommodations/${postID}/review/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

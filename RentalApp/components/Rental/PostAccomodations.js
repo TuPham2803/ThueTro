@@ -290,7 +290,7 @@ const PostAccommodations = ({ route, navigation }) => {
                 key={p.id}
                 onPress={() =>
                   navigation.navigate("PostAccommodationDetails", {
-                    postId: p.id,
+                    post: p,
                   })
                 }
               >

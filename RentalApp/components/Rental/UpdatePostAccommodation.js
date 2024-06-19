@@ -87,6 +87,7 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
     formData.append("room_type", selectedHouseType);
+    formData.append("pending_status", "PD");
     if (selectedHouseType === "SH") {
       formData.append("max_people", max_people);
       formData.append("current_people", current_people);
@@ -678,18 +679,18 @@ const UpdatePostAcccommodation = ({ route, navigation }) => {
           )}
         </ScrollView>
         <ImageViewing
+          images={[{ uri: mainImage.uri ? mainImage.uri : mainImage }]}
+          imageIndex={0}
+          visible={isMainImageViewVisible}
+          onRequestClose={() => setMainImageViewVisible(false)}
+        />
+        <ImageViewing
           images={images.map((image) => ({
             uri: image.uri ? image.uri : image,
           }))}
           imageIndex={currentImageIndex}
           visible={isImageViewVisible}
           onRequestClose={() => setImageViewVisible(false)}
-        />
-        <ImageViewing
-          images={[{ uri: mainImage.uri ? mainImage.uri : mainImage }]}
-          imageIndex={0}
-          visible={isMainImageViewVisible}
-          onRequestClose={() => setMainImageViewVisible(false)}
         />
       </View>
     </Provider>

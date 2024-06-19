@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet } from "react-native";
 import { ColorAssets } from "../assets/ColorAssets";
+
 const screenWidth = Dimensions.get("window").width;
 
 export default StyleSheet.create({
@@ -15,7 +16,8 @@ export default StyleSheet.create({
   },
   subject: {
     fontSize: 15,
-    fontWeight: "",
+    fontWeight: "normal",
+    color: ColorAssets.content.text,
   },
   title: {
     fontSize: 25,
@@ -55,8 +57,7 @@ export default StyleSheet.create({
     alignSelf: "center",
   },
   marginDistantSide: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 10,
   },
   wrapper: {
     height: 200,
@@ -72,6 +73,7 @@ export default StyleSheet.create({
     height: 200,
   },
   slide: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -81,10 +83,18 @@ export default StyleSheet.create({
   },
   horizontalScroll: {
     marginTop: 10,
-    paddingLeft: 10,
+  },
+  horizontalImageContainer: {
+    display: "flex",
+    marginRight: 10,
+  },
+  horizontalImage: {
+    width: 110,
+    height: 110,
+    borderRadius: 10,
   },
   card: {
-    width: screenWidth / 2.5 - 20, // Ensures three cards fit within the screen width
+    width: screenWidth / 2.5 - 20,
     marginHorizontal: 5,
   },
   cardImage: {
@@ -107,9 +117,9 @@ export default StyleSheet.create({
     padding: 10,
   },
   row_button: {
-    flexDirection: "row", // Đảm bảo các phần tử trong hàng nằm ngang
-    justifyContent: "center", // Căn giữa các phần tử trong hàng
-    alignItems: "center", // Căn giữa theo trục dọc
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   post_accomodations: {
     flex: 1,

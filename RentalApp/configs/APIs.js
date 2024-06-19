@@ -3,6 +3,9 @@ import { SERVER_HOST, SERVER_PORT } from "@env";
 
 const BASE_URL = `http://${SERVER_HOST}:${SERVER_PORT}`;
 console.log(BASE_URL);
+console.log(BASE_URL);
+console.log(BASE_URL);
+console.log(BASE_URL);
 
 export const endpoints = {
   post_accommodations: "/post_accommodations/",
