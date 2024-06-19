@@ -40,12 +40,8 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
   const [roomType, setRoomType] = useState(
     initialFilters.roomType?.toString() || null
   );
-  const [latitude, setLatitude] = useState(
-    initialFilters.latitude?.toString() || null
-  );
-  const [longitude, setLongitude] = useState(
-    initialFilters.longitude?.toString() || null
-  );
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleCityChange = (city) => {
@@ -128,258 +124,221 @@ const FilterModal = ({ isVisible, onClose, applyFilter, initialFilters }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={[styles.modalContainer]}>
+      <View style={[styles.modalContainer]}>
+        <Text
+          style={[
+            MyStyle.heading,
+            { color: "green", fontSize: 20, alignSelf: "center" },
+          ]}
+        >
+          Lọc tìm kiếm
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
+          <Icon source="cash" size={30} color={ColorAssets.content.icon} />
           <Text
-            style={[
-              MyStyle.heading,
-              { color: "green", fontSize: 20, alignSelf: "center" },
-            ]}
+            style={{
+              color: ColorAssets.content.title,
+              marginRight: 5,
+              fontFamily: "Roboto",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
           >
-            Lọc tìm kiếm
+            Khoảng giá
           </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="cash" size={30} color={ColorAssets.content.icon} />
-            <Text
-              style={{
-                color: ColorAssets.content.title,
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Khoảng giá
-            </Text>
-          </View>
-          <View style={styles.sliderContainer}>
-            <MultiSlider
-              selectedStyle={{ backgroundColor: ColorAssets.range.selected }}
-              unselectedStyle={{
-                backgroundColor: ColorAssets.range.unselected,
-              }}
-              containerStyle={styles.slider}
-              markerStyle={styles.thumbStyle}
-              values={[minPrice, maxPrice]}
-              min={0}
-              max={20000000}
-              step={500000}
-              onValuesChange={(values) => {
-                setMinPrice(values[0]);
-                setMaxPrice(values[1]);
-              }}
-            />
-          </View>
-          <View style={styles.priceLabels}>
-            <Text>{`Giá thấp nhất: ${formatCurrency(minPrice)} đ`}</Text>
-            <Text>{`Giá cao nhất: ${formatCurrency(maxPrice)} đ`}</Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="city" size={30} color={ColorAssets.content.icon} />
-            <Text
-              style={{
-                color: ColorAssets.content.title,
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Chọn thành phố
-            </Text>
-          </View>
-          <Picker
-            selectedValue={selectedCity}
-            onValueChange={(itemValue) => handleCityChange(itemValue)}
-          >
-            <Picker.Item label="Chọn thành phố" value={null} />
-            {Object.keys(data).map((city) => (
-              <Picker.Item key={city} label={city} value={city} />
-            ))}
-          </Picker>
-          {selectedCity &&
-            selectedCity !== "Chọn thành phố" &&
-            data[selectedCity] && (
-              <Picker
-                selectedValue={selectedDistrict}
-                onValueChange={(itemValue) => handleDistrictChange(itemValue)}
-              >
-                {data[selectedCity].map((district) => (
-                  <Picker.Item
-                    key={district}
-                    label={district}
-                    value={district}
-                  />
-                ))}
-              </Picker>
-            )}
-          {selectedCity && selectedDistrict && (
-            <View style={styles.result}>
-              <Text>
-                Bạn đã chọn: {selectedCity} - {selectedDistrict}
-              </Text>
-            </View>
-          )}
-          {selectedCity && (
-            <Button
-              title="Bỏ chọn thành phố"
-              onPress={resetSelection}
-              color="red"
-            />
-          )}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon
-              source="account-arrow-up"
-              size={30}
-              color={ColorAssets.content.icon}
-            />
-            <Text
-              style={{
-                color: ColorAssets.content.title,
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Người trọ tối đa
-            </Text>
-          </View>
-          <TextInput
-            style={styles.input}
-            value={maxPeople}
-            onChangeText={setMaxPeople}
-            keyboardType="numeric"
-          />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon
-              source="account-check"
-              size={30}
-              color={ColorAssets.content.icon}
-            />
-            <Text
-              style={{
-                color: ColorAssets.content.title,
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Người trọ hiện tại
-            </Text>
-          </View>
-          <TextInput
-            style={styles.input}
-            value={currentPeople}
-            onChangeText={setCurrentPeople}
-            keyboardType="numeric"
-          />
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: 5,
-            }}
-          >
-            <Icon source="home" size={30} color={ColorAssets.content.icon} />
-            <Text
-              style={{
-                color: ColorAssets.content.title,
-                marginRight: 5,
-                fontFamily: "Roboto",
-                fontWeight: "bold",
-                fontSize: 16,
-              }}
-            >
-              Loại phòng
-            </Text>
-          </View>
-          <View style={[MyStyle.input, MyStyle.margin]}>
-            <Picker
-              selectedValue={roomType}
-              onValueChange={setRoomType}
-              style={styles.picker}
-              mode="dialog" // or "dialog"
-            >
-              <Picker.Item
-                label="Chọn loại phòng..."
-                value=""
-                color={ColorAssets.input.placeholder}
-              />
-              <Picker.Item label="Phòng chung" value="SH" />
-              <Picker.Item label="Căn hộ riêng" value="PR" />
-            </Picker>
-          </View>
-
-          <View style={styles2.iconTextContainer}>
-            <Icon source="map" size={30} color={ColorAssets.content.icon} />
-            <Text style={styles2.iconText}>Vị trí bản đồ</Text>
-          </View>
-
-          {/* <View style={styles.mapContainer}>
-            <MapView
-              style={{ width: "100%", height: 300 }}
-              initialRegion={{
-                latitude: latitude,
-                longitude: longitude,
-                latitudeDelta: 0.0025,
-                longitudeDelta: 0.0025,
-              }}
-              region={{
-                latitude: latitude,
-                longitude: longitude,
-                latitudeDelta: 0.0025,
-                longitudeDelta: 0.0025,
-              }}
-              onPress={handleMapPress}
-            >
-              <Marker coordinate={{ latitude, longitude }} />
-            </MapView>
-            <TouchableOpacity
-              style={styles.currentLocationButton}
-              onPress={moveToCurrentLocation}
-            >
-              <Icon
-                source="crosshairs-gps"
-                size={30}
-                color={ColorAssets.content.icon}
-              />
-            </TouchableOpacity>
-          </View> */}
-
-          <View style={styles.buttonContainer}>
-            <Button title="Lọc tìm kiếm" onPress={handleApply} />
-            <Button title="Trở về mặc định" onPress={handleReset} />
-            <Button title="Đóng" onPress={onClose} />
-          </View>
         </View>
-      </ScrollView>
+        <View style={styles.sliderContainer}>
+          <MultiSlider
+            selectedStyle={{ backgroundColor: ColorAssets.range.selected }}
+            unselectedStyle={{
+              backgroundColor: ColorAssets.range.unselected,
+            }}
+            containerStyle={styles.slider}
+            markerStyle={styles.thumbStyle}
+            values={[minPrice, maxPrice]}
+            min={0}
+            max={20000000}
+            step={500000}
+            onValuesChange={(values) => {
+              setMinPrice(values[0]);
+              setMaxPrice(values[1]);
+            }}
+          />
+        </View>
+        <View style={styles.priceLabels}>
+          <Text>{`Giá thấp nhất: ${formatCurrency(minPrice)} đ`}</Text>
+          <Text>{`Giá cao nhất: ${formatCurrency(maxPrice)} đ`}</Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
+          <Icon source="city" size={30} color={ColorAssets.content.icon} />
+          <Text
+            style={{
+              color: ColorAssets.content.title,
+              marginRight: 5,
+              fontFamily: "Roboto",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          >
+            Chọn thành phố
+          </Text>
+        </View>
+        <Picker
+          selectedValue={selectedCity}
+          onValueChange={(itemValue) => handleCityChange(itemValue)}
+        >
+          <Picker.Item label="Chọn thành phố" value={null} />
+          {Object.keys(data).map((city) => (
+            <Picker.Item key={city} label={city} value={city} />
+          ))}
+        </Picker>
+        {selectedCity &&
+          selectedCity !== "Chọn thành phố" &&
+          data[selectedCity] && (
+            <Picker
+              selectedValue={selectedDistrict}
+              onValueChange={(itemValue) => handleDistrictChange(itemValue)}
+            >
+              {data[selectedCity].map((district) => (
+                <Picker.Item key={district} label={district} value={district} />
+              ))}
+            </Picker>
+          )}
+        {selectedCity && selectedDistrict && (
+          <View style={styles.result}>
+            <Text>
+              Bạn đã chọn: {selectedCity} - {selectedDistrict}
+            </Text>
+          </View>
+        )}
+        {selectedCity && (
+          <Button
+            title="Bỏ chọn thành phố"
+            onPress={resetSelection}
+            color="red"
+          />
+        )}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
+          <Icon
+            source="account-arrow-up"
+            size={30}
+            color={ColorAssets.content.icon}
+          />
+          <Text
+            style={{
+              color: ColorAssets.content.title,
+              marginRight: 5,
+              fontFamily: "Roboto",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          >
+            Người trọ tối đa
+          </Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          value={maxPeople}
+          onChangeText={setMaxPeople}
+          keyboardType="numeric"
+        />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
+          <Icon
+            source="account-check"
+            size={30}
+            color={ColorAssets.content.icon}
+          />
+          <Text
+            style={{
+              color: ColorAssets.content.title,
+              marginRight: 5,
+              fontFamily: "Roboto",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          >
+            Người trọ hiện tại
+          </Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          value={currentPeople}
+          onChangeText={setCurrentPeople}
+          keyboardType="numeric"
+        />
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 5,
+          }}
+        >
+          <Icon source="home" size={30} color={ColorAssets.content.icon} />
+          <Text
+            style={{
+              color: ColorAssets.content.title,
+              marginRight: 5,
+              fontFamily: "Roboto",
+              fontWeight: "bold",
+              fontSize: 16,
+            }}
+          >
+            Loại phòng
+          </Text>
+        </View>
+        <View style={[MyStyle.input, MyStyle.margin]}>
+          <Picker
+            selectedValue={roomType}
+            onValueChange={setRoomType}
+            style={styles.picker}
+            mode="dialog" // or "dialog"
+          >
+            <Picker.Item
+              label="Chọn loại phòng..."
+              value=""
+              color={ColorAssets.input.placeholder}
+            />
+            <Picker.Item label="Phòng chung" value="SH" />
+            <Picker.Item label="Căn hộ riêng" value="PR" />
+          </Picker>
+        </View>
+
+        <View style={styles2.iconTextContainer}>
+          <Icon source="map" size={30} color={ColorAssets.content.icon} />
+          <Text style={styles2.iconText}>Vị trí bản đồ</Text>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <Button title="Lọc tìm kiếm" onPress={handleApply} />
+          <Button title="Trở về mặc định" onPress={handleReset} />
+          <Button title="Đóng" onPress={onClose} />
+        </View>
+      </View>
     </Modal>
   );
 };
