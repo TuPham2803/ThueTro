@@ -49,20 +49,24 @@ const PostAccommodationDetails = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    checkLiked();
+    if (user) {
+      checkLiked();
+    }
   }, []);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon={liked ? "heart" : "heart-outline"}
-          iconColor="lightpink"
-          size={24}
-          onPress={handleLike}
-        />
-      ),
-    });
+    if (user) {
+      navigation.setOptions({
+        headerRight: () => (
+          <IconButton
+            icon={liked ? "heart" : "heart-outline"}
+            iconColor="lightpink"
+            size={24}
+            onPress={handleLike}
+          />
+        ),
+      });
+    }
   }, [liked]);
 
   const loadComments = async () => {
@@ -374,7 +378,7 @@ const PostAccommodationDetails = ({ route }) => {
                         <Text style={MyStyle.username}>
                           {post.user_post.username}
                         </Text>
-                        {post.user_post.id != user.id && (
+                        {user && post.user_post.id != user.id && (
                           <View style={[MyStyle.row]}>
                             <Button
                               mode="contained"
